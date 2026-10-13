@@ -61,6 +61,7 @@ MCP_TOOLS.save_frames = {
       bitsPerChannel: app.project.bitsPerChannel,
       bgColor: comp.bgColor,
       flattened: args.flatten === true,
+      writable: mcpIsWritable(),
       pendingFiles: files
     };
   }

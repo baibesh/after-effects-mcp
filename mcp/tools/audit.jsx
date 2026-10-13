@@ -187,7 +187,10 @@ function mcpAccentPeaks(layer) {
         }
         size = Math.sqrt(d1) + Math.sqrt(d2);
       }
-      if (dot < 0) peaks.push({time: p.keyTime(k), size: size});
+      // Масштаб, схлопнутый в 0 (переворот «на ребро», смена текста, исчезновение), — не акцент.
+      var collapsed = false;
+      if (p.matchName === "ADBE Scale") for (var z = 0; z < b.length - 1; z++) if (Math.abs(b[z]) < 0.5) collapsed = true;
+      if (dot < 0 && !collapsed) peaks.push({time: p.keyTime(k), size: size});
     }
   }
   return peaks;

@@ -46,6 +46,16 @@ function mcpCheckWritable() {
     "). Менять его не буду; чтение работает.");
 }
 
+/** @returns {boolean} можно ли менять открытый проект (без исключения) */
+function mcpIsWritable() {
+  try {
+    mcpCheckWritable();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 /** @param {string} text */
 function mcpWriteResult(text) {
   var out = new File(MCP_REQUEST.resultPath);

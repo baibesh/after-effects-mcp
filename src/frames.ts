@@ -41,7 +41,14 @@ export async function grabFrames(comp: string, times: number[], width: number): 
   let res: RunResult = await runInAE("save_frames", { comp, times, dir: FRAMES_DIR, prefix });
   if (!res.ok) return res;
   // 32 бита + прозрачность: цвет полупрозрачных пикселей не восстановить — переснимаем с подложкой.
-  if (res.result.bitsPerChannel === 32 && !res.result.missingFiles?.length && (await hasTransparency(res.result.pendingFiles))) {
+  // Подложка — временная композиция: проект после неё помечен изменённым, поэтому только там, где менять можно.
+  // В проектах только для чтения кадр не трогаем — полупрозрачное может выйти светлее (note в ответе).
+  let note: string | undefined;
+  const transparent = res.result.bitsPerChannel === 32 && !res.result.missingFiles?.length && (await hasTransparency(res.result.pendingFiles));
+  if (transparent && !res.result.writable) {
+    note = "в кадре есть прозрачность, а проект только для чтения: полупрозрачные места могут выйти светлее, чем в рендере (32 бит)";
+  }
+  if (transparent && res.result.writable) {
     res = await runInAE("save_frames", { comp, times, dir: FRAMES_DIR, prefix, flatten: true });
     const dropped = await runInAE("drop_flat", {});
     if (!res.ok) return res;
@@ -90,7 +97,7 @@ export async function grabFrames(comp: string, times: number[], width: number): 
     frames: {
       image,
       mimeType: "image/png",
-      info: { comp: r.comp, size: `${r.width}×${r.height}`, times, layout: times.length > 1 ? "лист слева направо, сверху вниз" : "один кадр", file: out },
+      info: { comp: r.comp, size: `${r.width}×${r.height}`, times, layout: times.length > 1 ? "лист слева направо, сверху вниз" : "один кадр", file: out, note },
     },
   };
 }

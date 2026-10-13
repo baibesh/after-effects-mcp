@@ -67,3 +67,8 @@ yarn-error.log*
 CLAUDE.md
 settings.local.json
 
+
+# AE MCP
+/out/
+/test/*.aep
+/test/*.aep Logs/

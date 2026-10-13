@@ -9,7 +9,7 @@ function mcpTestProjectFile(name) {
   return new File(MCP_REQUEST.projectRoots[0] + "/" + safe + ".aep");
 }
 
-/** Закрыть текущий проект, только если это не чужая работа. */
+/** Закрыть текущий проект, только если ничего не потеряется: сохранён без правок или это тестовый проект. */
 function mcpCloseCurrentSafely() {
   var file = app.project.file;
   if (!file) {
@@ -20,8 +20,12 @@ function mcpCloseCurrentSafely() {
     app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
     return;
   }
-  mcpCheckWritable(); // рабочий проект не закрываем: AE спросит про сохранение диалогом и скрипт повиснет
-  app.project.save();
+  var dirty = /** @type {any} */ (app.project).dirty;
+  if (dirty) {
+    // несохранённые правки в рабочем проекте не трогаем; тестовый — сохраняем
+    mcpCheckWritable();
+    app.project.save();
+  }
   app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
 }
 

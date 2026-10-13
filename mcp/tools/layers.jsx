@@ -250,3 +250,65 @@ MCP_TOOLS.delete_layer = {
     return {deleted: name, layers: comp.numLayers};
   }
 };
+
+MCP_TOOLS.add_text_plate = {
+  write: true,
+  run: function (args) {
+    var comp = mcpFindComp(args.comp);
+    var text = mcpFindLayer(comp, args.text);
+    if (!(text instanceof TextLayer)) throw new Error("«" + text.name + "» — не текстовый слой");
+    var name = args.name || text.name + " plate";
+    mcpCheckNewName(comp, name);
+    var pad = args.padding || [36, 18];
+    var minW = args.minWidth || 0;
+
+    var layer = comp.layers.addShape();
+    layer.name = name;
+    var group = kbAdd(kbGroup(layer, ["ADBE Root Vectors Group"]), "ADBE Vector Group");
+    group.name = "plate";
+    var contents = kbGroup(group, ["ADBE Vectors Group"]);
+    var rect = kbAdd(contents, "ADBE Vector Shape - Rect");
+    if (args.radius) kbProp(rect, ["ADBE Vector Rect Roundness"]).setValue(args.radius);
+    if (args.stroke) {
+      var stroke = kbAdd(contents, "ADBE Vector Graphic - Stroke");
+      kbProp(stroke, ["ADBE Vector Stroke Color"]).setValue(args.stroke.color);
+      kbProp(stroke, ["ADBE Vector Stroke Width"]).setValue(args.stroke.width || 4);
+    }
+    if (args.fill !== null) {
+      var fill = kbAdd(contents, "ADBE Vector Graphic - Fill");
+      kbProp(fill, ["ADBE Vector Fill Color"]).setValue(args.fill || [0.184, 0.427, 0.71]);
+    }
+
+    // Добавление в группу делает недействительными прежние ссылки на её свойства — прямоугольник берём заново.
+    rect = kbGroup(contents, ["ADBE Vector Shape - Rect"]);
+
+    // Плашка — ребёнок текста: координаты — пространство слоя текста, где sourceRectAtTime и живёт;
+    // движение, масштаб и поворот текста (пресеты, акценты) плашка получает от родителя.
+    var ref = "thisComp.layer(" + mcpQuote(text.name) + ")";
+    kbProp(rect, ["ADBE Vector Rect Size"]).expression =
+      "var r = " + ref + ".sourceRectAtTime(time, false);\n" +
+      "[Math.max(r.width + " + pad[0] * 2 + ", " + minW + "), r.height + " + pad[1] * 2 + "]";
+    layer.parent = text;
+    var tr = ["ADBE Transform Group"];
+    kbProp(layer, tr.concat(["ADBE Anchor Point"])).setValue([0, 0]);
+    kbProp(layer, tr.concat(["ADBE Position"])).expression =
+      "var r = " + ref + ".sourceRectAtTime(time, false);\n" +
+      "[r.left + r.width / 2, r.top + r.height / 2]";
+    kbProp(layer, tr.concat(["ADBE Scale"])).setValue([100, 100]);
+    kbProp(layer, tr.concat(["ADBE Rotate Z"])).setValue(0);
+    // Прозрачность не наследуется от родителя — повторяем текст.
+    kbProp(layer, tr.concat(["ADBE Opacity"])).expression = "value * " + ref + ".transform.opacity / 100";
+    layer.inPoint = text.inPoint;
+    layer.outPoint = text.outPoint;
+    layer.moveAfter(text);
+
+    var r0 = text.sourceRectAtTime(Math.max(text.inPoint, 0), false);
+    return {
+      name: name,
+      text: text.name,
+      size: [Math.round(Math.max(r0.width + pad[0] * 2, minW)), Math.round(r0.height + pad[1] * 2)],
+      index: layer.index,
+      note: "размер, положение и прозрачность — выражения от текста; менять текст можно set_text"
+    };
+  }
+};

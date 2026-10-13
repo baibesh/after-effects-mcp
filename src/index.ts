@@ -191,6 +191,25 @@ server.registerTool(
 );
 
 server.registerTool(
+  "add_text_plate",
+  {
+    description:
+      "Плашка под текстом, которая сама подстраивается под его размер: прямоугольник (скругление radius, заливка, обводка) с отступами padding [x, y] от текста. Ребёнок текстового слоя — двигается, масштабируется и поворачивается вместе с ним (пресеты на тексте качают и плашку), прозрачность повторяет текст; размер — выражение от sourceRectAtTime, поэтому set_text или смена кегля пересчитывают плашку сами. Ставится сразу под текстом.",
+    inputSchema: {
+      comp: compName,
+      text: z.string().describe("Имя текстового слоя"),
+      name: z.string().optional().describe("По умолчанию «<текст> plate»"),
+      padding: z.array(z.number().min(0)).length(2).optional().describe("Отступы [по бокам, сверху/снизу], px; по умолчанию [36, 18]"),
+      radius: z.number().min(0).optional(),
+      fill: rgb.nullable().optional(),
+      stroke: z.object({ color: rgb, width: z.number().positive().optional() }).optional(),
+      minWidth: z.number().min(0).optional(),
+    },
+  },
+  (a) => call("add_text_plate", a),
+);
+
+server.registerTool(
   "add_solid",
   {
     description: "Заливка (solid) на весь кадр или заданного размера; adjustment: true — корректирующий слой для эффектов на всё, что ниже.",

@@ -72,7 +72,8 @@ function mcpDispatch() {
     response = {ok: true, result: tool.run(MCP_REQUEST.args || {})};
   } catch (e) {
     var where = e.fileName ? " (" + new File(e.fileName).name + ":" + e.line + ")" : "";
-    response = {ok: false, error: String(e.message || e) + where};
+    var hint = undoOpen ? " — если вызов успел что-то изменить, Cmd+Z в AE откатывает его целиком" : "";
+    response = {ok: false, error: String(e.message || e) + where + hint};
   } finally {
     if (undoOpen) app.endUndoGroup();
   }

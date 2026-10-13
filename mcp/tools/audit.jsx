@@ -427,10 +427,10 @@ MCP_TOOLS.audit_animation = {
     }
 
     // entrance: несколько новых элементов разом. Одним элементом считаются: дети одного родителя, слои с общим
-    // началом имени («ben-text» + «ben-plate», «end0-0» + «end0-1») и всё, что входит в одном кадре (строка целиком).
+    // началом имени («ben-text» + «ben-plate», «end0-0» + «end0-1») и цепочка входов с шагом ≤ 2 кадров (строка по словам).
     entries.sort(function (a, b) { return a.time - b.time; });
     var window = 4 * MCP_F24;
-    var oneFrame = 1.01 / comp.frameRate;
+    var stagger = 2.01 / comp.frameRate;
     /** @param {string} name @returns {string} */
     var stem = function (name) { return name.replace(/[-_ ][^-_ ]*$/, ""); };
     var used = {};
@@ -448,10 +448,11 @@ MCP_TOOLS.audit_animation = {
         var unit = -1;
         for (var ui = 0; ui < units.length; ui++) {
           var un = units[ui];
-          if (un.root === en.root || un.stem === stem(en.root) || Math.abs(un.time - en.time) <= oneFrame) unit = ui;
+          // ступенчатый вход строки (слова с шагом ≤ 2 к.) — тоже одна единица: сравниваем с последним в ней
+          if (un.root === en.root || un.stem === stem(en.root) || Math.abs(un.last - en.time) <= stagger) unit = ui;
         }
-        if (unit < 0) units.push({root: en.root, stem: stem(en.root), time: en.time, layers: [en.layer]});
-        else units[unit].layers.push(en.layer);
+        if (unit < 0) units.push({root: en.root, stem: stem(en.root), time: en.time, last: en.time, layers: [en.layer]});
+        else { units[unit].layers.push(en.layer); units[unit].last = en.time; }
       }
       if (units.length > 1) {
         var names = [];

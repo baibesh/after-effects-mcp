@@ -166,6 +166,9 @@ node build/cli.js ae_status
 | `replace_footage` | заменить файл в слое, та же ширина на экране; `everywhere` — во всём проекте | `{"comp": "Scene", "layer": "card", "file": "/abs/card2.png"}` |
 | `set_color` | цвет текста (заливка/обводка), фигуры (все заливки/обводки без ключей), заливки solid | `{"comp": "Scene", "layer": "plaque", "color": [0.72, 0.46, 0.17]}` |
 
+| `shift_layers` | сдвиг слоёв с ключами: по именам, всё после `after`, `alignTo` (начало/конец слоя, маркер, момент + offset); `ripple` — вставить (+) или убрать (−) паузу: сквозные слои удлиняются/укорачиваются, их ключи после точки сдвигаются, маркеры и длина композиции подстраиваются; проверки — до изменений | `{"comp": "Scene", "layers": ["card"], "alignTo": {"layer": "voice-03", "edge": "in", "offset": 0.2}}` · `{"comp": "Scene", "after": 12.5, "seconds": 0.8, "ripple": true}` |
+| `set_comp` | имя, длительность, fps, фон, рабочая область | `{"comp": "Scene", "duration": 12, "workArea": [0, 12]}` |
+
 Типовой цикл исправления: `audit_animation` нашёл линейный старт → `edit_keys … action: "ease", ease: "snap"` → `audit_animation` чист;
 акцент опаздывает → `edit_keys … action: "shift", frames: -3`.
 

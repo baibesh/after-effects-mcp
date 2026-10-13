@@ -17,3 +17,4 @@
 //@include "tools/layers.jsx"
 //@include "tools/audit.jsx"
 //@include "tools/edit.jsx"
+//@include "tools/time.jsx"

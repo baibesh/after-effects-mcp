@@ -499,6 +499,50 @@ server.registerTool(
   (a) => call("set_color", a),
 );
 
+// ---------- время ----------
+
+server.registerTool(
+  "shift_layers",
+  {
+    description:
+      "Сдвинуть слои по времени вместе с их ключами. Кого: layers (имена) или after — все слои, что начинаются не раньше этого момента. На сколько: seconds, frames или alignTo — первый из выбранных встанет на начало/конец другого слоя ({layer, edge: in|out, offset}), маркер композиции ({marker}) или момент ({time}). ripple (с after): вставить паузу (плюс) или убрать (минус) — слои, идущие через момент after (фон, персонаж), удлиняются/укорачиваются, их ключи после after сдвигаются, маркеры композиции и её длина подстраиваются. Всё встаёт на кадр.",
+    inputSchema: {
+      comp: compName,
+      layers: z.array(z.string()).min(1).optional(),
+      after: z.number().min(0).optional(),
+      seconds: z.number().optional(),
+      frames: z.number().optional(),
+      alignTo: z
+        .object({
+          layer: z.string().optional(),
+          edge: z.enum(["in", "out"]).optional(),
+          marker: z.string().optional(),
+          time: z.number().optional(),
+          offset: z.number().optional().describe("Секунды после цели (минус — раньше)"),
+        })
+        .optional(),
+      ripple: z.boolean().optional(),
+    },
+  },
+  (a) => call("shift_layers", a),
+);
+
+server.registerTool(
+  "set_comp",
+  {
+    description: "Свойства композиции: имя, длительность, fps, цвет фона, рабочая область [начало, конец] (с).",
+    inputSchema: {
+      comp: compName,
+      name: z.string().optional(),
+      duration: z.number().positive().optional(),
+      fps: z.number().min(1).max(120).optional(),
+      background: rgb.optional(),
+      workArea: z.array(z.number().min(0)).length(2).optional(),
+    },
+  },
+  (a) => call("set_comp", a),
+);
+
 // ---------- пресеты ----------
 
 server.registerTool(

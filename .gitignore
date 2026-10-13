@@ -74,3 +74,4 @@ settings.local.json
 /test/*.aep Logs/
 
 /test/*.wav
+/test/*.png

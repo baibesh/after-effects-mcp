@@ -3,6 +3,8 @@
 
 //@include "../kit/core.jsx"
 //@include "../kit/motion.jsx"
+//@include "../kit/text.jsx"
+//@include "../kit/footage.jsx"
 //@include "lib/json.jsx"
 //@include "lib/find.jsx"
 //@include "lib/run.jsx"
@@ -12,3 +14,4 @@
 //@include "tools/render.jsx"
 //@include "tools/formats.jsx"
 //@include "tools/presets.jsx"
+//@include "tools/layers.jsx"

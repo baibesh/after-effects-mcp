@@ -129,6 +129,133 @@ server.registerTool(
   () => call("save_project", {}),
 );
 
+// ---------- слои ----------
+
+const xy = z.array(z.number()).min(2).max(3);
+const rgb = z.array(z.number().min(0).max(1)).length(3).describe("Цвет [r,g,b] 0..1");
+const timing = {
+  start: z.number().min(0).optional().describe("Появление слоя, с"),
+  end: z.number().min(0).optional().describe("Исчезновение слоя, с"),
+};
+
+server.registerTool(
+  "add_text",
+  {
+    description:
+      "Текстовый слой. Якорь — в центре текста (масштаб и пресеты идут от середины). font — ключ шрифта проекта (black, bold, regular… из kit.config.jsx) или PostScript-имя установленного шрифта; если шрифта нет — ошибка со списком шрифтов проекта. Перенос строки — \\n.",
+    inputSchema: {
+      comp: compName,
+      text: z.string(),
+      name: z.string().optional().describe("Имя слоя (по умолчанию начало текста); уникально в композиции"),
+      font: z.string().optional(),
+      size: z.number().positive().optional().describe("Кегль, px (по умолчанию 80)"),
+      color: rgb.optional(),
+      position: xy.optional().describe("Центр текста [x, y], по умолчанию центр кадра"),
+      justify: z.enum(["left", "center", "right"]).optional(),
+      tracking: z.number().optional(),
+      leading: z.number().positive().optional(),
+      ...timing,
+    },
+  },
+  (a) => call("add_text", a),
+);
+
+server.registerTool(
+  "add_shape",
+  {
+    description: "Фигура: прямоугольник (со скруглением) или эллипс, заливка и/или обводка. Якорь и позиция — центр фигуры.",
+    inputSchema: {
+      comp: compName,
+      name: z.string(),
+      shape: z.enum(["rect", "ellipse"]),
+      size: z.array(z.number().positive()).length(2).describe("[ширина, высота] px"),
+      position: xy.optional(),
+      fill: rgb.nullable().optional().describe("Заливка; null — без заливки"),
+      stroke: z.object({ color: rgb, width: z.number().positive().optional() }).optional(),
+      radius: z.number().min(0).optional().describe("Скругление углов прямоугольника, px"),
+      ...timing,
+    },
+  },
+  (a) => call("add_shape", a),
+);
+
+server.registerTool(
+  "add_solid",
+  {
+    description: "Заливка (solid) на весь кадр или заданного размера; adjustment: true — корректирующий слой для эффектов на всё, что ниже.",
+    inputSchema: {
+      comp: compName,
+      name: z.string(),
+      color: rgb.optional(),
+      size: z.array(z.number().int().positive()).length(2).optional(),
+      position: xy.optional(),
+      adjustment: z.boolean().optional(),
+      moveTo: z.enum(["top", "bottom"]).optional().describe("bottom — фон под всеми слоями"),
+      ...timing,
+    },
+  },
+  (a) => call("add_solid", a),
+);
+
+server.registerTool(
+  "add_null",
+  {
+    description: "Null-объект — невидимый родитель: двигать, масштабировать и вращать группу слоёв (set_layer parent).",
+    inputSchema: { comp: compName, name: z.string(), position: xy.optional(), ...timing },
+  },
+  (a) => call("add_null", a),
+);
+
+server.registerTool(
+  "add_footage",
+  {
+    description: "Картинка, видео или звук из файла слоем. Уже импортированный файл переиспользуется. fit: none (1:1), contain, cover или число — ширина на экране, px. blend multiply — рисунок на белом без альфы ложится на бумагу.",
+    inputSchema: {
+      comp: compName,
+      file: z.string().describe("Абсолютный путь к файлу (PNG/JPG/PSD/MOV/MP4/WAV…; WebP AE не импортирует)"),
+      name: z.string().optional(),
+      position: xy.optional(),
+      fit: z.union([z.enum(["none", "contain", "cover"]), z.number().positive()]).optional(),
+      blend: z.string().optional(),
+      ...timing,
+    },
+  },
+  (a) => call("add_footage", a),
+);
+
+server.registerTool(
+  "set_layer",
+  {
+    description:
+      "Изменить слой: имя, трансформ (position, scale — число или [x,y] в %, rotation, opacity, anchor), время (start/end), родитель (имя слоя или null), режим наложения, видимость, порядок (moveTo: top, bottom, {above: имя}, {below: имя}). Меняет статичные значения; для анимации — apply_preset.",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      name: z.string().optional().describe("Новое имя"),
+      position: xy.optional(),
+      scale: z.union([z.number(), z.array(z.number()).min(2).max(3)]).optional(),
+      rotation: z.number().optional(),
+      opacity: z.number().min(0).max(100).optional(),
+      anchor: xy.optional(),
+      parent: z.string().nullable().optional(),
+      blend: z.string().optional().describe("normal, multiply, screen, overlay, add, softLight, hardLight, darken, lighten, colorBurn, colorDodge, difference, color, luminosity"),
+      enabled: z.boolean().optional(),
+      moveTo: z.union([z.enum(["top", "bottom"]), z.object({ above: z.string() }), z.object({ below: z.string() })]).optional(),
+      ...timing,
+    },
+  },
+  (a) => call("set_layer", a),
+);
+
+server.registerTool(
+  "delete_layer",
+  {
+    description: "Удалить слой по имени (отменяется Cmd+Z в AE).",
+    inputSchema: { comp: compName, layer: layerName },
+  },
+  (a) => call("delete_layer", a),
+);
+
 // ---------- рендер и форматы ----------
 
 const formatKey = z.enum(Object.keys(FORMATS) as [FormatKey, ...FormatKey[]]);

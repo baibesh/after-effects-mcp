@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "after-effects": {
+      "command": "node",
+      "args": ["build/index.js"],
+      "env": {
+        "AE_MCP_FOREIGN_LOCKS": "~/Projects/dilyolu/dilyolu-content/ae/out/.ae-lock,~/kemel-bilim/kemel-bilim-content/ae/out/.ae-lock"
+      }
+    }
+  }
+}

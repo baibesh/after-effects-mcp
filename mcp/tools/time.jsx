@@ -17,7 +17,13 @@ function mcpAlignTime(comp, to) {
     for (var i = 1; i <= markers.numKeys; i++) {
       if (markers.keyValue(i).comment === to.marker) { t = markers.keyTime(i); break; }
     }
-    if (t === undefined) throw new Error("Нет маркера композиции «" + to.marker + "»");
+    if (t === undefined) {
+      // опорное слово озвучки: маркер «!имя» на звуковом слое здесь или в родительской композиции
+      var name = String(to.marker).replace(/^!/, "");
+      var voice = mcpVoiceBeats(comp, 4);
+      for (var v = 0; v < voice.length; v++) if (voice[v].label === name) { t = voice[v].time; break; }
+    }
+    if (t === undefined) throw new Error("Нет маркера «" + to.marker + "» ни у композиции, ни среди опорных слов озвучки");
   } else if (to.time !== undefined) {
     t = to.time;
   } else {

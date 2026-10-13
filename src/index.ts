@@ -284,6 +284,7 @@ server.registerTool(
       beats: z.array(z.union([z.number(), z.object({ time: z.number(), label: z.string().optional() })])).optional().describe("Ударные слоги / удары звука, секунды"),
       beatLayer: z.string().optional().describe("Взять удары из маркеров этого слоя (например, озвучки)"),
       useCompMarkers: z.boolean().optional().describe("Взять удары из маркеров композиции"),
+      voiceBeats: z.boolean().optional().describe("По умолчанию (без beats/beatLayer/useCompMarkers) удары — опорные слова озвучки: маркеры «!имя» звуковых слоёв (ставит кит) здесь или в родительских композициях; false — не проверять акценты"),
       accentLayers: z.array(z.string()).optional().describe("Где искать акценты (по умолчанию — все слои с ключами движения)"),
       depth: z.number().int().min(0).max(6).optional().describe("Глубина захода в прекомпы для холдов (по умолчанию 3)"),
       limit: z.number().int().min(1).max(500).optional(),
@@ -576,7 +577,7 @@ server.registerTool(
         .object({
           layer: z.string().optional(),
           edge: z.enum(["in", "out"]).optional(),
-          marker: z.string().optional(),
+          marker: z.string().optional().describe("Маркер композиции или опорное слово озвучки (маркер «!имя» звукового слоя)"),
           time: z.number().optional(),
           offset: z.number().optional().describe("Секунды после цели (минус — раньше)"),
         })

@@ -194,6 +194,41 @@ function mcpAccentPeaks(layer) {
 }
 
 /**
+ * Опорные слова озвучки: маркеры слоёв «!имя» (их ставит kbAudioMarkers кита) в этой композиции или,
+ * если здесь их нет, в родительских — со временем, пересчитанным во время этой композиции.
+ * @param {CompItem} comp
+ * @param {number} depth
+ * @returns {Object[]} [{time, label, layer}]
+ */
+function mcpVoiceBeats(comp, depth) {
+  var own = [];
+  for (var i = 1; i <= comp.numLayers; i++) {
+    var layer = comp.layer(i);
+    var markers = kbProp(layer, ["ADBE Marker"]);
+    for (var k = 1; k <= markers.numKeys; k++) {
+      var c = String(markers.keyValue(k).comment);
+      if (c.charAt(0) === "!") own.push({time: markers.keyTime(k), label: c.substr(1), layer: layer.name});
+    }
+  }
+  if (own.length || depth <= 0) return own;
+  var mapped = [];
+  for (var p = 1; p <= app.project.numItems; p++) {
+    var parent = app.project.item(p);
+    if (!(parent instanceof CompItem)) continue;
+    for (var j = 1; j <= parent.numLayers; j++) {
+      var l = /** @type {any} */ (parent.layer(j));
+      if (l.source !== comp || l.timeRemapEnabled) continue;
+      var up = mcpVoiceBeats(parent, depth - 1);
+      for (var u = 0; u < up.length; u++) {
+        if (up[u].time < l.inPoint || up[u].time > l.outPoint) continue;
+        mapped.push({time: (up[u].time - l.startTime) * 100 / l.stretch, label: up[u].label, layer: parent.name + " / " + up[u].layer});
+      }
+    }
+  }
+  return mapped;
+}
+
+/**
  * Ударные слоги: args.beats, маркеры слоя args.beatLayer или маркеры композиции.
  * @param {CompItem} comp
  * @param {any} args
@@ -212,8 +247,10 @@ function mcpBeats(comp, args) {
   var markers = args.beatLayer ? kbProp(mcpFindLayer(comp, args.beatLayer), ["ADBE Marker"]) : /** @type {any} */ (comp).markerProperty;
   if (args.beatLayer || args.useCompMarkers) {
     for (i = 1; i <= markers.numKeys; i++) beats.push({time: markers.keyTime(i), label: markers.keyValue(i).comment});
+    return beats;
   }
-  return beats;
+  if (args.voiceBeats === false) return beats;
+  return mcpVoiceBeats(comp, 4); // по умолчанию — опорные слова озвучки
 }
 
 /**
@@ -429,6 +466,8 @@ MCP_TOOLS.audit_animation = {
 
     // accent: пики движения к ударным слогам
     var beats = mcpBeats(comp, args);
+    var fromVoice = !args.beats && !args.beatLayer && !args.useCompMarkers;
+    var quietBeats = 0;
     if (beats.length) {
       var accentLayers = [];
       for (var al = 1; al <= comp.numLayers; al++) {
@@ -457,6 +496,8 @@ MCP_TOOLS.audit_animation = {
         }
         var where = {beat: mcpRound(beat.time), label: beat.label};
         if (!best) {
+          // Опорные слова озвучки — отметки тайминга, не каждое требует акцента: без пика — только счёт.
+          if (fromVoice) { quietBeats++; continue; }
           where.message = "на ударный слог нет пика движения в окне −12…+6 к.";
           where.fix = "акцент (пресет accent-punch) со стартом за 6–7 к. до слога — пик придёт за 2–4 к.";
           add("accent", "info", where);
@@ -487,6 +528,8 @@ MCP_TOOLS.audit_animation = {
       fps: comp.frameRate,
       characters: characters,
       beats: beats.length,
+      beatsWithoutAccent: fromVoice ? quietBeats : undefined,
+      beatsFrom: args.beats ? "beats" : (args.beatLayer ? "beatLayer" : (args.useCompMarkers ? "compMarkers" : "voice !-markers")),
       counts: counts,
       issues: issues.slice(0, limit),
       truncated: issues.length > limit ? issues.length - limit : 0,

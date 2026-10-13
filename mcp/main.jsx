@@ -16,3 +16,4 @@
 //@include "tools/presets.jsx"
 //@include "tools/layers.jsx"
 //@include "tools/audit.jsx"
+//@include "tools/edit.jsx"

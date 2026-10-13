@@ -157,6 +157,18 @@ node build/cli.js ae_status
 | `set_layer` | имя, трансформ, время, родитель, наложение, видимость, порядок | `{"comp": "Scene", "layer": "title", "parent": "rig", "moveTo": {"above": "plaque"}}` |
 | `delete_layer` | удалить слой | `{"comp": "Scene", "layer": "sub"}` |
 
+### Правка готового
+
+| Инструмент | Что делает | Пример |
+|---|---|---|
+| `edit_keys` | ключи слоя на отрезке `from`–`to`: `shift` (seconds/frames), `stretch` (factor от pivot), `ease`, `delete`, `set`; ключи переносятся со всеми свойствами и встают на кадр; перескок через неподвижный ключ, попадание на него, отрицательное время — ошибка без изменений; ease неподвижных соседей сохраняется. `prop`: короткое имя, `*` (весь трансформ) или путь к параметру эффекта | `{"comp": "Scene", "layer": "title", "prop": "scale", "action": "shift", "frames": -3}` · `{"…", "prop": "position", "action": "ease", "from": 0.5, "to": 1, "ease": "snap"}` |
+| `set_text` | текст и стиль; якорь в центре текста остаётся в центре; при ключах текста — стиль на все ключи, текст в момент `time` | `{"comp": "Scene", "layer": "title", "text": "Сабақ 3", "font": "black"}` |
+| `replace_footage` | заменить файл в слое, та же ширина на экране; `everywhere` — во всём проекте | `{"comp": "Scene", "layer": "card", "file": "/abs/card2.png"}` |
+| `set_color` | цвет текста (заливка/обводка), фигуры (все заливки/обводки без ключей), заливки solid | `{"comp": "Scene", "layer": "plaque", "color": [0.72, 0.46, 0.17]}` |
+
+Типовой цикл исправления: `audit_animation` нашёл линейный старт → `edit_keys … action: "ease", ease: "snap"` → `audit_animation` чист;
+акцент опаздывает → `edit_keys … action: "shift", frames: -3`.
+
 ### Анимация
 
 | Инструмент | Что делает | Пример |

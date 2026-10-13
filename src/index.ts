@@ -418,6 +418,87 @@ server.registerTool(
   },
 );
 
+// ---------- правка готового ----------
+
+const easeArg = z
+  .union([z.enum(["snap", "soft", "punch", "linear", "hold"]), z.object({ in: z.number().min(0.1).max(100).optional(), out: z.number().min(0.1).max(100).optional() })])
+  .describe("snap {out 20, in 90} · soft {60, 60} · punch {10, 95} · linear · hold · {in, out} — влияние ease, %");
+
+server.registerTool(
+  "edit_keys",
+  {
+    description:
+      "Правка существующих ключей слоя на отрезке from–to (секунды; без них — все ключи). Действия: shift — сдвинуть на seconds или frames (кадры композиции); stretch — растянуть/сжать в factor раз от pivot (по умолчанию from); ease — поставить ease; delete — удалить; set — поставить ключ value в time (с ease). Ключи переносятся со всеми свойствами (ease, касательные, hold), встают на кадр; столкновение с чужим ключом — ошибка без изменений. prop: position, scale, rotation, opacity, anchor, x, y, timeRemap, sourceText, «*» — весь трансформ, или путь [\"Effects\", \"Gaussian Blur\", \"Blurriness\"] (имена или matchName). Удобно исправлять находки audit_animation.",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      prop: z.union([z.string(), z.array(z.string()).min(1)]),
+      action: z.enum(["shift", "stretch", "ease", "delete", "set"]),
+      from: z.number().optional(),
+      to: z.number().optional(),
+      seconds: z.number().optional().describe("shift: на сколько секунд (минус — раньше)"),
+      frames: z.number().optional().describe("shift: на сколько кадров композиции"),
+      factor: z.number().positive().optional().describe("stretch: 2 — вдвое длиннее, 0.5 — вдвое короче"),
+      pivot: z.number().optional().describe("stretch: неподвижная точка, с"),
+      ease: easeArg.optional(),
+      time: z.number().min(0).optional().describe("set: время ключа, с"),
+      value: z.union([z.number(), z.array(z.number())]).optional().describe("set: значение"),
+    },
+  },
+  (a) => call("edit_keys", a),
+);
+
+server.registerTool(
+  "set_text",
+  {
+    description:
+      "Изменить текстовый слой: текст и/или стиль (font — ключ шрифта проекта или PostScript-имя, size, color, tracking, leading, justify). Якорь, стоявший в центре текста, остаётся в центре. Если текст меняется по ключам — стиль ставится на все ключи, новый текст — в момент time.",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      text: z.string().optional().describe("Новый текст, перенос — \\n"),
+      font: z.string().optional(),
+      size: z.number().positive().optional(),
+      color: rgb.optional(),
+      tracking: z.number().optional(),
+      leading: z.number().positive().optional(),
+      justify: z.enum(["left", "center", "right"]).optional(),
+      time: z.number().min(0).optional(),
+    },
+  },
+  (a) => call("set_text", a),
+);
+
+server.registerTool(
+  "replace_footage",
+  {
+    description:
+      "Заменить картинку/видео/звук в слое на другой файл. По умолчанию только в этом слое и с той же шириной на экране (keepSize: false — оставить масштаб); everywhere: true — заменить сам элемент проекта во всех слоях.",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      file: z.string().describe("Абсолютный путь к новому файлу"),
+      keepSize: z.boolean().optional(),
+      everywhere: z.boolean().optional(),
+    },
+  },
+  (a) => call("replace_footage", a),
+);
+
+server.registerTool(
+  "set_color",
+  {
+    description: "Цвет слоя: у текста — заливка или обводка букв, у фигуры — все заливки или обводки (свойства с ключами не трогает), у заливки (solid) — её цвет (общий для всех слоёв с этим solid).",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      color: rgb,
+      target: z.enum(["fill", "stroke"]).optional(),
+    },
+  },
+  (a) => call("set_color", a),
+);
+
 // ---------- пресеты ----------
 
 server.registerTool(

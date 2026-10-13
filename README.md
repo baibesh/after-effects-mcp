@@ -83,8 +83,15 @@ node build/cli.js ae_status
 
 ## Подключение к Claude
 
-**Claude Code** — в репозитории уже есть `.mcp.json`; запустите `claude` в папке `ae-plugin` и разрешите сервер
-`after-effects`.
+**Claude Code** — один раз зарегистрировать сервер для всех папок (user scope), после чего инструменты AE
+доступны в сессии, открытой в любой папке (например, в папке проекта со сценариями):
+
+```bash
+claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/build/index.js"
+```
+
+Переменные окружения (таблица ниже) передаются флагами `-e ИМЯ=значение` перед `--`. Проверка — `claude mcp list`,
+удалить — `claude mcp remove after-effects -s user`. После правок сервера достаточно `npm run build`.
 
 **Claude Desktop** — `~/Library/Application Support/Claude/claude_desktop_config.json`:
 

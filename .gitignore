@@ -75,3 +75,6 @@ settings.local.json
 
 /test/*.wav
 /test/*.png
+
+# личная настройка MCP — в user scope Claude Code (README «Подключение к Claude»)
+/.mcp.json

@@ -27,9 +27,6 @@ export const config = {
   projectRoots: listEnv("AE_MCP_PROJECT_ROOTS", [path.join(REPO_ROOT, "test")]),
   /** Замки других конвейеров (out/.ae-lock китов в проектах): пока они есть, AE занят. */
   foreignLocks: listEnv("AE_MCP_FOREIGN_LOCKS", []),
-  /** Разрешить run_script — выполнение .jsx-файлов из scriptRoots. По умолчанию выключено. */
-  allowScripts: process.env.AE_MCP_ALLOW_SCRIPTS === "1",
-  scriptRoots: listEnv("AE_MCP_SCRIPT_ROOTS", [path.join(REPO_ROOT, "scripts")]),
   minFreeGb: Number(process.env.AE_MCP_MIN_FREE_GB ?? "1.5"),
   /** Куда писать мастера и выдачу. */
   renderDir: listEnv("AE_MCP_RENDER_DIR", [path.join(REPO_ROOT, "out", "renders")])[0],

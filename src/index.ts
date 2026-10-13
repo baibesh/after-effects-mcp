@@ -5,6 +5,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { grabFrames } from "./frames.js";
 import { config, runInAE } from "./runner.js";
 
 const server = new McpServer({ name: "after-effects", version: "0.1.0" });
@@ -59,6 +60,29 @@ server.registerTool(
   },
   },
   (a) => call("get_layer", a),
+);
+
+server.registerTool(
+  "get_frames",
+  {
+    description:
+      "Посмотреть композицию глазами: кадры в указанные секунды (один кадр или лист до 4 в ряд). Проект не меняется. Использовать после каждой правки, чтобы проверить результат, и перед правкой, чтобы понять сцену.",
+    inputSchema: {
+      comp: compName,
+      times: z.array(z.number().min(0)).min(1).max(16).describe("Секунды от начала композиции"),
+      width: z.number().int().min(160).max(1920).optional().describe("Ширина одного кадра в ответе, px (по умолчанию 960 для одного кадра, 480 для листа)"),
+    },
+  },
+  async ({ comp, times, width }) => {
+    const res = await grabFrames(comp, times, width ?? (times.length > 1 ? 480 : 960));
+    if (!res.ok) return { content: [{ type: "text", text: `Ошибка: ${res.error}` }], isError: true };
+    return {
+      content: [
+        { type: "image", data: res.frames.image, mimeType: res.frames.mimeType },
+        { type: "text", text: JSON.stringify(res.frames.info) },
+      ],
+    };
+  },
 );
 
 // ---------- проект ----------

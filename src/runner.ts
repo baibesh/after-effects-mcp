@@ -10,7 +10,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const OUT_DIR = path.join(REPO_ROOT, "out");
+export const OUT_DIR = path.join(REPO_ROOT, "out");
 const REQ_DIR = path.join(OUT_DIR, "mcp");
 const LOG_PATH = path.join(OUT_DIR, "ae.log");
 const LOCK_DIR = path.join(OUT_DIR, ".ae-lock");
@@ -107,6 +107,19 @@ function es3Literal(value: unknown): string {
   return JSON.stringify(value).replace(/[\u007f-￿]/g, (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
 }
 
+/** Ждать, пока файлы появятся и перестанут расти. Возвращает те, что не дописались. */
+async function waitForFiles(files: string[], waitMs: number): Promise<string[]> {
+  const deadline = Date.now() + waitMs;
+  const size = (f: string) => (fs.existsSync(f) ? fs.statSync(f).size : 0);
+  let pending = files;
+  while (pending.length && Date.now() < deadline) {
+    const before = pending.map(size);
+    await sleep(300);
+    pending = pending.filter((f, i) => before[i] === 0 || size(f) !== before[i]);
+  }
+  return pending;
+}
+
 function logTail(lines: number): string {
   if (!fs.existsSync(LOG_PATH)) return "";
   return fs.readFileSync(LOG_PATH, "utf8").trimEnd().split("\n").slice(-lines).join("\n");
@@ -153,7 +166,13 @@ export async function runInAE(tool: string, args: Record<string, unknown>, timeo
     if (!fs.existsSync(resPath)) {
       return { ok: false, error: `AE не записал ответ. Последние строки out/ae.log:\n${logTail(5)}` };
     }
-    return JSON.parse(fs.readFileSync(resPath, "utf8")) as RunResult;
+    const res = JSON.parse(fs.readFileSync(resPath, "utf8")) as RunResult;
+    // saveFrameToPng и подобные пишут асинхронно: держим замок, пока файлы не допишутся,
+    // иначе следующий запуск может закрыть проект раньше.
+    if (res.ok && Array.isArray(res.result?.pendingFiles)) {
+      res.result.missingFiles = await waitForFiles(res.result.pendingFiles, 120_000);
+    }
+    return res;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     const hint = /timed out|-1712|SIGTERM/i.test(msg) ? "\nAE не ответил вовремя — скорее всего, в AE открыт модальный диалог. Нажмите в нём OK." : "";

@@ -6,3 +6,4 @@
 //@include "lib/run.jsx"
 //@include "tools/read.jsx"
 //@include "tools/project.jsx"
+//@include "tools/frames.jsx"

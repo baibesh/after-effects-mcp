@@ -1,0 +1,3965 @@
+{
+ "source": "docsforadobe/after-effects-scripting-guide@7137a99",
+ "effects": {
+  "ADBE AUX CHANNEL EXTRACT": {
+   "name": "3D Channel Extract",
+   "category": "3D Channel",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE DEPTH MATTE": {
+   "name": "Depth Matte",
+   "category": "3D Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE DEPTH FIELD": {
+   "name": "Depth of Field",
+   "category": "3D Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "EXtractoR": {
+   "name": "EXtractoR",
+   "category": "3D Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE FOG_3D": {
+   "name": "Fog 3D",
+   "category": "3D Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE ID MATTE": {
+   "name": "ID Matte",
+   "category": "3D Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "IDentifier": {
+   "name": "IDentifier",
+   "category": "3D Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Aud Reverse": {
+   "name": "Backwards",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud BT": {
+   "name": "Bass & Treble",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud Delay": {
+   "name": "Delay",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud_Flange": {
+   "name": "Flange & Chorus",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud HiLo": {
+   "name": "High-Low Pass",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud Modulator": {
+   "name": "Modulator",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Param EQ": {
+   "name": "Parametric EQ",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud Reverb": {
+   "name": "Reverb",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud Stereo Mixer": {
+   "name": "Stereo Mixer",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Aud Tone": {
+   "name": "Tone",
+   "category": "Audio",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Bilateral": {
+   "name": "Bilateral Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Camera Lens Blur": {
+   "name": "Camera Lens Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE CameraShakeDeblur": {
+   "name": "Camera-Shake Deblur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CS CrossBlur": {
+   "name": "CC Cross Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Radial Blur": {
+   "name": "CC Radial Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Radial Fast Blur": {
+   "name": "CC Radial Fast Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Vector Blur": {
+   "name": "CC Vector Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Channel Blur": {
+   "name": "Channel Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Compound Blur": {
+   "name": "Compound Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Motion Blur": {
+   "name": "Directional Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": "15.0"
+  },
+  "ADBE Box Blur2": {
+   "name": "Fast Box Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": "14.2"
+  },
+  "ADBE Gaussian Blur 2": {
+   "name": "Gaussian Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": "13.8"
+  },
+  "ADBE Radial Blur": {
+   "name": "Radial Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Sharpen": {
+   "name": "Sharpen",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": "13.8"
+  },
+  "ADBE Smart Blur": {
+   "name": "Smart Blur",
+   "category": "Blur & Sharpen",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Unsharp Mask2": {
+   "name": "Unsharp Mask",
+   "category": "Blur & Sharpen",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Arithmetic": {
+   "name": "Arithmetic",
+   "category": "Channel",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Blend": {
+   "name": "Blend",
+   "category": "Channel",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Calculations": {
+   "name": "Calculations",
+   "category": "Channel",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Composite": {
+   "name": "CC Composite",
+   "category": "Channel",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Channel Combiner": {
+   "name": "Channel Combiner",
+   "category": "Channel",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Compound Arithmetic": {
+   "name": "Compound Arithmetic",
+   "category": "Channel",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Invert": {
+   "name": "Invert",
+   "category": "Channel",
+   "bpc": 32,
+   "gpu": "14.1"
+  },
+  "ADBE Minimax": {
+   "name": "Minimax",
+   "category": "Channel",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Remove Color Matting": {
+   "name": "Remove Color Matting",
+   "category": "Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Set Channels": {
+   "name": "Set Channels",
+   "category": "Channel",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Set Matte3": {
+   "name": "Set Matte",
+   "category": "Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Shift Channels": {
+   "name": "Shift Channels",
+   "category": "Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Solid Composite": {
+   "name": "Solid Composite",
+   "category": "Channel",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CINEMA 4D Effect": {
+   "name": "CINEWARE",
+   "category": "CINEMA 4D",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE AutoColor": {
+   "name": "Auto Color",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE AutoContrast": {
+   "name": "Auto Contrast",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE AutoLevels": {
+   "name": "Auto Levels",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Black&White": {
+   "name": "Black & White",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Brightness & Contrast 2": {
+   "name": "Brightness & Contrast",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": "14.1"
+  },
+  "ADBE Broadcast Colors": {
+   "name": "Broadcast Colors",
+   "category": "Color Correction",
+   "bpc": 8,
+   "gpu": null
+  },
+  "CS Color Neutralizer": {
+   "name": "CC Color Neutralizer",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Color Offset": {
+   "name": "CC Color Offset",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CS Kernel": {
+   "name": "CC Kernel",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Toner": {
+   "name": "CC Toner",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Change Color": {
+   "name": "Change Color",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Change To Color": {
+   "name": "Change to Color",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE CHANNEL MIXER": {
+   "name": "Channel Mixer",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Color Balance 2": {
+   "name": "Color Balance",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Color Balance (HLS)": {
+   "name": "Color Balance (HLS)",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Color Link": {
+   "name": "Color Link",
+   "category": "Color Correction",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Deflicker": {
+   "name": "Color Stabilizer",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "APC Colorama": {
+   "name": "Colorama",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE CurvesCustom": {
+   "name": "Curves",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Equalize": {
+   "name": "Equalize",
+   "category": "Color Correction",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Exposure2": {
+   "name": "Exposure",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Gamma/Pedestal/Gain2": {
+   "name": "Gamma/Pedestal/Gain",
+   "category": "Color Correction",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE HUE SATURATION": {
+   "name": "Hue/Saturation",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": "14.1"
+  },
+  "ADBE Leave Color": {
+   "name": "Leave Color",
+   "category": "Color Correction",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Easy Levels2": {
+   "name": "Levels",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": "14.2"
+  },
+  "ADBE Pro Levels2": {
+   "name": "Levels (Individual Controls)",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": "14.2"
+  },
+  "ADBE Lumetri": {
+   "name": "Lumetri Color",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": "13.8"
+  },
+  "ADBE PhotoFilterPS": {
+   "name": "Photo Filter",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE PS Arbitrary Map": {
+   "name": "PS Arbitrary Map",
+   "category": "Color Correction",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE SelectiveColor": {
+   "name": "Selective Color",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE ShadowHighlight": {
+   "name": "Shadow/Highlight",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Tint": {
+   "name": "Tint",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": "14.1"
+  },
+  "ADBE Tritone": {
+   "name": "Tritone",
+   "category": "Color Correction",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Vibrance": {
+   "name": "Vibrance",
+   "category": "Color Correction",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE BEZMESH": {
+   "name": "Bezier Warp",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Bulge": {
+   "name": "Bulge",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Bend It": {
+   "name": "CC Bend It",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Bender": {
+   "name": "CC Bender",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Blobbylize": {
+   "name": "CC Blobbylize",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Flo Motion": {
+   "name": "CC Flo Motion",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Griddler": {
+   "name": "CC Griddler",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Lens": {
+   "name": "CC Lens",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Page Turn": {
+   "name": "CC Page Turn",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Power Pin": {
+   "name": "CC Power Pin",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Ripple Pulse": {
+   "name": "CC Ripple Pulse",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Slant": {
+   "name": "CC Slant",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Smear": {
+   "name": "CC Smear",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Split": {
+   "name": "CC Split",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Split 2": {
+   "name": "CC Split 2",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Tiler": {
+   "name": "CC Tiler",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Corner Pin": {
+   "name": "Corner Pin",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Upscale": {
+   "name": "Detail-preserving Upscale",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Displacement Map": {
+   "name": "Displacement Map",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE LIQUIFY": {
+   "name": "Liquify",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Magnify": {
+   "name": "Magnify",
+   "category": "Distort",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE MESH WARP": {
+   "name": "Mesh Warp",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Mirror": {
+   "name": "Mirror",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Offset": {
+   "name": "Offset",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": "14.2"
+  },
+  "ADBE Optics Compensation": {
+   "name": "Optics Compensation",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Polar Coordinates": {
+   "name": "Polar Coordinates",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE RESHAPE": {
+   "name": "Reshape",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Ripple": {
+   "name": "Ripple",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Rolling Shutter": {
+   "name": "Rolling Shutter Repair",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE SCHMEAR": {
+   "name": "Smear",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Spherize": {
+   "name": "Spherize",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Geometry2": {
+   "name": "Transform",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": "15.0"
+  },
+  "ADBE Turbulent Displace": {
+   "name": "Turbulent Displace",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Twirl": {
+   "name": "Twirl",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE WRPMESH": {
+   "name": "Warp",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE SubspaceStabilizer": {
+   "name": "Warp Stabilizer VFX",
+   "category": "Distort",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Wave Warp": {
+   "name": "Wave Warp",
+   "category": "Distort",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Point3D Control": {
+   "name": "3D Point Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Angle Control": {
+   "name": "Angle Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Checkbox Control": {
+   "name": "Checkbox Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Color Control": {
+   "name": "Color Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Dropdown Control": {
+   "name": "Dropdown Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Layer Control": {
+   "name": "Layer Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Point Control": {
+   "name": "Point Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Slider Control": {
+   "name": "Slider Control",
+   "category": "Expression Controls",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE 4ColorGradient": {
+   "name": "4-Color Gradient",
+   "category": "Generate",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Lightning 2": {
+   "name": "Advanced Lightning",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE AudSpect": {
+   "name": "Audio Spectrum",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE AudWave": {
+   "name": "Audio Waveform",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Laser": {
+   "name": "Beam",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Glue Gun": {
+   "name": "CC Glue Gun",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Light Burst 2.5": {
+   "name": "CC Light Burst 2.5",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Light Rays": {
+   "name": "CC Light Rays",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Light Sweep": {
+   "name": "CC Light Sweep",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CS Threads": {
+   "name": "CC Threads",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Cell Pattern": {
+   "name": "Cell Pattern",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Checkerboard": {
+   "name": "Checkerboard",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Circle": {
+   "name": "Circle",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE ELLIPSE": {
+   "name": "Ellipse",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Eyedropper Fill": {
+   "name": "Eyedropper Fill",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Fill": {
+   "name": "Fill",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Fractal": {
+   "name": "Fractal",
+   "category": "Generate",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Ramp": {
+   "name": "Gradient Ramp",
+   "category": "Generate",
+   "bpc": 32,
+   "gpu": "14.2"
+  },
+  "ADBE Grid": {
+   "name": "Grid",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Lens Flare": {
+   "name": "Lens Flare",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Paint Bucket": {
+   "name": "Paint Bucket",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "APC Radio Waves": {
+   "name": "Radio Waves",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Scribble Fill": {
+   "name": "Scribble",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Stroke": {
+   "name": "Stroke",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "APC Vegas": {
+   "name": "Vegas",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Write-on": {
+   "name": "Write-on",
+   "category": "Generate",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Spill2": {
+   "name": "Advanced Spill Suppressor",
+   "category": "Keying",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Simple Wire Removal": {
+   "name": "CC Simple Wire Removal",
+   "category": "Keying",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Color Difference Key": {
+   "name": "Color Difference Key",
+   "category": "Keying",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Color Range": {
+   "name": "Color Range",
+   "category": "Keying",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Difference Matte2": {
+   "name": "Difference Matte",
+   "category": "Keying",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Extract": {
+   "name": "Extract",
+   "category": "Keying",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE ATG Extract": {
+   "name": "Inner/Outer Key",
+   "category": "Keying",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE KeyCleaner": {
+   "name": "Key Cleaner",
+   "category": "Keying",
+   "bpc": 32,
+   "gpu": null
+  },
+  "Keylight 906": {
+   "name": "Keylight (1.2)",
+   "category": "Keying",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Linear Color Key2": {
+   "name": "Linear Color Key",
+   "category": "Keying",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Matte Choker": {
+   "name": "Matte Choker",
+   "category": "Matte",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ISL MochaShapeImporter": {
+   "name": "mocha shape",
+   "category": "Matte",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE RefineRBMatte": {
+   "name": "Refine Hard Matte",
+   "category": "Matte",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE RefineMatte2": {
+   "name": "Refine Soft Matte",
+   "category": "Matte",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Simple Choker": {
+   "name": "Simple Choker",
+   "category": "Matte",
+   "bpc": 32,
+   "gpu": null
+  },
+  "VISINF Grain Implant": {
+   "name": "Add Grain",
+   "category": "Noise & Grain",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Dust & Scratches": {
+   "name": "Dust & Scratches",
+   "category": "Noise & Grain",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Fractal Noise": {
+   "name": "Fractal Noise",
+   "category": "Noise & Grain",
+   "bpc": 32,
+   "gpu": "14.2"
+  },
+  "VISINF Grain Duplication": {
+   "name": "Match Grain",
+   "category": "Noise & Grain",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Median": {
+   "name": "Median",
+   "category": "Noise & Grain",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Noise": {
+   "name": "Noise",
+   "category": "Noise & Grain",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Noise Alpha2": {
+   "name": "Noise Alpha",
+   "category": "Noise & Grain",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Noise HLS2": {
+   "name": "Noise HLS",
+   "category": "Noise & Grain",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Noise HLS Auto2": {
+   "name": "Noise HLS Auto",
+   "category": "Noise & Grain",
+   "bpc": 8,
+   "gpu": null
+  },
+  "VISINF Grain Removal": {
+   "name": "Remove Grain",
+   "category": "Noise & Grain",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE AIF Perlin Noise 3D": {
+   "name": "Turbulent Noise",
+   "category": "Noise & Grain",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Basic 3D": {
+   "name": "Basic 3D",
+   "category": "Obsolete",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Basic Text2": {
+   "name": "Basic Text",
+   "category": "Obsolete",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Color Key": {
+   "name": "Color Key",
+   "category": "Obsolete",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Fast Blur": {
+   "name": "Fast Blur (Legacy)",
+   "category": "Obsolete",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Gaussian Blur": {
+   "name": "Gaussian Blur (Legacy)",
+   "category": "Obsolete",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Lightning": {
+   "name": "Lightning",
+   "category": "Obsolete",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Luma Key": {
+   "name": "Luma Key",
+   "category": "Obsolete",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Path Text": {
+   "name": "Path Text",
+   "category": "Obsolete",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Reduce Interlace Flicker": {
+   "name": "Reduce Interlace Flicker",
+   "category": "Obsolete",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Spill Suppressor": {
+   "name": "Spill Suppressor",
+   "category": "Obsolete",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE 3D Tracker": {
+   "name": "3D Camera Tracker",
+   "category": "Perspective",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE 3D Glasses2": {
+   "name": "3D Glasses",
+   "category": "Perspective",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Bevel Alpha": {
+   "name": "Bevel Alpha",
+   "category": "Perspective",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Bevel Edges": {
+   "name": "Bevel Edges",
+   "category": "Perspective",
+   "bpc": 8,
+   "gpu": null
+  },
+  "CC Cylinder": {
+   "name": "CC Cylinder",
+   "category": "Perspective",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Environment": {
+   "name": "CC Environment",
+   "category": "Perspective",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Sphere": {
+   "name": "CC Sphere",
+   "category": "Perspective",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Spotlight": {
+   "name": "CC Spotlight",
+   "category": "Perspective",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Drop Shadow": {
+   "name": "Drop Shadow",
+   "category": "Perspective",
+   "bpc": 32,
+   "gpu": "14.2"
+  },
+  "ADBE Radial Shadow": {
+   "name": "Radial Shadow",
+   "category": "Perspective",
+   "bpc": 8,
+   "gpu": null
+  },
+  "APC CardDanceCam": {
+   "name": "Card Dance",
+   "category": "Simulation",
+   "bpc": 8,
+   "gpu": null
+  },
+  "APC Caustics": {
+   "name": "Caustics",
+   "category": "Simulation",
+   "bpc": 8,
+   "gpu": null
+  },
+  "CC Ball Action": {
+   "name": "CC Ball Action",
+   "category": "Simulation",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Bubbles": {
+   "name": "CC Bubbles",
+   "category": "Simulation",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Drizzle": {
+   "name": "CC Drizzle",
+   "category": "Simulation",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Hair": {
+   "name": "CC Hair",
+   "category": "Simulation",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Mr. Mercury": {
+   "name": "CC Mr. Mercury",
+   "category": "Simulation",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Particle Systems II": {
+   "name": "CC Particle Systems II",
+   "category": "Simulation",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Particle World": {
+   "name": "CC Particle World",
+   "category": "Simulation",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Pixel Polly": {
+   "name": "CC Pixel Polly",
+   "category": "Simulation",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CSRainfall": {
+   "name": "CC Rainfall",
+   "category": "Simulation",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Scatterize": {
+   "name": "CC Scatterize",
+   "category": "Simulation",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CSSnowfall": {
+   "name": "CC Snowfall",
+   "category": "Simulation",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Star Burst": {
+   "name": "CC Star Burst",
+   "category": "Simulation",
+   "bpc": 16,
+   "gpu": null
+  },
+  "APC Foam": {
+   "name": "Foam",
+   "category": "Simulation",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Playgnd": {
+   "name": "Particle Playground",
+   "category": "Simulation",
+   "bpc": 8,
+   "gpu": null
+  },
+  "APC Shatter": {
+   "name": "Shatter",
+   "category": "Simulation",
+   "bpc": 8,
+   "gpu": null
+  },
+  "APC Wave World": {
+   "name": "Wave World",
+   "category": "Simulation",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Brush Strokes": {
+   "name": "Brush Strokes",
+   "category": "Stylize",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Cartoonify": {
+   "name": "Cartoon",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CS BlockLoad": {
+   "name": "CC Block Load",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Burn Film": {
+   "name": "CC Burn Film",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Glass": {
+   "name": "CC Glass",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CS HexTile": {
+   "name": "CC HexTile",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Kaleida": {
+   "name": "CC Kaleida",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Mr. Smoothie": {
+   "name": "CC Mr. Smoothie",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Plastic": {
+   "name": "CC Plastic",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC RepeTile": {
+   "name": "CC RepeTile",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Threshold": {
+   "name": "CC Threshold",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Threshold RGB": {
+   "name": "CC Threshold RGB",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CS Vignette": {
+   "name": "CC Vignette",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Color Emboss": {
+   "name": "Color Emboss",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Emboss": {
+   "name": "Emboss",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Find Edges": {
+   "name": "Find Edges",
+   "category": "Stylize",
+   "bpc": 8,
+   "gpu": "14.1"
+  },
+  "ADBE Glo2": {
+   "name": "Glow",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": "14.1"
+  },
+  "ADBE Mosaic": {
+   "name": "Mosaic",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Tile": {
+   "name": "Motion Tile",
+   "category": "Stylize",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Posterize": {
+   "name": "Posterize",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Roughen Edges": {
+   "name": "Roughen Edges",
+   "category": "Stylize",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Scatter": {
+   "name": "Scatter",
+   "category": "Stylize",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Strobe": {
+   "name": "Strobe Light",
+   "category": "Stylize",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Texturize": {
+   "name": "Texturize",
+   "category": "Stylize",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Threshold2": {
+   "name": "Threshold",
+   "category": "Stylize",
+   "bpc": 32,
+   "gpu": null
+  },
+  "SYNTHAP CF Color Finesse 2": {
+   "name": "SA Color Finesse 3",
+   "category": "Synthetic Aperture",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Numbers2": {
+   "name": "Numbers",
+   "category": "Text",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Timecode": {
+   "name": "Timecode",
+   "category": "Text",
+   "bpc": 8,
+   "gpu": null
+  },
+  "CC Force Motion Blur": {
+   "name": "CC Force Motion Blur",
+   "category": "Time",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Wide Time": {
+   "name": "CC Wide Time",
+   "category": "Time",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Echo": {
+   "name": "Echo",
+   "category": "Time",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE OFMotionBlur": {
+   "name": "Pixel Motion Blur",
+   "category": "Time",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Posterize Time": {
+   "name": "Posterize Time",
+   "category": "Time",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Difference": {
+   "name": "Time Difference",
+   "category": "Time",
+   "bpc": 8,
+   "gpu": null
+  },
+  "ADBE Time Displacement": {
+   "name": "Time Displacement",
+   "category": "Time",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Timewarp": {
+   "name": "Timewarp",
+   "category": "Time",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Block Dissolve": {
+   "name": "Block Dissolve",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "APC CardWipeCam": {
+   "name": "Card Wipe",
+   "category": "Transition",
+   "bpc": 8,
+   "gpu": null
+  },
+  "CC Glass Wipe": {
+   "name": "CC Glass Wipe",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Grid Wipe": {
+   "name": "CC Grid Wipe",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Image Wipe": {
+   "name": "CC Image Wipe",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Jaws": {
+   "name": "CC Jaws",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Light Wipe": {
+   "name": "CC Light Wipe",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CS LineSweep": {
+   "name": "CC Line Sweep",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Radial ScaleWipe": {
+   "name": "CC Radial ScaleWipe",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC Scale Wipe": {
+   "name": "CC Scale Wipe",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Twister": {
+   "name": "CC Twister",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "CC WarpoMatic": {
+   "name": "CC WarpoMatic",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE Gradient Wipe": {
+   "name": "Gradient Wipe",
+   "category": "Transition",
+   "bpc": 16,
+   "gpu": null
+  },
+  "ADBE IRIS_WIPE": {
+   "name": "Iris Wipe",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Linear Wipe": {
+   "name": "Linear Wipe",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Radial Wipe": {
+   "name": "Radial Wipe",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Venetian Blinds": {
+   "name": "Venetian Blinds",
+   "category": "Transition",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Apply Color LUT2": {
+   "name": "Apply Color LUT",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "CC Overbrights": {
+   "name": "CC Overbrights",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Cineon Converter2": {
+   "name": "Cineon Converter",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE ProfileToProfile": {
+   "name": "Color Profile Converter",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE GROW BOUNDS": {
+   "name": "Grow Bounds",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Compander": {
+   "name": "HDR Compander",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE HDR ToneMap": {
+   "name": "HDR Highlight Compression",
+   "category": "Utility",
+   "bpc": 32,
+   "gpu": null
+  },
+  "ADBE Paint": {
+   "name": "Paint",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Samurai": {
+   "name": "Roto Brush & Refine Edge",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE FreePin3": {
+   "name": "Puppet",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE RefineMatte": {
+   "name": "Refine Matte",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE 3D Glasses": {
+   "name": "3D Glasses (Obsolete)",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Alpha Levels2": {
+   "name": "Alpha Levels",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Alpha Levels3": {
+   "name": "Alpha Levels",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Apply Color LUT": {
+   "name": "Apply Color LUT",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Brightness & Contrast": {
+   "name": "Brightness & Contrast",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Box Blur": {
+   "name": "Box Blur",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Cineon Converter": {
+   "name": "Cineon Converter",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Color Balance": {
+   "name": "Color Balance",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "CC PS Classic": {
+   "name": "CC PS Classic (obsolete)",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "CC PS LE Classic": {
+   "name": "CC PS LE Classic (obsolete)",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "CC Rain": {
+   "name": "CC Rain",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "CC Snow": {
+   "name": "CC Snow",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "CC Time Blend": {
+   "name": "CC Time Blend",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "CC Time Blend FX": {
+   "name": "CC Time Blend FX",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Exposure": {
+   "name": "Exposure",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Easy Levels": {
+   "name": "Levels",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Pro Levels": {
+   "name": "Levels (Individual Controls)",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Noise Alpha": {
+   "name": "Noise Alpha",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Noise HLS": {
+   "name": "Noise HLS",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Noise HLS Auto": {
+   "name": "Noise HLS Auto",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE PSL Bevel Emboss": {
+   "name": "Photoshop Bevel And Emboss",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE PSL Drop Shadow": {
+   "name": "Photoshop Drop Shadow",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE PSL Inner Glow": {
+   "name": "Photoshop Inner Glow",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE PSL Inner Shadow": {
+   "name": "Photoshop Inner Shadow",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE PSL Outer Glow": {
+   "name": "Photoshop Outer Glow",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE PSL Solid Fill": {
+   "name": "Photoshop Solid Fill",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Photo Filter": {
+   "name": "Photo Filter",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Set Matte2": {
+   "name": "Set Matte",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Three-Way Color Corrector": {
+   "name": "Three-Way Color Corrector",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Threshold": {
+   "name": "Threshold",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Geometry": {
+   "name": "Transform",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Unsharp Mask": {
+   "name": "Unsharp Mask",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  },
+  "ADBE Vector Paint": {
+   "name": "Vector Paint",
+   "category": "\\_Obsolete",
+   "bpc": null,
+   "gpu": null
+  }
+ },
+ "props": {
+  "ADBE Plane Options Group": {
+   "name": "Geometry Options",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Plane Curvature": {
+   "name": "Curvature",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Plane Subdivision": {
+   "name": "Segments",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Extrsn Options Group": {
+   "name": "Geometry Options",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Bevel Depth": {
+   "name": "Bevel Depth",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Hole Bevel Depth": {
+   "name": "Hole Bevel Depth",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Extrsn Depth": {
+   "name": "Extrusion Depth",
+   "page": "layer/3dlayer",
+   "section": "Plane"
+  },
+  "ADBE Material Options Group": {
+   "name": "Material Options",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Light Transmission": {
+   "name": "Light Transmission",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Ambient Coefficient": {
+   "name": "Ambient",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Diffuse Coefficient": {
+   "name": "Diffuse",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Specular Coefficient": {
+   "name": "Specular Intensity",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Shininess Coefficient": {
+   "name": "Specular Shininess",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Metal Coefficient": {
+   "name": "Metal",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Reflection Coefficient": {
+   "name": "Reflection Intensity",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Glossiness Coefficient": {
+   "name": "Reflection Sharpness",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Fresnel Coefficient": {
+   "name": "Reflection Rolloff",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Transparency Coefficient": {
+   "name": "Transparency",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Transp Rolloff": {
+   "name": "Transparency Rolloff",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE Index of Refraction": {
+   "name": "Index of Refraction",
+   "page": "layer/3dlayer",
+   "section": "Materials"
+  },
+  "ADBE AV Layer": {
+   "name": "",
+   "page": "layer/avlayer",
+   "section": "Layer"
+  },
+  "ADBE Marker": {
+   "name": "Marker",
+   "page": "layer/avlayer",
+   "section": "Top-Level"
+  },
+  "ADBE Time Remapping": {
+   "name": "Time Remap",
+   "page": "layer/avlayer",
+   "section": "Top-Level"
+  },
+  "ADBE MTrackers": {
+   "name": "Motion Trackers",
+   "page": "layer/avlayer",
+   "section": "Top-Level"
+  },
+  "ADBE Mask Parade": {
+   "name": "Masks",
+   "page": "layer/avlayer",
+   "section": "Top-Level"
+  },
+  "ADBE Effect Parade": {
+   "name": "Effects",
+   "page": "layer/avlayer",
+   "section": "Top-Level"
+  },
+  "ADBE Layer Overrides": {
+   "name": "Essential Properties",
+   "page": "layer/avlayer",
+   "section": "Top-Level"
+  },
+  "ADBE Transform Group": {
+   "name": "Transform",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Anchor Point": {
+   "name": "Anchor Point",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Position": {
+   "name": "Position",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Position_0": {
+   "name": "X Position",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Position_1": {
+   "name": "Y Position",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Position_2": {
+   "name": "Z Position",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Scale": {
+   "name": "Scale",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Orientation": {
+   "name": "Orientation",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Rotate X": {
+   "name": "X Rotation",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Rotate Y": {
+   "name": "Y Rotation",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Rotate Z": {
+   "name": "Z Rotation",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Opacity": {
+   "name": "Opacity",
+   "page": "layer/avlayer",
+   "section": "Transform"
+  },
+  "ADBE Audio Group": {
+   "name": "Audio",
+   "page": "layer/avlayer",
+   "section": "Audio"
+  },
+  "ADBE Audio Levels": {
+   "name": "Audio Levels",
+   "page": "layer/avlayer",
+   "section": "Audio"
+  },
+  "ADBE Layer Source Alternate": {
+   "name": "",
+   "page": "layer/avlayer",
+   "section": "Essential Properties"
+  },
+  "ADBE Camera Layer": {
+   "name": "",
+   "page": "layer/cameralayer",
+   "section": "Layer"
+  },
+  "ADBE Camera Options Group": {
+   "name": "Camera Options",
+   "page": "layer/cameralayer",
+   "section": "Camera"
+  },
+  "ADBE Camera Zoom": {
+   "name": "Zoom",
+   "page": "layer/cameralayer",
+   "section": "Camera"
+  },
+  "ADBE Camera Depth of Field": {
+   "name": "Depth of Field",
+   "page": "layer/cameralayer",
+   "section": "Camera"
+  },
+  "ADBE Camera Focus Distance": {
+   "name": "Focus Distance",
+   "page": "layer/cameralayer",
+   "section": "Camera"
+  },
+  "ADBE Camera Aperture": {
+   "name": "Aperture",
+   "page": "layer/cameralayer",
+   "section": "Camera"
+  },
+  "ADBE Camera Blur Level": {
+   "name": "Blur Level",
+   "page": "layer/cameralayer",
+   "section": "Camera"
+  },
+  "ADBE Iris Shape": {
+   "name": "Iris Shape",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Rotation": {
+   "name": "Iris Rotation",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Roundness": {
+   "name": "Iris Roundness",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Aspect Ratio": {
+   "name": "Iris Aspect Ratio",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Diffraction Fringe": {
+   "name": "Iris Diffraction Fringe",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Highlight Gain": {
+   "name": "Highlight Gain",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Highlight Threshold": {
+   "name": "Highlight Threshold",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Iris Hightlight Saturation": {
+   "name": "Highlight Saturation",
+   "page": "layer/cameralayer",
+   "section": "Iris"
+  },
+  "ADBE Blend Options Group": {
+   "name": "Blending Options",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE Global Angle2": {
+   "name": "Global Light Angle",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE Global Altitude2": {
+   "name": "Global Light Altitude",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE Adv Blend Group": {
+   "name": "Advanced Blending",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE Layer Fill Opacity2": {
+   "name": "Fill Opacity",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE R Channel Blend": {
+   "name": "Red",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE G Channel Blend": {
+   "name": "Green",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE B Channel Blend": {
+   "name": "Blue",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE Blend Interior": {
+   "name": "Blend Interior Styles as Group",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "ADBE Blend Ranges": {
+   "name": "Use Blend Ranges from Source",
+   "page": "layer/layerstyles",
+   "section": "Styles"
+  },
+  "dropShadow/enabled": {
+   "name": "Drop Shadow",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/useGlobalAngle": {
+   "name": "Use Global Light",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/localLightingAngle": {
+   "name": "Angle",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/distance": {
+   "name": "Distance",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/chokeMatte": {
+   "name": "Spread",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/blur": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/noise": {
+   "name": "Noise",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "dropShadow/layerConceals": {
+   "name": "Layer Knocks Out Drop Shadow",
+   "page": "layer/layerstyles",
+   "section": "Drop Shadow"
+  },
+  "innerShadow/enabled": {
+   "name": "Inner Shadow",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/useGlobalAngle": {
+   "name": "Use Global Light",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/localLightingAngle": {
+   "name": "Angle",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/distance": {
+   "name": "Distance",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/chokeMatte": {
+   "name": "Choke",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/blur": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "innerShadow/noise": {
+   "name": "Noise",
+   "page": "layer/layerstyles",
+   "section": "Inner Shadow"
+  },
+  "outerGlow/enabled": {
+   "name": "Outer Glow",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/noise": {
+   "name": "Noise",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/AEColorChoice": {
+   "name": "Color Type",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/gradient": {
+   "name": "Colors",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/gradientSmoothness": {
+   "name": "Gradient Smoothness",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/glowTechnique": {
+   "name": "Technique",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/chokeMatte": {
+   "name": "Spread",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/blur": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/inputRange": {
+   "name": "Range",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "outerGlow/shadingNoise": {
+   "name": "Jitter",
+   "page": "layer/layerstyles",
+   "section": "Outer Glow"
+  },
+  "innerGlow/enabled": {
+   "name": "Inner Glow",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/noise": {
+   "name": "Noise",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/AEColorChoice": {
+   "name": "Color Type",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/gradient": {
+   "name": "Colors",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/gradientSmoothness": {
+   "name": "Gradient Smoothness",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/glowTechnique": {
+   "name": "Technique",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/innerGlowSource": {
+   "name": "Source",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/chokeMatte": {
+   "name": "Choke",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/blur": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/inputRange": {
+   "name": "Range",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "innerGlow/shadingNoise": {
+   "name": "Jitter",
+   "page": "layer/layerstyles",
+   "section": "Inner Glow"
+  },
+  "bevelEmboss/enabled": {
+   "name": "Bevel and Emboss",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/bevelStyle": {
+   "name": "Style",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/bevelTechnique": {
+   "name": "Technique",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/strengthRatio": {
+   "name": "Depth",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/bevelDirection": {
+   "name": "Direction",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/blur": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/softness": {
+   "name": "Soften",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/useGlobalAngle": {
+   "name": "Use Global Light",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/localLightingAngle": {
+   "name": "Angle",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/localLightingAltitude": {
+   "name": "Altitude",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/highlightMode": {
+   "name": "Highlight Mode",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/highlightColor": {
+   "name": "Highlight Color",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/highlightOpacity": {
+   "name": "Highlight Opacity",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/shadowMode": {
+   "name": "Shadow Mode",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/shadowColor": {
+   "name": "Shadow Color",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "bevelEmboss/shadowOpacity": {
+   "name": "Shadow Opacity",
+   "page": "layer/layerstyles",
+   "section": "Bevel/Emboss"
+  },
+  "chromeFX/enabled": {
+   "name": "Satin",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/localLightingAngle": {
+   "name": "Angle",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/distance": {
+   "name": "Distance",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/blur": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "chromeFX/invert": {
+   "name": "Invert",
+   "page": "layer/layerstyles",
+   "section": "Satin"
+  },
+  "solidFill/enabled": {
+   "name": "Color Overlay",
+   "page": "layer/layerstyles",
+   "section": "Solid Fill"
+  },
+  "solidFill/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Solid Fill"
+  },
+  "solidFill/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Solid Fill"
+  },
+  "solidFill/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Solid Fill"
+  },
+  "gradientFill/enabled": {
+   "name": "Gradient Overlay",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/gradient": {
+   "name": "Colors",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/gradientSmoothness": {
+   "name": "Gradient Smoothness",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/angle": {
+   "name": "Angle",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/type": {
+   "name": "Style",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/reverse": {
+   "name": "Reverse",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/align": {
+   "name": "Align with Layer",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/scale": {
+   "name": "Scale",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "gradientFill/offset": {
+   "name": "Offset",
+   "page": "layer/layerstyles",
+   "section": "Grad Fill"
+  },
+  "patternFill/enabled": {
+   "name": "Pattern Overlay",
+   "page": "layer/layerstyles",
+   "section": "Pattern"
+  },
+  "patternFill/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Pattern"
+  },
+  "patternFill/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Pattern"
+  },
+  "patternFill/align": {
+   "name": "Link with Layer",
+   "page": "layer/layerstyles",
+   "section": "Pattern"
+  },
+  "patternFill/scale": {
+   "name": "Scale",
+   "page": "layer/layerstyles",
+   "section": "Pattern"
+  },
+  "patternFill/phase": {
+   "name": "Offset",
+   "page": "layer/layerstyles",
+   "section": "Pattern"
+  },
+  "frameFX/enabled": {
+   "name": "Stroke",
+   "page": "layer/layerstyles",
+   "section": "Stroke"
+  },
+  "frameFX/mode2": {
+   "name": "Blend Mode",
+   "page": "layer/layerstyles",
+   "section": "Stroke"
+  },
+  "frameFX/color": {
+   "name": "Color",
+   "page": "layer/layerstyles",
+   "section": "Stroke"
+  },
+  "frameFX/size": {
+   "name": "Size",
+   "page": "layer/layerstyles",
+   "section": "Stroke"
+  },
+  "frameFX/opacity": {
+   "name": "Opacity",
+   "page": "layer/layerstyles",
+   "section": "Stroke"
+  },
+  "frameFX/style": {
+   "name": "Position",
+   "page": "layer/layerstyles",
+   "section": "Stroke"
+  },
+  "ADBE Light Layer": {
+   "name": "",
+   "page": "layer/lightlayer",
+   "section": "Layer"
+  },
+  "ADBE Light Options Group": {
+   "name": "Light Options",
+   "page": "layer/lightlayer",
+   "section": "Light"
+  },
+  "ADBE Light Intensity": {
+   "name": "Intensity",
+   "page": "layer/lightlayer",
+   "section": "Light"
+  },
+  "ADBE Light Color": {
+   "name": "Color",
+   "page": "layer/lightlayer",
+   "section": "Light"
+  },
+  "ADBE Light Cone Angle": {
+   "name": "Cone Angle",
+   "page": "layer/lightlayer",
+   "section": "Light"
+  },
+  "ADBE Light Cone Feather 2": {
+   "name": "Cone Feather",
+   "page": "layer/lightlayer",
+   "section": "Light"
+  },
+  "ADBE Light Falloff Type": {
+   "name": "Falloff",
+   "page": "layer/lightlayer",
+   "section": "Falloff"
+  },
+  "ADBE Light Falloff Start": {
+   "name": "Radius",
+   "page": "layer/lightlayer",
+   "section": "Falloff"
+  },
+  "ADBE Light Falloff Distance": {
+   "name": "Falloff Distance",
+   "page": "layer/lightlayer",
+   "section": "Falloff"
+  },
+  "ADBE Light Shadow Darkness": {
+   "name": "Shadow Darkness",
+   "page": "layer/lightlayer",
+   "section": "Shadow"
+  },
+  "ADBE Light Shadow Diffusion": {
+   "name": "Shadow Diffusion",
+   "page": "layer/lightlayer",
+   "section": "Shadow"
+  },
+  "ADBE Vector Layer": {
+   "name": "Shape Layer",
+   "page": "layer/shapelayer",
+   "section": "Layer"
+  },
+  "ADBE Root Vectors Group": {
+   "name": "Contents",
+   "page": "layer/shapelayer",
+   "section": "Contents"
+  },
+  "ADBE Vector Group": {
+   "name": "Group",
+   "page": "layer/shapelayer",
+   "section": "Group"
+  },
+  "ADBE Vector Blend Mode": {
+   "name": "Blend Mode",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vectors Group": {
+   "name": "Contents",
+   "page": "layer/shapelayer",
+   "section": "Group"
+  },
+  "ADBE Vector Transform Group": {
+   "name": "Transform",
+   "page": "layer/shapelayer",
+   "section": "Group"
+  },
+  "ADBE Vector Materials Group": {
+   "name": "Material Options",
+   "page": "layer/shapelayer",
+   "section": "Group"
+  },
+  "ADBE Vector Anchor": {
+   "name": "Shape Group Transform Anchor Point",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Position": {
+   "name": "Shape Group Transform Position",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Scale": {
+   "name": "Shape Group Transform Scale",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Skew": {
+   "name": "Shape Group Transform Skew",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Skew Axis": {
+   "name": "Shapw Group Transform Skew Axis",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Rotation": {
+   "name": "Shape Group Transform Rotation",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Group Opacity": {
+   "name": "Shape Group Transform Opacity",
+   "page": "layer/shapelayer",
+   "section": "Group Transform Properties"
+  },
+  "ADBE Vector Shape - Rect": {
+   "name": "Rectangle",
+   "page": "layer/shapelayer",
+   "section": "Rectangle"
+  },
+  "ADBE Vector Shape Direction": {
+   "name": "Shape Direction",
+   "page": "layer/shapelayer",
+   "section": "Path"
+  },
+  "ADBE Vector Rect Size": {
+   "name": "Size",
+   "page": "layer/shapelayer",
+   "section": "Rectangle"
+  },
+  "ADBE Vector Rect Position": {
+   "name": "Position",
+   "page": "layer/shapelayer",
+   "section": "Rectangle"
+  },
+  "ADBE Vector Rect Roundness": {
+   "name": "Roundness",
+   "page": "layer/shapelayer",
+   "section": "Rectangle"
+  },
+  "ADBE Vector Shape - Ellipse": {
+   "name": "Ellipse",
+   "page": "layer/shapelayer",
+   "section": "Ellipse"
+  },
+  "ADBE Vector Ellipse Size": {
+   "name": "Size",
+   "page": "layer/shapelayer",
+   "section": "Ellipse"
+  },
+  "ADBE Vector Ellipse Position": {
+   "name": "Position",
+   "page": "layer/shapelayer",
+   "section": "Ellipse"
+  },
+  "ADBE Vector Shape - Star": {
+   "name": "Polystar",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Type": {
+   "name": "Type",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Points": {
+   "name": "Points",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Position": {
+   "name": "Position",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Rotation": {
+   "name": "Rotation",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Inner Radius": {
+   "name": "Inner Radius",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Outer Radius": {
+   "name": "Outer Radius",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Inner Roundess": {
+   "name": "Inner Roundness",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Star Outer Roundess": {
+   "name": "Outer Roundness",
+   "page": "layer/shapelayer",
+   "section": "Polystar"
+  },
+  "ADBE Vector Shape - Group": {
+   "name": "Path",
+   "page": "layer/shapelayer",
+   "section": "Path"
+  },
+  "ADBE Vector Shape": {
+   "name": "Path",
+   "page": "layer/shapelayer",
+   "section": "Path"
+  },
+  "ADBE Vector Graphic - Fill": {
+   "name": "Fill",
+   "page": "layer/shapelayer",
+   "section": "Fill"
+  },
+  "ADBE Vector Composite Order": {
+   "name": "Composite",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Fill Rule": {
+   "name": "Fill Rule",
+   "page": "layer/shapelayer",
+   "section": "Gradient Fill"
+  },
+  "ADBE Vector Fill Color": {
+   "name": "Color",
+   "page": "layer/shapelayer",
+   "section": "Fill"
+  },
+  "ADBE Vector Fill Opacity": {
+   "name": "Opacity",
+   "page": "layer/shapelayer",
+   "section": "Gradient Fill"
+  },
+  "ADBE Vector Graphic - Stroke": {
+   "name": "Stroke",
+   "page": "layer/shapelayer",
+   "section": "Stroke"
+  },
+  "ADBE Vector Stroke Color": {
+   "name": "Color",
+   "page": "layer/shapelayer",
+   "section": "Stroke"
+  },
+  "ADBE Vector Stroke Opacity": {
+   "name": "Opacity",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Stroke Width": {
+   "name": "Stroke Width",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Stroke Line Cap": {
+   "name": "Line Cap",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Stroke Line Join": {
+   "name": "Line Join",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Stroke Miter Limit": {
+   "name": "Miter Limit",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Stroke Dashes": {
+   "name": "Dashes",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Stroke Dash 1": {
+   "name": "Dash",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Gap 1": {
+   "name": "Gap",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Dash 2": {
+   "name": "Dash 2",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Gap 2": {
+   "name": "Gap 2",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Dash 3": {
+   "name": "Dash 3",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Gap 3": {
+   "name": "Gap 3",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Offset": {
+   "name": "Offset",
+   "page": "layer/shapelayer",
+   "section": "Stroke Dashes"
+  },
+  "ADBE Vector Stroke Taper": {
+   "name": "Taper",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper Start Width": {
+   "name": "Start Width",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper Length Units": {
+   "name": "Length Units",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper End Width": {
+   "name": "End Width",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper End Ease": {
+   "name": "End Ease",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper End Length": {
+   "name": "End Length",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper Start Length": {
+   "name": "Start Length",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Taper Start Ease": {
+   "name": "Start Ease",
+   "page": "layer/shapelayer",
+   "section": "Stroke Taper"
+  },
+  "ADBE Vector Stroke Wave": {
+   "name": "Wave",
+   "page": "layer/shapelayer",
+   "section": "Stroke Wave"
+  },
+  "ADBE Vector Taper Wave Amount": {
+   "name": "Amount",
+   "page": "layer/shapelayer",
+   "section": "Stroke Wave"
+  },
+  "ADBE Vector Taper Wave Units": {
+   "name": "Units",
+   "page": "layer/shapelayer",
+   "section": "Stroke Wave"
+  },
+  "ADBE Vector Taper Wave Phase": {
+   "name": "Phase",
+   "page": "layer/shapelayer",
+   "section": "Stroke Wave"
+  },
+  "ADBE Vector Taper Wavelength": {
+   "name": "Wavelength",
+   "page": "layer/shapelayer",
+   "section": "Stroke Wave"
+  },
+  "ADBE Vector Graphic - G-Fill": {
+   "name": "Gradient Fill",
+   "page": "layer/shapelayer",
+   "section": "Gradient Fill"
+  },
+  "ADBE Vector Grad Type": {
+   "name": "Type",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Grad Start Pt": {
+   "name": "Start Point",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Grad End Pt": {
+   "name": "End Point",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Grad HiLite Length": {
+   "name": "Highlight Length",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Grad HiLite Angle": {
+   "name": "Highlight Angle",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Grad Colors": {
+   "name": "Colors",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Graphic - G-Stroke": {
+   "name": "Gradient Stroke",
+   "page": "layer/shapelayer",
+   "section": "Gradient Stroke"
+  },
+  "ADBE Vector Filter - Merge": {
+   "name": "Merge Paths",
+   "page": "layer/shapelayer",
+   "section": "Merge Paths"
+  },
+  "ADBE Vector Merge Type": {
+   "name": "Mode",
+   "page": "layer/shapelayer",
+   "section": "Merge Paths"
+  },
+  "ADBE Vector Filter - Offset": {
+   "name": "Offset Paths",
+   "page": "layer/shapelayer",
+   "section": "Offset Paths"
+  },
+  "ADBE Vector Offset Amount": {
+   "name": "Amount",
+   "page": "layer/shapelayer",
+   "section": "Offset Paths"
+  },
+  "ADBE Vector Offset Line Join": {
+   "name": "Line Join",
+   "page": "layer/shapelayer",
+   "section": "Offset Paths"
+  },
+  "ADBE Vector Offset Miter Limit": {
+   "name": "Miter Limit",
+   "page": "layer/shapelayer",
+   "section": "Offset Paths"
+  },
+  "ADBE Vector Offset Copies": {
+   "name": "Copies",
+   "page": "layer/shapelayer",
+   "section": "Offset Paths"
+  },
+  "ADBE Vector Offset Copy Offset": {
+   "name": "Copy Offset",
+   "page": "layer/shapelayer",
+   "section": "Offset Paths"
+  },
+  "ADBE Vector Filter - PB": {
+   "name": "Pucker & Bloat",
+   "page": "layer/shapelayer",
+   "section": "Pucker & Bloat"
+  },
+  "ADBE Vector PuckerBloat Amount": {
+   "name": "Amount",
+   "page": "layer/shapelayer",
+   "section": "Pucker & Bloat"
+  },
+  "ADBE Vector Filter - Repeater": {
+   "name": "Repeater",
+   "page": "layer/shapelayer",
+   "section": "Repeater"
+  },
+  "ADBE Vector Repeater Copies": {
+   "name": "Copies",
+   "page": "layer/shapelayer",
+   "section": "Repeater"
+  },
+  "ADBE Vector Repeater Offset": {
+   "name": "Offset",
+   "page": "layer/shapelayer",
+   "section": "Repeater"
+  },
+  "ADBE Vector Repeater Order": {
+   "name": "Composite",
+   "page": "layer/shapelayer",
+   "section": "Repeater"
+  },
+  "ADBE Vector Repeater Transform": {
+   "name": "Transform",
+   "page": "layer/shapelayer",
+   "section": "Repeater"
+  },
+  "ADBE Vector Filter - RC": {
+   "name": "Round Corners",
+   "page": "layer/shapelayer",
+   "section": "Round Corners"
+  },
+  "ADBE Vector RoundCorner Radius": {
+   "name": "Radius",
+   "page": "layer/shapelayer",
+   "section": "Round Corners"
+  },
+  "ADBE Vector Filter - Trim": {
+   "name": "Trim Paths",
+   "page": "layer/shapelayer",
+   "section": "Trim Paths"
+  },
+  "ADBE Vector Trim Start": {
+   "name": "Start",
+   "page": "layer/shapelayer",
+   "section": "Trim Paths"
+  },
+  "ADBE Vector Trim End": {
+   "name": "End",
+   "page": "layer/shapelayer",
+   "section": "Trim Paths"
+  },
+  "ADBE Vector Trim Offset": {
+   "name": "Offset",
+   "page": "layer/shapelayer",
+   "section": "Trim Paths"
+  },
+  "ADBE Vector Trim Type": {
+   "name": "Trim Multiple Shapes",
+   "page": "layer/shapelayer",
+   "section": "Trim Paths"
+  },
+  "ADBE Vector Filter - Twist": {
+   "name": "Twist",
+   "page": "layer/shapelayer",
+   "section": "Twist"
+  },
+  "ADBE Vector Twist Angle": {
+   "name": "Angle",
+   "page": "layer/shapelayer",
+   "section": "Twist"
+  },
+  "ADBE Vector Twist Center": {
+   "name": "Center",
+   "page": "layer/shapelayer",
+   "section": "Twist"
+  },
+  "ADBE Vector Filter - Roughen": {
+   "name": "Wiggle Paths",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Paths"
+  },
+  "ADBE Vector Roughen Size": {
+   "name": "Size",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Paths"
+  },
+  "ADBE Vector Roughen Detail": {
+   "name": "Detail",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Paths"
+  },
+  "ADBE Vector Roughen Points": {
+   "name": "Points",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Paths"
+  },
+  "ADBE Vector Temporal Freq": {
+   "name": "Wiggles/Second",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Paths"
+  },
+  "ADBE Vector Correlation": {
+   "name": "Correlation",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Temporal Phase": {
+   "name": "Temporal Phase",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Spatial Phase": {
+   "name": "Spatial Phase",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Random Seed": {
+   "name": "Random Seed",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Filter - Wiggler": {
+   "name": "Wiggle Transform",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Xform Temporal Freq": {
+   "name": "Wiggles/Second",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Wiggler Transform": {
+   "name": "Transform",
+   "page": "layer/shapelayer",
+   "section": "Wiggle Transform"
+  },
+  "ADBE Vector Filter - Zigzag": {
+   "name": "Zig Zag",
+   "page": "layer/shapelayer",
+   "section": "Zig Zag"
+  },
+  "ADBE Vector Zigzag Size": {
+   "name": "Size",
+   "page": "layer/shapelayer",
+   "section": "Zig Zag"
+  },
+  "ADBE Vector Zigzag Detail": {
+   "name": "Ridges per segment",
+   "page": "layer/shapelayer",
+   "section": "Zig Zag"
+  },
+  "ADBE Vector Zigzag Points": {
+   "name": "Points",
+   "page": "layer/shapelayer",
+   "section": "Zig Zag"
+  },
+  "ADBE Text Layer": {
+   "name": "",
+   "page": "layer/textlayer",
+   "section": "Layer"
+  },
+  "ADBE Text Properties": {
+   "name": "Text",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Document": {
+   "name": "Source Text",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Path Options": {
+   "name": "Path Options",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Reverse Path": {
+   "name": "Reverse Path",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Perpendicular To Path": {
+   "name": "Perpendicular To Path",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Force Align Path": {
+   "name": "Force Alignment",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text First Margin": {
+   "name": "First Margin",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Last Margin": {
+   "name": "Last Margin",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text More Options": {
+   "name": "More Options",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Variable Font Spacing": {
+   "name": "Variable Font Spacing",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Anchor Point Align": {
+   "name": "Grouping Alignment",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Animators": {
+   "name": "Animators",
+   "page": "layer/textlayer",
+   "section": "Text"
+  },
+  "ADBE Text Animator": {
+   "name": "Animator",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Selectors": {
+   "name": "Selectors",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Selector": {
+   "name": "Range Selector",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Percent Start": {
+   "name": "Start",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Percent End": {
+   "name": "End",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Percent Offset": {
+   "name": "Offset",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Index Start": {
+   "name": "Start",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Index End": {
+   "name": "End",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Index Offset": {
+   "name": "Offset",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Range Advanced": {
+   "name": "Advanced",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Range Units": {
+   "name": "Units",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Selector Mode": {
+   "name": "Mode",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Selector Max Amount": {
+   "name": "Amount",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Selector Smoothness": {
+   "name": "Smoothness",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Levels Max Ease": {
+   "name": "Ease High",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Levels Min Ease": {
+   "name": "Ease Low",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Random Seed": {
+   "name": "Random Seed",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Animator Properties": {
+   "name": "Properties",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Anchor Point 3D": {
+   "name": "Anchor Point",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Position 3D": {
+   "name": "Position",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Scale 3D": {
+   "name": "Scale",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Skew": {
+   "name": "Skew",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Skew Axis": {
+   "name": "Skew Axis",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Rotation X": {
+   "name": "X Rotation",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Rotation Y": {
+   "name": "Y Rotation",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Rotation": {
+   "name": "Z Rotation",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Opacity": {
+   "name": "Opacity",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Fill Opacity": {
+   "name": "Fill Opacity",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Stroke Opacity": {
+   "name": "Stroke Opacity",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Fill Color": {
+   "name": "Fill Color",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Stroke Color": {
+   "name": "Stroke Color",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Fill Hue": {
+   "name": "Fill Hue",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Stroke Hue": {
+   "name": "Stroke Hue",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Fill Saturation": {
+   "name": "Fill Saturation",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Stroke Saturation": {
+   "name": "Stroke Saturation",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Fill Brightness": {
+   "name": "Fill Brightness",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Stroke Brightness": {
+   "name": "Stroke Brightness",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Stroke Width": {
+   "name": "Stroke Width",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Line Anchor": {
+   "name": "Line Anchor",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Track Type": {
+   "name": "Tracking Type",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Tracking Amount": {
+   "name": "Tracking Amount",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Character Replace": {
+   "name": "Character Value",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Character Offset": {
+   "name": "Character Offset",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Line Spacing": {
+   "name": "Line Spacing",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE Text Blur": {
+   "name": "Blur",
+   "page": "layer/textlayer",
+   "section": "Animators"
+  },
+  "ADBE 3DText Front RGB": {
+   "name": "Front Color",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Hue": {
+   "name": "Front Hue",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Sat": {
+   "name": "Front Saturation",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Bright": {
+   "name": "Front Brightness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Opacity": {
+   "name": "Front Opacity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Ambient": {
+   "name": "Front Ambient",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Diffuse": {
+   "name": "Front Diffuse",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Specular": {
+   "name": "Front Specular Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Shininess": {
+   "name": "Front Specular Shininess",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Metal": {
+   "name": "Front Metal",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Reflection": {
+   "name": "Front Reflection Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Gloss": {
+   "name": "Front Reflection Sharpness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Fresnel": {
+   "name": "Front Reflection Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front Xparency": {
+   "name": "Front Transparency",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front XparRoll": {
+   "name": "Front Transparency Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Front IOR": {
+   "name": "Front Index of Refraction",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel RGB": {
+   "name": "Bevel Color",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Hue": {
+   "name": "Bevel Hue",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Sat": {
+   "name": "Bevel Saturation",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Bright": {
+   "name": "Bevel Brightness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Opacity": {
+   "name": "Bevel Opacity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Ambient": {
+   "name": "Bevel Ambient",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Diffuse": {
+   "name": "Bevel Diffuse",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Specular": {
+   "name": "Bevel Specular Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Shininess": {
+   "name": "Bevel Specular Shininess",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Metal": {
+   "name": "Bevel Metal",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Reflection": {
+   "name": "Bevel Reflection Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Gloss": {
+   "name": "Bevel Reflection Sharpness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Fresnel": {
+   "name": "Bevel Reflection Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Xparency": {
+   "name": "Bevel Transparency",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel XparRoll": {
+   "name": "Bevel Transparency Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel IOR": {
+   "name": "Bevel Index of Refraction",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side RGB": {
+   "name": "Side Color",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Hue": {
+   "name": "Side Hue",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Sat": {
+   "name": "Side Saturation",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Bright": {
+   "name": "Side Brightness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Opacity": {
+   "name": "Side Opacity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Ambient": {
+   "name": "Side Ambient",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Diffuse": {
+   "name": "Side Diffuse",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Specular": {
+   "name": "Side Specular Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Shininess": {
+   "name": "Side Specular Shininess",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Metal": {
+   "name": "Side Metal",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Reflection": {
+   "name": "Side Reflection Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Gloss": {
+   "name": "Side Reflection Sharpness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Fresnel": {
+   "name": "Side Reflection Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side Xparency": {
+   "name": "Side Transparency",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side XparRoll": {
+   "name": "Side Transparency Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Side IOR": {
+   "name": "Side Index of Refraction",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back RGB": {
+   "name": "Back Color",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Hue": {
+   "name": "Back Hue",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Sat": {
+   "name": "Back Saturation",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Bright": {
+   "name": "Back Brightness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Opacity": {
+   "name": "Back Opacity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Ambient": {
+   "name": "Back Ambient",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Diffuse": {
+   "name": "Back Diffuse",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Specular": {
+   "name": "Back Specular Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Shininess": {
+   "name": "Back Specular Shininess",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Metal": {
+   "name": "Back Metal",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Reflection": {
+   "name": "Back Reflection Intensity",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Gloss": {
+   "name": "Back Reflection Sharpness",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Fresnel": {
+   "name": "Back Reflection Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back Xparency": {
+   "name": "Back Transparency",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back XparRoll": {
+   "name": "Back Transparency Rolloff",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Back IOR": {
+   "name": "Back Index of Refraction",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Bevel Depth": {
+   "name": "Bevel Depth",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  },
+  "ADBE 3DText Extrude Depth": {
+   "name": "Extrusion Depth",
+   "page": "layer/textlayer",
+   "section": "3d Text"
+  }
+ }
+}

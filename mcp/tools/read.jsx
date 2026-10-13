@@ -51,6 +51,16 @@ function mcpValue(prop, value) {
   return value;
 }
 
+/**
+ * Эффекты слоя; у камеры и света их нет.
+ * @param {Layer} layer
+ * @returns {any}
+ */
+function mcpEffectParade(layer) {
+  if (layer instanceof CameraLayer || layer instanceof LightLayer) return null;
+  return kbGroup(layer, ["ADBE Effect Parade"]);
+}
+
 var MCP_INTERP = {};
 MCP_INTERP[KeyframeInterpolationType.LINEAR] = "linear";
 MCP_INTERP[KeyframeInterpolationType.BEZIER] = "bezier";
@@ -102,6 +112,7 @@ function mcpDescribeProp(prop) {
 function mcpDescribeGroup(group, depth, onlyModified) {
   var out = [];
   for (var i = 1; i <= group.numProperties; i++) {
+    /** @type {any} */
     var p = group.property(i);
     if (!p || (p.isModified === false && onlyModified)) continue;
     // X/Y/Z Position существуют всегда, но действуют, только когда измерения разделены
@@ -162,10 +173,8 @@ MCP_TOOLS.list_layers = {
     for (var i = 1; i <= comp.numLayers; i++) {
       var layer = comp.layer(i);
       var effects = [];
-      var parade = layer.property("ADBE Effect Parade");
-      if (parade) {
-        for (var e = 1; e <= parade.numProperties; e++) effects.push(parade.property(e).name);
-      }
+      var parade = mcpEffectParade(layer);
+      for (var e = 1; parade && e <= parade.numProperties; e++) effects.push(parade.property(e).name);
       var info = {
         index: i,
         name: layer.name,
@@ -207,22 +216,23 @@ MCP_TOOLS.get_layer = {
       outPoint: Math.round(layer.outPoint * 1000) / 1000,
       startTime: Math.round(layer.startTime * 1000) / 1000,
       parent: layer.parent ? layer.parent.name : null,
-      transform: mcpDescribeGroup(layer.property("ADBE Transform Group"), 0, false)
+      transform: mcpDescribeGroup(kbGroup(layer, ["ADBE Transform Group"]), 0, false)
     };
     if (layer instanceof TextLayer) {
-      out.text = mcpDescribeProp(layer.property("ADBE Text Properties").property("ADBE Text Document"));
+      out.text = mcpDescribeProp(kbProp(layer, ["ADBE Text Properties", "ADBE Text Document"]));
     }
-    var parade = layer.property("ADBE Effect Parade");
+    var parade = mcpEffectParade(layer);
     if (parade && parade.numProperties) {
       var effects = [];
       for (var e = 1; e <= parade.numProperties; e++) {
+        /** @type {any} */
         var fx = parade.property(e);
         effects.push({name: fx.name, matchName: fx.matchName, enabled: fx.enabled, properties: mcpDescribeGroup(fx, 2, !all)});
       }
       out.effects = effects;
     }
     if (layer instanceof ShapeLayer) {
-      out.contents = mcpDescribeGroup(layer.property("ADBE Root Vectors Group"), args.depth || 3, !all);
+      out.contents = mcpDescribeGroup(kbGroup(layer, ["ADBE Root Vectors Group"]), args.depth || 3, !all);
     }
     return out;
   }

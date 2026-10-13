@@ -18,3 +18,4 @@
 //@include "tools/audit.jsx"
 //@include "tools/edit.jsx"
 //@include "tools/time.jsx"
+//@include "tools/effects.jsx"

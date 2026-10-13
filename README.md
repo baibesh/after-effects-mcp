@@ -172,6 +172,14 @@ node build/cli.js ae_status
 Типовой цикл исправления: `audit_animation` нашёл линейный старт → `edit_keys … action: "ease", ease: "snap"` → `audit_animation` чист;
 акцент опаздывает → `edit_keys … action: "shift", frames: -3`.
 
+### Эффекты
+
+| Инструмент | Что делает | Пример |
+|---|---|---|
+| `list_effects` | поиск по имени/категории: matchName, битность, параметры (словарь с AE 26.5) | `{"query": "glow"}` |
+| `add_effect` | эффект по имени или matchName с параметрами по именам; 8/16-битный эффект в 32-битном проекте — warning | `{"comp": "Scene", "layer": "plaque", "effect": "Drop Shadow", "name": "shadow", "params": {"Opacity": 35, "Distance": 12, "Softness": 30}}` |
+| `set_effect` | параметры, `enabled`, `rename`, `index`, `remove`; параметр с ключами — через `edit_keys` с путём `["Effects", "<эффект>", "<параметр>"]` | `{"comp": "Scene", "layer": "plaque", "effect": "shadow", "params": {"Distance": 20}}` |
+
 ### Анимация
 
 | Инструмент | Что делает | Пример |

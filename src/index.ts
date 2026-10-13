@@ -8,6 +8,7 @@ import { z } from "zod";
 import * as path from "node:path";
 import { deliver } from "./deliver.js";
 import { FORMATS, PLATFORMS, type FormatKey, type PlatformKey } from "./formats.js";
+import { listEffects, resolveEffect } from "./effects.js";
 import { grabFrames } from "./frames.js";
 import { listPresets, PRESETS_DIR, resolvePreset } from "./presets.js";
 import { config, runInAE } from "./runner.js";
@@ -497,6 +498,65 @@ server.registerTool(
     },
   },
   (a) => call("set_color", a),
+);
+
+// ---------- эффекты ----------
+
+server.registerTool(
+  "list_effects",
+  {
+    description: "Поиск эффектов AE по имени, категории или matchName (словарь с живого AE 26.5): имя, matchName, категория, битность (8/16/32), параметры — где известны.",
+    inputSchema: { query: z.string().optional().describe('Например "blur", "Stylize", "glow"') },
+  },
+  ({ query }) => text(listEffects(query)),
+);
+
+server.registerTool(
+  "add_effect",
+  {
+    description:
+      "Добавить эффект на слой по имени («Gaussian Blur») или matchName, сразу с параметрами {«Blurriness»: 20} (имя параметра или matchName; цвет — [r,g,b]; выпадающий список — номер пункта с 1). Эффект 8/16 бит в 32-битном проекте обрезает яркости выше 1.0 — в ответе warning (ставить только там, где их нет).",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      effect: z.string(),
+      name: z.string().optional().describe("Своё имя эффекта на слое (уникальное)"),
+      params: z.record(z.string(), z.union([z.number(), z.array(z.number()), z.boolean()])).optional(),
+    },
+  },
+  async ({ effect, ...rest }) => {
+    let info;
+    try {
+      info = resolveEffect(effect);
+    } catch (e) {
+      return text(`Ошибка: ${e instanceof Error ? e.message : String(e)}`, true);
+    }
+    const res = await runInAE("add_effect", { ...rest, matchName: info.matchName });
+    if (!res.ok) return text(`Ошибка: ${res.error}`, true);
+    const out = res.result as Record<string, unknown>;
+    if (info.bpc && typeof out.projectBits === "number" && info.bpc < out.projectBits) {
+      out.warning = `«${info.name}» считается в ${info.bpc} битах, проект ${out.projectBits}: яркости выше 1.0 обрежутся — только на слоях без них (маски, маты, до свечения).`;
+    }
+    return text(out);
+  },
+);
+
+server.registerTool(
+  "set_effect",
+  {
+    description: "Эффект на слое по его имени: параметры, enabled, rename, index (порядок, с 1), remove. Параметры с ключами — через edit_keys.",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      effect: z.string().describe("Имя эффекта на слое (из list_layers / get_layer)"),
+      params: z.record(z.string(), z.union([z.number(), z.array(z.number()), z.boolean()])).optional(),
+      enabled: z.boolean().optional(),
+      rename: z.string().optional(),
+      index: z.number().int().min(1).optional(),
+      remove: z.boolean().optional(),
+    },
+  },
+  (a) => call("set_effect", a),
 );
 
 // ---------- время ----------

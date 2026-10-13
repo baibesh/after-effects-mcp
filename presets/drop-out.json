@@ -1,0 +1,9 @@
+{
+  "description": "Уход вниз: антиципация вверх на 20 px за 3 кадра, затем падение на 300 px с ускорением и угасание к 12-му кадру.",
+  "use": "Убрать элемент со сцены с весом. start — начало ухода.",
+  "tracks": [
+    { "prop": "position", "mode": "offset", "keys": [[0, [0, 0]], [3, [0, -20]]], "ease": "soft" },
+    { "prop": "position", "mode": "offset", "keys": [[3, [0, -20]], [12, [0, 300]]], "ease": { "out": 75, "into": 10 } },
+    { "prop": "opacity", "mode": "absolute", "keys": [[6, 100], [12, 0]], "ease": "linear" }
+  ]
+}

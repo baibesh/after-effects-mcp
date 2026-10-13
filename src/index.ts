@@ -9,6 +9,7 @@ import * as path from "node:path";
 import { deliver } from "./deliver.js";
 import { FORMATS, PLATFORMS, type FormatKey, type PlatformKey } from "./formats.js";
 import { grabFrames } from "./frames.js";
+import { listPresets, PRESETS_DIR, resolvePreset } from "./presets.js";
 import { config, runInAE } from "./runner.js";
 
 const server = new McpServer({ name: "after-effects", version: "0.1.0" });
@@ -252,6 +253,44 @@ server.registerTool(
       report[format] = { comp: target, master: m.result, outputs };
     }
     return text(report, failed);
+  },
+);
+
+// ---------- пресеты ----------
+
+server.registerTool(
+  "list_presets",
+  {
+    description: `Пресеты анимации. local — свои из ${PRESETS_DIR}: JSON-данные (ключи в кадрах при 24 fps, числа по Уильямсу: антиципация, перелёт, ease, микродвижение) и .ffx, сохранённые из AE. adobe — штатные пресеты AE (их ~600, задавайте query: "Behaviors", "Text", "Transitions").`,
+    inputSchema: {
+      source: z.enum(["local", "adobe"]).optional().describe("По умолчанию local"),
+      query: z.string().optional().describe("Подстрока в имени или описании"),
+    },
+  },
+  ({ source, query }) => text(listPresets(source ?? "local", query)),
+);
+
+server.registerTool(
+  "apply_preset",
+  {
+    description:
+      "Применить пресет к слою по имени. JSON-пресет ставит ключи от start (секунды, по умолчанию начало слоя) с ease по отрезкам: offset/factor — относительно текущего значения, поэтому слой сначала ставят в конечное положение. speed растягивает время (1.5 — в полтора раза медленнее; кадры при 24 fps пересчитываются под fps композиции). .ffx (свой или adobe:…) применяется штатно от start. Одна отмена на вызов.",
+    inputSchema: {
+      comp: compName,
+      layer: layerName,
+      preset: z.string().describe('Имя из list_presets: "fade-up", "мои/zoom" или "adobe:Behaviors/…"'),
+      start: z.number().min(0).optional(),
+      speed: z.number().min(0.25).max(4).optional(),
+    },
+  },
+  async ({ comp, layer, preset, start, speed }) => {
+    let resolved;
+    try {
+      resolved = resolvePreset(preset);
+    } catch (e) {
+      return text(`Ошибка: ${e instanceof Error ? e.message : String(e)}`, true);
+    }
+    return call("apply_preset", { comp, layer, name: preset, start, speed, ...resolved });
   },
 );
 

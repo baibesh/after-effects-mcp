@@ -4,6 +4,8 @@
 // Почему копия, а не символическая ссылка: ExtendScript не находит вложенные //@include через ссылку
 // (reels → local/x.jsx → ../kit/project.jsx → core.jsx даёт «File or folder does not exist»), проверено на AE 26.5.
 //
+// Заодно обновляет tools/validate.mjs проекта (правила валидатора общие с китом).
+//
 // Источник правды — ae-plugin/kit. В проекте kit/ — копия с меткой kit/.kit-source (коммит ae-plugin).
 // Перед обновлением сверяет копию с тем коммитом: если кит правили прямо в проекте, ничего не трогает
 // и перечисляет файлы — правки сначала перенести в ae-plugin/kit.
@@ -30,9 +32,13 @@ const kitFiles = (dir) => (existsSync(dir) ? readdirSync(dir).filter((f) => /\.(
 
 const differs = (a, b) => !existsSync(a) || !existsSync(b) || !readFileSync(a).equals(readFileSync(b))
 
+const validator = join(repo, 'tools', 'validate.mjs')
+const projectValidator = join(resolve(target), 'tools', 'validate.mjs')
+
 if (check) {
   const names = new Set([...kitFiles(source), ...kitFiles(kit)])
   const changed = [...names].filter((f) => differs(join(source, f), join(kit, f)))
+  if (existsSync(projectValidator) && differs(validator, projectValidator)) changed.push('tools/validate.mjs')
   if (changed.length) {
     console.log(`kit/ проекта расходится с ae-plugin/kit: ${changed.join(', ')}\n→ node ${join(repo, 'tools/kit-sync.mjs')} ${target}`)
     process.exit(1)
@@ -70,6 +76,7 @@ if (git('status', '--porcelain', '--', 'kit')) {
 rmSync(kit, { recursive: true, force: true })
 mkdirSync(kit, { recursive: true })
 for (const f of kitFiles(source)) copyFileSync(join(source, f), join(kit, f))
+if (existsSync(projectValidator)) copyFileSync(validator, projectValidator)
 const commit = git('rev-parse', '--short', 'HEAD')
 writeFileSync(stamp, `Копия ae-plugin/kit, commit ${commit}. Не править здесь: правки — в ae-plugin/kit, затем tools/kit-sync.mjs.\n`)
 console.log(`kit/ ← ae-plugin/kit @ ${commit} (${kitFiles(kit).length} файлов)`)

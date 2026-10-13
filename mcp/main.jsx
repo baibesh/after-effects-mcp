@@ -15,3 +15,4 @@
 //@include "tools/formats.jsx"
 //@include "tools/presets.jsx"
 //@include "tools/layers.jsx"
+//@include "tools/audit.jsx"

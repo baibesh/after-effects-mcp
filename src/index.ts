@@ -104,6 +104,16 @@ server.registerTool(
 );
 
 server.registerTool(
+  "open_project",
+  {
+    description:
+      "Открыть проект .aep по пути. Текущий закрывается, только если ничего не потеряется (сохранён без правок или тестовый). writable в ответе — можно ли его менять (папка из AE_MCP_PROJECT_ROOTS); читать, смотреть кадры, проверять и рендерить можно любой.",
+    inputSchema: { path: z.string().describe("Абсолютный путь к .aep") },
+  },
+  (a) => call("open_project", a, 300),
+);
+
+server.registerTool(
   "create_comp",
   {
     description: "Создать композицию. Имя должно быть уникальным. По умолчанию 1920×1080, 30 fps, 10 с.",
@@ -254,6 +264,31 @@ server.registerTool(
     inputSchema: { comp: compName, layer: layerName },
   },
   (a) => call("delete_layer", a),
+);
+
+// ---------- проверка ----------
+
+server.registerTool(
+  "audit_animation",
+  {
+    description:
+      "Проверка анимации по правилам /animation-craft, проект не меняется. linear — линейные ключи движения (ease нужен); hold — у персонажа ничего не меняется дольше maxHold кадров (учитываются ключи, выражения, анимация внутри прекомпа — моргание, дыхание); accent — пик движения к ударному слогу должен быть на 1–6 кадров раньше (лучше 2–4); entrance — несколько новых элементов входят в пределах 4 кадров; expression — ошибки выражений. Кадры — при 24 fps. Звать после сборки сцены и перед рендером; исправлять warning/error.",
+    inputSchema: {
+      comp: compName,
+      start: z.number().min(0).optional().describe("Начало проверяемого отрезка, с"),
+      end: z.number().min(0).optional(),
+      characters: z.array(z.string()).optional().describe("Слои-персонажи для проверки холдов; по умолчанию — по шаблону имени"),
+      characterPattern: z.string().optional().describe('Регулярное выражение для имён персонажей (по умолчанию "char|hero|персонаж|герой")'),
+      maxHold: z.number().min(1).max(48).optional().describe("Допустимая статика, кадров при 24 fps (по умолчанию 6)"),
+      beats: z.array(z.union([z.number(), z.object({ time: z.number(), label: z.string().optional() })])).optional().describe("Ударные слоги / удары звука, секунды"),
+      beatLayer: z.string().optional().describe("Взять удары из маркеров этого слоя (например, озвучки)"),
+      useCompMarkers: z.boolean().optional().describe("Взять удары из маркеров композиции"),
+      accentLayers: z.array(z.string()).optional().describe("Где искать акценты (по умолчанию — все слои с ключами движения)"),
+      depth: z.number().int().min(0).max(6).optional().describe("Глубина захода в прекомпы для холдов (по умолчанию 3)"),
+      limit: z.number().int().min(1).max(500).optional(),
+    },
+  },
+  (a) => call("audit_animation", a, 300),
 );
 
 // ---------- рендер и форматы ----------

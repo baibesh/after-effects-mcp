@@ -16,6 +16,8 @@
 //   matchname  matchName, которого нет в документации (с подсказкой ближайшего)
 //   bpc        эффект с меньшей глубиной цвета, чем проект (обрежет яркости выше 1.0)
 //   asset      путь к файлу, которого нет; формат, который AE не импортирует
+//   ternary    вложенный ?: без скобок: ExtendScript (AE 26.5) группирует «a && b ? x : c ? y : z» как
+//              «a && (b ? x : c) ? y : z» и выбирает не ту ветку — вложенное условие всегда в скобках
 //   types      вызовы API AE и ExtendScript против types-for-adobe (в т.ч. forEach/JSON/trim — их нет)
 //
 // Заглушить находку в строке: комментарий `// ae-ok: <правило>[, <правило>]` в той же строке;
@@ -134,7 +136,17 @@ function checkFile(file) {
   let undoOpen = 0
   let undoLine = 0
 
+  // Скобки acorn не сохраняет: смотрим, стоит ли «(» прямо перед вложенным условием.
+  const wrapped = (node) => /\(\s*$/.test(parseable.slice(Math.max(0, node.start - 40), node.start))
+
   walk.simple(ast, {
+    ConditionalExpression(node) {
+      for (const inner of [node.consequent, node.alternate]) {
+        if (inner.type === 'ConditionalExpression' && !wrapped(inner)) {
+          add('ternary', inner.loc.start.line, 'вложенный ?: без скобок — ExtendScript группирует «a && b ? x : c ? y : z» неверно; взять вложенное в скобки или if/else')
+        }
+      }
+    },
     MemberExpression(node) {
       if (!node.computed && ES3_RESERVED.has(node.property.name)) {
         add('reserved', node.loc.start.line, `.${node.property.name} — зарезервированное слово ES3, писать ["${node.property.name}"]`)

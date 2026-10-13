@@ -85,3 +85,20 @@ MCP_TOOLS.save_project = {
     return {project: app.project.file.fsName};
   }
 };
+
+MCP_TOOLS.open_project = {
+  write: false, // открыть можно любой проект; менять — только из разрешённых папок (mcpCheckWritable)
+  run: function (args) {
+    var target = new File(args.path);
+    if (!target.exists) throw new Error("Нет файла " + args.path);
+    if (!/\.aep$/i.test(target.name)) throw new Error("Это не проект After Effects (.aep): " + target.name);
+    if (app.project.file && app.project.file.fsName === target.fsName) {
+      return {project: target.fsName, note: "уже открыт"};
+    }
+    mcpCloseCurrentSafely();
+    app.open(target);
+    var writable = true;
+    try { mcpCheckWritable(); } catch (e) { writable = false; }
+    return {project: target.fsName, items: app.project.numItems, writable: writable};
+  }
+};

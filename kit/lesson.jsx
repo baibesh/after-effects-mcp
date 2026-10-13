@@ -119,7 +119,7 @@ function kbMouthOf(ids) {
 function kbVoiceTrack(master, dir, gain) {
   for (var i = 0; i < KB_IDS.length; i++) {
     var id = KB_IDS[i];
-    var al = kbAudio(master, { file: dir + KB_FILE[id] + ".wav", start: KB_S[id], name: "vo-" + id, level: gain[KB_FILE[id]] });
+    var al = kbAudio(master, { file: dir + KB_FILE[id] + ".wav", start: KB_S[id], name: "vo-" + id, level: gain[KB_FILE[id]], anchors: KB_ANCHORS[KB_FILE[id]] });
     al.moveToEnd();
   }
 }

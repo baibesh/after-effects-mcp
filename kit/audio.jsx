@@ -28,7 +28,7 @@ function kbAudioBaseName(file) {
  * Аудиослой: импорт wav с переиспользованием (kbImport), старт в композиции, видео выключено —
  * источник без картинки, звук идёт один.
  * @param {CompItem} comp
- * @param {{file: string, start: number, name?: string, level?: number}} opts file — путь к wav
+ * @param {{file: string, start: number, name?: string, level?: number, words?: number[], anchors?: Object}} opts file — путь к wav
  *   относительно ae/ (см. kbAudioPath); name — имя слоя, по умолчанию имя файла без расширения;
  *   level — громкость в дБ, ставится одинаково на оба канала (`ADBE Audio Group` → `ADBE Audio Levels`)
  * @returns {AVLayer}
@@ -43,7 +43,31 @@ function kbAudio(comp, opts) {
   if (opts.level !== undefined) {
     kbProp(layer, ["ADBE Audio Group", "ADBE Audio Levels"]).setValue([opts.level, opts.level]);
   }
+  kbAudioMarkers(layer, opts.words, opts.anchors);
   return layer;
+}
+
+/**
+ * Маркеры слов на звуковом слое: начала слов — «w1», «w2»…, опорные (ударные) слова — «!имя».
+ * Время — секунды от начала файла; маркеры слоя едут вместе со слоем. По «!»-маркерам MCP проверяет
+ * акценты (audit_animation) и выравнивает слои (shift_layers alignTo marker) без выполнения скриптов ролика.
+ * Опорное слово ставится после слов и заменяет маркер слова в тот же момент.
+ * @param {AVLayer} layer
+ * @param {number[]=} words
+ * @param {Object=} anchors {имя: секунды}
+ */
+function kbAudioMarkers(layer, words, anchors) {
+  if (!words && !anchors) return;
+  var markers = kbProp(layer, ["ADBE Marker"]);
+  var i;
+  if (words) {
+    for (i = 0; i < words.length; i++) markers.setValueAtTime(layer.startTime + words[i], new MarkerValue("w" + (i + 1)));
+  }
+  if (anchors) {
+    for (var key in anchors) {
+      if (anchors.hasOwnProperty(key)) markers.setValueAtTime(layer.startTime + anchors[key], new MarkerValue("!" + key));
+    }
+  }
 }
 
 /**

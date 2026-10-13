@@ -5,6 +5,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import * as path from "node:path";
+import { deliver } from "./deliver.js";
+import { FORMATS, PLATFORMS, type FormatKey, type PlatformKey } from "./formats.js";
 import { grabFrames } from "./frames.js";
 import { config, runInAE } from "./runner.js";
 
@@ -123,6 +126,133 @@ server.registerTool(
     inputSchema: {},
   },
   () => call("save_project", {}),
+);
+
+// ---------- рендер и форматы ----------
+
+const formatKey = z.enum(Object.keys(FORMATS) as [FormatKey, ...FormatKey[]]);
+const platformKey = z.enum(Object.keys(PLATFORMS) as [PlatformKey, ...PlatformKey[]]);
+const slug = (s: string) => s.replace(/[^\p{L}\p{N}_-]+/gu, "-").replace(/^-+|-+$/g, "");
+const masterPath = (comp: string) => path.join(config.renderDir, slug(comp), `${slug(comp)}-master.mov`);
+const text = (v: unknown, isError = false): ToolResponse => ({ content: [{ type: "text", text: typeof v === "string" ? v : JSON.stringify(v, null, 2) }], isError });
+
+/** Композиция под формат: своя раскладка «<comp> <формат>», сама композиция того же размера или переразметка. */
+async function formatComp(comp: string, format: FormatKey, opts: { mode?: string; focus?: number[]; background?: unknown }) {
+  const f = FORMATS[format];
+  return runInAE("make_format_comp", { comp, format, width: f.width, height: f.height, safe: f.safe, ...opts });
+}
+
+server.registerTool(
+  "list_render_templates",
+  {
+    description: "Шаблоны рендера и вывода, которые есть в AE (только в тестовом проекте). Мастер берёт «MCP ProRes 422 HQ» / «MCP ProRes 4444», если вы их создали, иначе штатные «High Quality».",
+    inputSchema: {},
+  },
+  () => call("list_render_templates", {}),
+);
+
+server.registerTool(
+  "make_format_comp",
+  {
+    description:
+      `Композиция под формат кадра. Порядок: (1) своя раскладка «<comp> <формат>» — берётся как есть (правильный путь: отдельная компоновка под формат); (2) сама композиция, если размер совпадает; (3) иначе переразметка «<comp> <формат> (reframe)»: сцена слоем, cover — заполнить кадр с обрезкой, contain — вписать, поля размытой копией или цветом. В ответе — тексты, вылезшие за безопасные зоны (outside) и непроверенные (с родителем, поворотом, 3D). Форматы: ${Object.entries(FORMATS).map(([k, v]) => `${k} ${v.width}×${v.height} (${v.note})`).join("; ")}.`,
+    inputSchema: {
+      comp: compName,
+      format: formatKey,
+      mode: z.enum(["cover", "contain"]).optional().describe("По умолчанию cover"),
+      focus: z.array(z.number()).length(2).optional().describe("Точка исходного кадра [x, y] px, которая встанет в центр (по умолчанию центр)"),
+      background: z.union([z.literal("blur"), z.array(z.number().min(0).max(1)).length(3)]).optional().describe("Поля при contain: blur (по умолчанию) или цвет [r,g,b]"),
+    },
+  },
+  async ({ comp, format, ...opts }) => {
+    const res = await formatComp(comp, format, opts);
+    return res.ok ? text(res.result) : text(`Ошибка: ${res.error}`, true);
+  },
+);
+
+server.registerTool(
+  "render_master",
+  {
+    description: `Мастер-файл композиции: QuickTime ProRes (422 HQ / 4444 с альфой при наличии шаблонов «MCP …», иначе штатные «High Quality»). Пишет в ${config.renderDir}/<comp>/<comp>-master.mov. Блокирует AE до конца рендера; очередь рендера пользователя не трогает.`,
+    inputSchema: {
+      comp: compName,
+      alpha: z.boolean().optional().describe("С прозрачностью (ProRes 4444)"),
+      start: z.number().min(0).optional().describe("Начало отрезка, с"),
+      duration: z.number().positive().optional().describe("Длина отрезка, с"),
+    },
+  },
+  ({ comp, ...rest }) => call("render_master", { comp, file: masterPath(comp), ...rest }, 3600),
+);
+
+server.registerTool(
+  "deliver",
+  {
+    description: `Файл для площадки из мастера (ffmpeg): ${Object.entries(PLATFORMS).map(([k, v]) => `${k} — ${v.note}`).join("; ")}. Громкость двумя проходами loudnorm, теги цвета BT.709.`,
+    inputSchema: {
+      master: z.string().describe(`Путь к мастеру внутри ${config.renderDir}`),
+      platform: platformKey,
+    },
+  },
+  async ({ master, platform }) => {
+    const file = path.resolve(master);
+    if (!file.startsWith(config.renderDir + path.sep)) return text(`Ошибка: мастер должен лежать в ${config.renderDir}`, true);
+    try {
+      return text(await deliver(file, platform));
+    } catch (e) {
+      return text(`Ошибка: ${e instanceof Error ? e.message : String(e)}`, true);
+    }
+  },
+);
+
+server.registerTool(
+  "render_formats",
+  {
+    description:
+      "Весь путь для нескольких форматов: композиция под формат (make_format_comp) → мастер ProRes → файлы для площадок. По умолчанию 16x9 → youtube, остальные → social. Если переразметка вывела текст за безопасные зоны — формат не рендерится (вернётся список слоёв), пока не передан force: лучше сделать свою раскладку «<comp> <формат>» или сдвинуть focus.",
+    inputSchema: {
+      comp: compName,
+      formats: z.array(formatKey).min(1),
+      platforms: z.array(platformKey).optional().describe("Площадки для всех форматов вместо значений по умолчанию"),
+      mode: z.enum(["cover", "contain"]).optional(),
+      focus: z.array(z.number()).length(2).optional(),
+      force: z.boolean().optional().describe("Рендерить, даже если текст вне безопасных зон"),
+    },
+  },
+  async ({ comp, formats, platforms, mode, focus, force }) => {
+    const report: Record<string, unknown> = {};
+    let failed = false;
+    for (const format of formats) {
+      const fc = await formatComp(comp, format, { mode, focus });
+      if (!fc.ok) {
+        report[format] = { error: fc.error };
+        failed = true;
+        continue;
+      }
+      const target = fc.result as { comp: string; kind: string; outside: unknown[]; unchecked: string[] };
+      if (target.outside.length && !force) {
+        report[format] = { skipped: "текст за безопасными зонами", ...target };
+        failed = true;
+        continue;
+      }
+      const m = await runInAE("render_master", { comp: target.comp, file: masterPath(target.comp) }, 3600);
+      if (!m.ok) {
+        report[format] = { comp: target, error: m.error };
+        failed = true;
+        continue;
+      }
+      const outputs = [];
+      for (const p of platforms ?? [format.startsWith("16x9") ? "youtube" : "social"] as PlatformKey[]) {
+        try {
+          outputs.push(await deliver(m.result.file, p));
+        } catch (e) {
+          outputs.push({ platform: p, error: e instanceof Error ? e.message : String(e) });
+          failed = true;
+        }
+      }
+      report[format] = { comp: target, master: m.result, outputs };
+    }
+    return text(report, failed);
+  },
 );
 
 const transport = new StdioServerTransport();

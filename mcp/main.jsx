@@ -8,3 +8,5 @@
 //@include "tools/read.jsx"
 //@include "tools/project.jsx"
 //@include "tools/frames.jsx"
+//@include "tools/render.jsx"
+//@include "tools/formats.jsx"

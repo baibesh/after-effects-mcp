@@ -135,6 +135,7 @@ MCP_TOOLS.ae_status = {
     return {
       version: app.version,
       project: file ? file.fsName : null,
+      dirty: /** @type {any} */ (app.project).dirty,
       items: app.project.numItems,
       bitsPerChannel: app.project.bitsPerChannel,
       linearBlending: app.project.linearBlending,

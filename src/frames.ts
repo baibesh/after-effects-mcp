@@ -15,6 +15,22 @@ function ffmpeg(args: string[]): Promise<void> {
   );
 }
 
+/** Есть ли в кадрах пиксели с альфой < 1: сырые RGBA 16 бит (уменьшенные без сглаживания), каждый 4-й канал. */
+async function hasTransparency(files: string[]): Promise<boolean> {
+  for (const f of files) {
+    const raw = await new Promise<Buffer>((resolve, reject) =>
+      execFile(
+        "ffmpeg",
+        ["-v", "error", "-i", f, "-vf", "scale=480:-1:flags=neighbor,format=rgba64le", "-f", "rawvideo", "-"],
+        { encoding: "buffer", maxBuffer: 64 * 1024 * 1024 },
+        (err, so, se) => (err ? reject(new Error(String(se) || err.message)) : resolve(so)),
+      ),
+    );
+    for (let i = 6; i < raw.length; i += 8) if (raw.readUInt16LE(i) < 65535) return true;
+  }
+  return false;
+}
+
 export type Frames = { image: string; mimeType: "image/png"; info: Record<string, unknown> };
 
 /**
@@ -22,27 +38,48 @@ export type Frames = { image: string; mimeType: "image/png"; info: Record<string
  */
 export async function grabFrames(comp: string, times: number[], width: number): Promise<{ ok: true; frames: Frames } | { ok: false; error: string }> {
   const prefix = `f${Date.now()}`;
-  const res: RunResult = await runInAE("save_frames", { comp, times, dir: FRAMES_DIR, prefix });
+  let res: RunResult = await runInAE("save_frames", { comp, times, dir: FRAMES_DIR, prefix });
   if (!res.ok) return res;
-  const r = res.result as { pendingFiles: string[]; missingFiles: string[]; bitsPerChannel: number; width: number; height: number; comp: string };
+  // 32 бита + прозрачность: цвет полупрозрачных пикселей не восстановить — переснимаем с подложкой.
+  if (res.result.bitsPerChannel === 32 && !res.result.missingFiles?.length && (await hasTransparency(res.result.pendingFiles))) {
+    res = await runInAE("save_frames", { comp, times, dir: FRAMES_DIR, prefix, flatten: true });
+    const dropped = await runInAE("drop_flat", {});
+    if (!res.ok) return res;
+    if (!dropped.ok) return { ok: false, error: `Кадры сняты, но временная композиция __mcp_flat не удалена: ${dropped.error}` };
+  }
+  const r = res.result as { pendingFiles: string[]; missingFiles: string[]; bitsPerChannel: number; bgColor: number[]; width: number; height: number; comp: string };
   if (r.missingFiles?.length) return { ok: false, error: `AE не дописал кадры: ${r.missingFiles.join(", ")}` };
 
   // В 32-битном проекте saveFrameToPng пишет PNG с яркостью, делённой ровно на 10; рендер при этом верный.
-  const filters: string[] = [];
-  if (r.bitsPerChannel === 32) filters.push("colorlevels=rimax=0.1:gimax=0.1:bimax=0.1");
-  filters.push(`scale=${Math.min(width, r.width)}:-2`);
-  const out = path.join(FRAMES_DIR, `${prefix}-view.png`);
-  if (r.pendingFiles.length === 1) {
-    await ffmpeg(["-i", r.pendingFiles[0], "-vf", [...filters, "format=rgb24"].join(","), out]);
-  } else {
-    const cols = Math.min(4, r.pendingFiles.length);
-    const rows = Math.ceil(r.pendingFiles.length / cols);
+  // Фон композиции в PNG не попадает (там альфа) — кладём кадр на bgColor, как при рендере без альфы.
+  // Умножаем в 16 битах: иначе ffmpeg сначала сводит кадр к 8 битам и цвет плывёт (6225/257 → 24 → ×10 = 240).
+  const times10 = "lutrgb=r='min(val*10,maxval)':g='min(val*10,maxval)':b='min(val*10,maxval)',";
+  const levels = "format=rgba64le," + (r.bitsPerChannel === 32 ? times10 : "");
+  const hex = r.bgColor.map((c) => Math.round(Math.max(0, Math.min(1, c)) * 255).toString(16).padStart(2, "0")).join("");
+  const w = Math.min(width, r.width);
+  const flat: string[] = [];
+  for (const [i, src] of r.pendingFiles.entries()) {
+    const dst = path.join(FRAMES_DIR, `${prefix}-flat-${i}.png`);
     await ffmpeg([
-      "-framerate", "1", "-i", path.join(FRAMES_DIR, `${prefix}-%d.png`),
-      "-vf", [...filters, `tile=${cols}x${rows}:padding=8:color=0x808080`, "format=rgb24"].join(","),
+      "-f", "lavfi", "-i", `color=c=0x${hex}:s=${r.width}x${r.height}`, "-i", src,
+      "-filter_complex", `[0:v]format=rgba64le[b];[1:v]${levels}format=rgba64le[f];[b][f]overlay=format=auto,scale=${w}:-2:flags=lanczos,format=rgb24`,
+      "-frames:v", "1", dst,
+    ]);
+    flat.push(dst);
+  }
+  const out = path.join(FRAMES_DIR, `${prefix}-view.png`);
+  if (flat.length === 1) {
+    fs.renameSync(flat[0], out);
+  } else {
+    const cols = Math.min(4, flat.length);
+    const rows = Math.ceil(flat.length / cols);
+    await ffmpeg([
+      "-framerate", "1", "-i", path.join(FRAMES_DIR, `${prefix}-flat-%d.png`),
+      "-vf", `tile=${cols}x${rows}:padding=8:color=0x808080,format=rgb24`,
       "-frames:v", "1", out,
     ]);
   }
+  for (const f of flat) fs.rmSync(f, { force: true });
   const image = fs.readFileSync(out).toString("base64");
   // Держим 30 последних листов для просмотра человеком, остальные удаляем.
   const views = fs.readdirSync(FRAMES_DIR).filter((f) => f.endsWith("-view.png")).sort();

@@ -72,3 +72,5 @@ settings.local.json
 /out/
 /test/*.aep
 /test/*.aep Logs/
+
+/test/*.wav

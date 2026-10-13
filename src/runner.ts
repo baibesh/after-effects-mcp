@@ -31,6 +31,8 @@ export const config = {
   allowScripts: process.env.AE_MCP_ALLOW_SCRIPTS === "1",
   scriptRoots: listEnv("AE_MCP_SCRIPT_ROOTS", [path.join(REPO_ROOT, "scripts")]),
   minFreeGb: Number(process.env.AE_MCP_MIN_FREE_GB ?? "1.5"),
+  /** Куда писать мастера и выдачу. */
+  renderDir: listEnv("AE_MCP_RENDER_DIR", [path.join(REPO_ROOT, "out", "renders")])[0],
 };
 
 export type RunResult = { ok: true; result: any } | { ok: false; error: string };

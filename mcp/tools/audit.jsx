@@ -351,9 +351,17 @@ MCP_TOOLS.audit_animation = {
       var isChar = layer.hasVideo && mcpIsCharacter(layer, args, pattern);
       if (isChar) characters.push(layer.name);
 
-      // expression: ошибки во всех свойствах слоя
+      // expression: ошибки во всех свойствах слоя. AE вычисляет выражение лениво (только когда кадр рисуется),
+      // поэтому сперва вычисляем его сами в начале, середине и конце жизни слоя — иначе ошибка не видна.
       var keyed = [];
       mcpKeyedProps(layer, keyed, 6);
+      for (var ev = 0; ev < keyed.length; ev++) {
+        if (!keyed[ev].canSetExpression || !keyed[ev].expressionEnabled || !keyed[ev].expression) continue;
+        var probe = [layer.inPoint, (layer.inPoint + layer.outPoint) / 2, layer.outPoint - 1 / comp.frameRate];
+        for (var pv = 0; pv < probe.length; pv++) {
+          try { keyed[ev].valueAtTime(Math.max(0, probe[pv]), false); } catch (err) { /* ошибка ляжет в expressionError */ }
+        }
+      }
       for (var e = 0; e < keyed.length; e++) {
         if (keyed[e].canSetExpression && keyed[e].expressionEnabled && keyed[e].expressionError) {
           add("expression", "error", {layer: layer.name, prop: keyed[e].name, message: keyed[e].expressionError,

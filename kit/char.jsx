@@ -391,7 +391,7 @@ function kbPlaceChar(host, charComp, o) {
     "var q = effect(\"squash\")(1) / 100;\n" +
     "var h = s[1] * (1 + k) * (1 - q);\n" +
     "var w = s[0] * (1 - k * 0.45) * (1 + q * 0.5);\n" +
-    "[w, h, s[2]];";
+    "s.length > 2 ? [w, h, s[2]] : [w, h];";
   var tl = o.poses || [];
   for (var i = 1; i < tl.length; i++) {
     if (tl[i][2] === 1) kbSquashAt(slider, kbHT(tl[i][0]), 3, 0.133);

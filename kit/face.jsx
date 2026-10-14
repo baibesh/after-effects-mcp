@@ -207,26 +207,30 @@ var KB_FACE_JAW_3Q = [[0, 0.258], [0.115, 0.248], [0.237, 0.246], [0.36, 0.247],
 /** Галочка у угла рта (щека), точки от дальнего конца к углу, [du, dv] в L. */
 var KB_FACE_CREASE_3Q = [[-0.09, 0.016], [-0.055, -0.02], [0, 0]];
 
+/** Шагов вдоль рта: 24 — чтобы узкое круглое отверстие (F) не превращалось в многоугольник. */
+var KB_FACE_N = 24;
+
 /**
  * Формы рта Rhubarb, всё в долях L: uc — угол рта сдвинут к кончику (узкий рот), sag — доля провиса улыбки,
  * up/lo — верхняя губа вверх / нижняя вниз в вершине горба, peak/sharp — где и насколько узок горб раскрытия,
  * crease — галочка у щеки (0…1), teeth — верхние зубы от верхней губы вниз, tongue/tpeak — высота и вершина языка.
- * Нижняя губа не опускается ниже нарисованной челюсти (floor − floorGap): рот открывается внутри морды.
+ * A — губы сжаты: линия короче и прямее, у угла утолщение (щель уже толщины линии); F — круглое отверстие у носа
+ * в линии рта (узкий горб sharp 7), линия остаётся. Нижняя губа не опускается ниже нарисованной челюсти (floor − floorGap): рот открывается внутри морды.
  */
 var KB_FACE_MOUTHS = {
   X: { uc: 0, sag: 1, up: 0, lo: 0, peak: 0.55, sharp: 1, crease: 1, teeth: 0, tongue: 0, tpeak: 0.6 },
-  A: { uc: 0.06, sag: 0.6, up: 0, lo: 0, peak: 0.55, sharp: 1, crease: 0.4, teeth: 0, tongue: 0, tpeak: 0.6 },
+  A: { uc: 0.14, sag: 0.42, up: 0, lo: 0.018, peak: 0.12, sharp: 6, crease: 0.2, teeth: 0, tongue: 0, tpeak: 0.6 },
   B: { uc: 0.02, sag: 0.95, up: 0.02, lo: 0.075, peak: 0.6, sharp: 0.7, crease: 0.9, teeth: 0.035, tongue: 0, tpeak: 0.6 },
   C: { uc: 0.02, sag: 0.95, up: 0.04, lo: 0.09, peak: 0.6, sharp: 0.7, crease: 0.9, teeth: 0.025, tongue: 0.035, tpeak: 0.6 },
   D: { uc: 0, sag: 0.9, up: 0.075, lo: 0.14, peak: 0.58, sharp: 0.6, crease: 1, teeth: 0.02, tongue: 0.05, tpeak: 0.6 },
   E: { uc: 0.3, sag: 0.8, up: 0.07, lo: 0.12, peak: 0.5, sharp: 1.2, crease: 0.3, teeth: 0, tongue: 0.03, tpeak: 0.55 },
-  F: { uc: 0.55, sag: 0.6, up: 0.05, lo: 0.07, peak: 0.5, sharp: 1.4, crease: 0, teeth: 0, tongue: 0, tpeak: 0.6 },
+  F: { uc: 0.03, sag: 0.9, up: 0.03, lo: 0.04, peak: 0.8, sharp: 7, crease: 0.6, teeth: 0, tongue: 0, tpeak: 0.6 },
   G: { uc: 0.06, sag: 0.8, up: 0, lo: 0.055, peak: 0.55, sharp: 0.8, crease: 0.6, teeth: 0.08, tongue: 0, tpeak: 0.6 },
   H: { uc: 0.02, sag: 0.95, up: 0.05, lo: 0.1, peak: 0.6, sharp: 0.7, crease: 0.9, teeth: 0.02, tongue: 0.1, tpeak: 0.85 }
 };
 
 /**
- * Геометрия формы рта в координатах композиции: полость (16 вершин), зубы и язык (по 18), галочка у щеки (3).
+ * Геометрия формы рта в координатах композиции: полость (2 × KB_FACE_N вершин), зубы и язык (по 2 × KB_FACE_N + 2), галочка (3).
  * @param {{corner: number[], tip: number[], sag?: number[][], floor?: number[][], floorGap?: number, crease?: number[][]}} o
  * @param {{uc: number, sag: number, up: number, lo: number, peak: number, sharp: number, crease: number, teeth: number, tongue: number, tpeak: number}} f
  * @returns {{cavity: number[][], teeth: number[][], tongue: number[][], crease: number[][]}}
@@ -245,7 +249,7 @@ function kbFaceMouthGeo(o, f) {
   var sag = o.sag || KB_FACE_SAG_3Q;
   var floor = o.floor || KB_FACE_JAW_3Q;
   var gap = o.floorGap === undefined ? 0.045 : o.floorGap;
-  var N = 8;
+  var N = KB_FACE_N;
   var U = [];
   var Lo = [];
   var TeU = [];
@@ -307,8 +311,9 @@ function kbFaceMouth(comp, o) {
   var geo = {};
   for (var fn in forms) if (forms.hasOwnProperty(fn)) geo[fn] = kbFaceMouthGeo(o, forms[fn]);
   var g0 = geo[o.form || "X"];
-  var sharpC = [0, 8];
-  var sharpB = [0, 8, 9, 17];
+  var N = KB_FACE_N;
+  var sharpC = [0, N];
+  var sharpB = [0, N, N + 1, 2 * N + 1];
   // сверху вниз: галочка, губы, зубы, язык, полость
   var gc = kbFaceGroup(L, "crease");
   kbFaceAddPath(gc, "p", kbFacePath(g0.crease, false));
@@ -456,71 +461,9 @@ function kbFaceEye(comp, o) {
   matte.moveBefore(iris);
   iris.setTrackMatte(matte, TrackMatteType.ALPHA);
 
-  // веки — свой слой без мата: внешний край отодвинут от глаза на cover, чтобы закрытое веко прятало и нарисованную
-  // обводку с ореолом (она шире векторной линии). Пока глаз открыт, эту полоску закрывают ресницы и нижняя линия.
-  var lids0 = o.lids && o.lids.length ? o.lids[0] : [0, 0, 0];
-  var coverUp = o.lash / 2 + 2;
-  var coverLow = o.line / 2 + 4;
-  /** @param {number[][]} arc @param {number} d @returns {number[][]} */
-  function outward(arc, d) {
-    var r = [];
-    for (var q = 0; q < arc.length; q++) {
-      var vx = arc[q][0] - cx;
-      var vy = arc[q][1] - cy;
-      var vl = Math.sqrt(vx * vx + vy * vy) || 1;
-      r.push([arc[q][0] + vx / vl * d, arc[q][1] + vy / vl * d]);
-    }
-    return r;
-  }
-  var Uo = outward(U, coverUp);
-  var Loo = outward(Lo, coverLow);
-  /** @param {number} t @returns {Shape} */
-  function lidUp(t) {
-    return kbFacePath(kbFaceLoop(Uo, kbFaceMix(U, Lo, t)), true);
-  }
-  /** @param {number} t @returns {Shape} */
-  function lidLow(t) {
-    return kbFacePath(kbFaceLoop(Loo, kbFaceMix(Lo, U, t)), true);
-  }
-  var lid = kbFaceLayer(comp, o.name + "-lid");
-  // верхнее веко — вертикальный переход как на нарисованной морде: тень глазницы сверху (lidShade) → мех (lid) в середине →
-  // светлый мех под глазом (lidLow) у ресниц. 7 полос от внешнего края вглубь, каждая пересечена с веком, основа — lidLow;
-  // размытие слоя сглаживает ступени
-  var shadeN = c.lidShade ? 8 : 0;
-  var lowC = c.lidLow || c.lid;
-  /** @param {number[]} a @param {number[]} b @param {number} t @returns {number[]} */
-  function mixC(a, b, t) {
-    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
-  }
-  for (var sh = 0; sh < shadeN - 1; sh++) {
-    var gsh = kbFaceGroup(lid, "lidShade" + sh);
-    var pos = (sh + 0.5) / shadeN;
-    kbFaceAddPath(gsh, "clip", lidUp(lids0[1]));
-    kbFaceAddPath(gsh, "p", kbFacePath(kbFaceLoop(Uo, kbFaceMix(U, Lo, (sh + 1) / shadeN)), true));
-    kbFaceIntersect(gsh);
-    kbFaceFill(gsh, pos < 0.5 ? mixC(c.lidShade, c.lid, pos / 0.5) : mixC(c.lid, lowC, (pos - 0.5) / 0.5));
-  }
-  var gu = kbFaceGroup(lid, "lidUp");
-  kbFaceAddPath(gu, "p", lidUp(lids0[1]));
-  kbFaceFill(gu, shadeN ? lowC : c.lid);
-  var gd = kbFaceGroup(lid, "lidLow");
-  kbFaceAddPath(gd, "p", lidLow(lids0[2]));
-  kbFaceFill(gd, c.lidLow || c.lid);
-  // мягкий край: плоский мех века не читается заплаткой на градиенте нарисованного меха
-  var soft = o.lidSoft === undefined ? 7 : o.lidSoft;
-  if (soft > 0) kbProp(kbEffect(lid, "ADBE Gaussian Blur 2"), ["ADBE Gaussian Blur 2-0001"]).setValue(soft);
-
-  // линии: ресницы по краю верхнего века (толстые, сужаются к уголкам) и нижняя линия по краю нижнего века;
-  // отдельной обводки нет — закрытый глаз остаётся одной линией ресниц
-  var line = kbFaceLayer(comp, o.name + "-line");
-  var gs = kbFaceGroup(line, "lash");
-  kbFaceAddPath(gs, "p", kbFacePath(kbFaceMix(U, Lo, lids0[1]), false));
-  kbFaceStroke(gs, c.line, o.lash, [0.22, 0.22, 55]);
-  var gb = kbFaceGroup(line, "lowLine");
-  kbFaceAddPath(gb, "p", kbFacePath(kbFaceMix(Lo, U, lids0[2]), false));
-  kbFaceStroke(gb, c.line, o.line, [0.15, 0.15, 75]);
-
-  var all = [white, iris, matte, lid, line];
+  var lidL = kbFaceLids(comp, { name: o.name, upper: U, lower: Lo, colors: c, line: o.line, lash: o.lash, lidSoft: o.lidSoft,
+    lids: o.lids, blinks: o.blinks, hideOpen: false });
+  var all = [white, iris, matte, lidL.lid, lidL.line];
   for (var a = 0; a < all.length; a++) {
     if (o.t0 !== undefined) all[a].inPoint = o.t0;
     if (o.t1 !== undefined) all[a].outPoint = o.t1;
@@ -549,8 +492,17 @@ function kbFaceEye(comp, o) {
     "var v = [o[0] + value[0], o[1] + value[1]];\nvar k = Math.sqrt(Math.pow(v[0] / r[0], 2) + Math.pow(v[1] / r[1], 2));\n" +
     "if (k > 1) v = [v[0] / k, v[1] / k];\n[v[0] - o[0], v[1] - o[1]];";
 
-  // веки: эмоция (hold) + моргания поверх
-  var base = o.lids && o.lids.length ? o.lids : [[0, 0, 0]];
+  return { white: white, iris: iris, matte: matte, lid: lidL.lid, line: lidL.line };
+}
+
+/**
+ * События век: эмоция (hold) + моргания поверх неё фазами sbLid (0 → 55 → 100 → 100 → 50 → 0 % по кадру).
+ * @param {number[][]=} lids [[t, верхнее, нижнее]]
+ * @param {number[]=} blinks
+ * @returns {number[][]} [[t, верхнее, нижнее]] по времени
+ */
+function kbFaceLidEvents(lids, blinks) {
+  var base = lids && lids.length ? lids : [[0, 0, 0]];
   /** @param {number} tt @returns {number[]} */
   function baseAt(tt) {
     var r = base[0];
@@ -560,17 +512,101 @@ function kbFaceEye(comp, o) {
   var ev = [];
   for (var b = 0; b < base.length; b++) ev.push([base[b][0], base[b][1], base[b][2]]);
   var ph = [0, 0.55, 1, 1, 0.5, 0];
-  for (var n = 0; o.blinks && n < o.blinks.length; n++) {
-    var b0 = Math.round(o.blinks[n] * 30) / 30;
+  for (var n = 0; blinks && n < blinks.length; n++) {
+    var b0 = Math.round(blinks[n] * 30) / 30;
     for (var f = 0; f < ph.length; f++) {
       var tf = b0 + f * KB_F;
       var bs = baseAt(tf);
-      ev.push([tf, Math.max(bs[1], ph[f]), bs[2], 1]);
+      ev.push([tf, Math.max(bs[1], ph[f]), bs[2]]);
     }
   }
   ev.sort(function (x, y) {
     return x[0] - y[0];
   });
+  return ev;
+}
+
+/**
+ * Веки и линии ресниц по дугам глаза (общая часть kbFaceEye и kbFaceLid): слой <name>-lid (верхнее веко с переходом
+ * тень → мех → светлый мех, нижнее веко, мягкий край) и <name>-line (ресницы по краю верхнего века, нижняя линия).
+ * hideOpen — оба слоя видны только пока веко хоть чуть прикрыто (поверх нарисованного глаза).
+ * @param {CompItem} comp
+ * @param {{name: string, upper: number[][], lower: number[][], colors: any, line: number, lash: number, lidSoft?: number,
+ *   lids?: number[][], blinks?: number[], hideOpen: boolean}} o
+ * @returns {{lid: ShapeLayer, line: ShapeLayer}}
+ */
+function kbFaceLids(comp, o) {
+  var c = o.colors;
+  var U = o.upper;
+  var Lo = o.lower;
+  var eye = kbFaceLoop(U, Lo);
+  var cx = 0;
+  var cy = 0;
+  for (var i = 0; i < eye.length; i++) {
+    cx += eye[i][0];
+    cy += eye[i][1];
+  }
+  cx /= eye.length;
+  cy /= eye.length;
+  var ev = kbFaceLidEvents(o.lids, o.blinks);
+  var lids0 = ev[0];
+  // внешний край века отодвинут от глаза: закрытое веко прячет и нарисованную обводку с ореолом
+  var coverUp = o.lash / 2 + 2;
+  var coverLow = o.line / 2 + 4;
+  /** @param {number[][]} arc @param {number} d @returns {number[][]} */
+  function outward(arc, d) {
+    var r = [];
+    for (var q = 0; q < arc.length; q++) {
+      var vx = arc[q][0] - cx;
+      var vy = arc[q][1] - cy;
+      var vl = Math.sqrt(vx * vx + vy * vy) || 1;
+      r.push([arc[q][0] + vx / vl * d, arc[q][1] + vy / vl * d]);
+    }
+    return r;
+  }
+  var Uo = outward(U, coverUp);
+  var Loo = outward(Lo, coverLow);
+  /** @param {number} t @returns {Shape} */
+  function lidUp(t) {
+    return kbFacePath(kbFaceLoop(Uo, kbFaceMix(U, Lo, t)), true);
+  }
+  /** @param {number} t @returns {Shape} */
+  function lidLow(t) {
+    return kbFacePath(kbFaceLoop(Loo, kbFaceMix(Lo, U, t)), true);
+  }
+  /** @param {number[]} a @param {number[]} b @param {number} t @returns {number[]} */
+  function mixC(a, b, t) {
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  }
+  var lid = kbFaceLayer(comp, o.name + "-lid");
+  // верхнее веко — 7 полос от внешнего края вглубь (тень глазницы → мех → светлый мех), каждая пересечена с веком
+  var shadeN = c.lidShade ? 8 : 0;
+  var lowC = c.lidLow || c.lid;
+  for (var sh = 0; sh < shadeN - 1; sh++) {
+    var gsh = kbFaceGroup(lid, "lidShade" + sh);
+    var pos = (sh + 0.5) / shadeN;
+    kbFaceAddPath(gsh, "clip", lidUp(lids0[1]));
+    kbFaceAddPath(gsh, "p", kbFacePath(kbFaceLoop(Uo, kbFaceMix(U, Lo, (sh + 1) / shadeN)), true));
+    kbFaceIntersect(gsh);
+    kbFaceFill(gsh, pos < 0.5 ? mixC(c.lidShade, c.lid, pos / 0.5) : mixC(c.lid, lowC, (pos - 0.5) / 0.5));
+  }
+  var gu = kbFaceGroup(lid, "lidUp");
+  kbFaceAddPath(gu, "p", lidUp(lids0[1]));
+  kbFaceFill(gu, shadeN ? lowC : c.lid);
+  var gd = kbFaceGroup(lid, "lidLow");
+  kbFaceAddPath(gd, "p", lidLow(lids0[2]));
+  kbFaceFill(gd, lowC);
+  var soft = o.lidSoft === undefined ? 7 : o.lidSoft;
+  if (soft > 0) kbProp(kbEffect(lid, "ADBE Gaussian Blur 2"), ["ADBE Gaussian Blur 2-0001"]).setValue(soft);
+
+  var line = kbFaceLayer(comp, o.name + "-line");
+  var gs = kbFaceGroup(line, "lash");
+  kbFaceAddPath(gs, "p", kbFacePath(kbFaceMix(U, Lo, lids0[1]), false));
+  kbFaceStroke(gs, c.line, o.lash, [0.22, 0.22, 55]);
+  var gb = kbFaceGroup(line, "lowLine");
+  kbFaceAddPath(gb, "p", kbFacePath(kbFaceMix(Lo, U, lids0[2]), false));
+  kbFaceStroke(gb, c.line, o.line, [0.15, 0.15, 75]);
+
   /** @param {number} x @param {number} y @returns {boolean} */
   function sameN(x, y) {
     return Math.abs(x - y) < 0.001;
@@ -590,13 +626,15 @@ function kbFaceEye(comp, o) {
   function never() {
     return false;
   }
+  var up = [];
+  var lo = [];
+  var vis = [];
+  for (var m = 0; m < ev.length; m++) {
+    up.push([ev[m][0], ev[m][1]]);
+    lo.push([ev[m][0], ev[m][2]]);
+    vis.push([ev[m][0], ev[m][1] > 0.001 || ev[m][2] > 0.001 ? 100 : 0]);
+  }
   if (ev.length > 1) {
-    var up = [];
-    var lo = [];
-    for (var m = 0; m < ev.length; m++) {
-      up.push([ev[m][0], ev[m][1]]);
-      lo.push([ev[m][0], ev[m][2]]);
-    }
     kbFaceHoldKeys(kbFaceShapeProp(lid, "lidUp", "p"), shapes(up, lidUp), never);
     for (var sk = 0; sk < shadeN - 1; sk++) kbFaceHoldKeys(kbFaceShapeProp(lid, "lidShade" + sk, "clip"), shapes(up, lidUp), never);
     kbFaceHoldKeys(kbFaceShapeProp(line, "lash", "p"), shapes(up, function (v) {
@@ -607,7 +645,34 @@ function kbFaceEye(comp, o) {
       return kbFacePath(kbFaceMix(Lo, U, v), false);
     }), never);
   }
-  return { white: white, iris: iris, matte: matte, lid: lid, line: line };
+  if (o.hideOpen) {
+    var vv = shapes(vis, function (v) {
+      return v;
+    });
+    kbFaceHoldKeys(kbTr(lid, "op"), vv, never);
+    kbFaceHoldKeys(kbTr(line, "op"), vv, never);
+  }
+  return { lid: lid, line: line };
+}
+
+/**
+ * Моргание и веки поверх НАРИСОВАННОГО глаза (глаз и зрачок позы не трогаются): слои веков из kbFaceLids видны
+ * только пока веко прикрыто. Дуги — как у kbFaceEye (по внешнему краю нарисованной обводки, по 7 точек, концы общие).
+ * Моргать — на смене мысли, повороте головы, между репликами (animation-craft §3), не по таймеру.
+ * @param {CompItem} comp
+ * @param {{name: string, upper: number[][], lower: number[][], colors: {line: number[], lid: number[], lidLow?: number[], lidShade?: number[]},
+ *   line: number, lash: number, lidSoft?: number, lids?: number[][], blinks?: number[], t0?: number, t1?: number}} o
+ * @returns {{lid: ShapeLayer, line: ShapeLayer}}
+ */
+function kbFaceLid(comp, o) {
+  var r = kbFaceLids(comp, { name: o.name, upper: o.upper, lower: o.lower, colors: o.colors, line: o.line, lash: o.lash,
+    lidSoft: o.lidSoft, lids: o.lids, blinks: o.blinks, hideOpen: true });
+  var all = [r.lid, r.line];
+  for (var a = 0; a < all.length; a++) {
+    if (o.t0 !== undefined) all[a].inPoint = o.t0;
+    if (o.t1 !== undefined) all[a].outPoint = o.t1;
+  }
+  return r;
 }
 
 // ─── бровь ──────────────────────────────────────────────────────────────────────────────
@@ -671,3 +736,106 @@ function kbFaceBrow(comp, o) {
   }
   return L;
 }
+
+// ─── бровь-вырезка (нарисованная бровь позы) ────────────────────────────────────────────
+
+/**
+ * Эмоции брови-вырезки: dx — к носу и dy — вниз в долях толщины брови, rot — внутренний конец вверх (°), s — масштаб %
+ * (≤ 105, иначе видна растяжка растра).
+ */
+var KB_FACE_BROWCUT = {
+  neutral: { dx: 0, dy: 0, rot: 0, s: 100 },
+  up: { dx: 0, dy: -0.42, rot: 4, s: 103 },
+  frown: { dx: 0.12, dy: 0.24, rot: -9, s: 100 },
+  happy: { dx: 0, dy: -0.24, rot: -2, s: 102 }
+};
+
+/**
+ * Нарисованная бровь, вырезанная маской из исходной картинки и положенная поверх плашки, где брови стёрты: эмоция —
+ * сдвиг, поворот вокруг середины брови и лёгкий масштаб. Слой — ребёнок головы: координаты маски, опоры и сдвигов —
+ * пиксели исходной картинки, она же должна совпадать по размеру с картинкой головы (плашка из того же кропа).
+ * Ключи: приход эмоции заканчивается за lead (4 кадра) до ударного слога, ход dur (0,2 с) с лёгким перелётом;
+ * возврат в neutral — мягкий, без опережения (dur 0,35 с).
+ * @param {CompItem} comp
+ * @param {{name: string, file: string, parent: Layer, mask: number[][], feather?: number, pivot: number[], width: number,
+ *   inner: number, emotions?: Object, emotion?: string, keys?: any[][], t0?: number, t1?: number}} o
+ *   mask — контур брови с запасом 3–4 px (точки исходника); pivot — середина брови; width — толщина брови, px;
+ *   inner — 1, если внутренний конец (к носу) правее опоры, −1 — левее; keys — [[t ударного слога, эмоция, dur?, lead?]]
+ * @returns {AVLayer}
+ */
+function kbFaceBrowCut(comp, o) {
+  var emo = o.emotions || KB_FACE_BROWCUT;
+  var L = comp.layers.add(kbImport(o.file));
+  L.name = o.name;
+  L.motionBlur = false;
+  var m = kbAdd(kbGroup(L, ["ADBE Mask Parade"]), "ADBE Mask Atom"); // ae-ok: matchname (маски нет в словаре docsforadobe)
+  m.name = "brow";
+  kbProp(m, ["ADBE Mask Shape"]).setValue(kbFacePath(o.mask, true)); // ae-ok: matchname
+  var fe = o.feather === undefined ? 3 : o.feather;
+  kbProp(m, ["ADBE Mask Feather"]).setValue([fe, fe]); // ae-ok: matchname
+  // ребёнок головы: позиция — в пикселях картинки головы, поэтому опора совпадает сама
+  L.parent = o.parent;
+  kbTr(L, "anchor").setValue(o.pivot);
+  kbTr(L, "pos").setValue(o.pivot);
+  kbTr(L, "scale").setValue([100, 100]);
+  kbTr(L, "rot").setValue(0);
+  if (o.t0 !== undefined) L.inPoint = o.t0;
+  if (o.t1 !== undefined) L.outPoint = o.t1;
+
+  /** @param {string} name @param {number} over @returns {{pos: number[], rot: number, s: number[]}} */
+  function state(name, over) {
+    var e = emo[name];
+    if (!e) throw new Error("kbFaceBrowCut: нет эмоции «" + name + "»");
+    var k = over;
+    return {
+      pos: [o.pivot[0] + o.inner * e.dx * o.width * k, o.pivot[1] + e.dy * o.width * k],
+      rot: -o.inner * e.rot * k,
+      s: [100 + (e.s - 100) * k, 100 + (e.s - 100) * k, 100]
+    };
+  }
+  var cur = o.emotion || "neutral";
+  var st0 = state(cur, 1);
+  kbTr(L, "pos").setValue(st0.pos);
+  kbTr(L, "rot").setValue(st0.rot);
+  kbTr(L, "scale").setValue(st0.s);
+  if (!o.keys || !o.keys.length) return L;
+
+  var T = [];
+  var V = [];
+  /** @param {number} t @param {{pos: number[], rot: number, s: number[]}} v */
+  function push(t, v) {
+    if (T.length && t <= T[T.length - 1] + 0.005) t = T[T.length - 1] + 0.01;
+    T.push(t);
+    V.push(v);
+  }
+  var last = st0;
+  for (var i = 0; i < o.keys.length; i++) {
+    var K = o.keys[i];
+    var toNeutral = K[1] === "neutral";
+    var dur = K[2] !== undefined ? K[2] : (toNeutral ? 0.35 : 0.2);
+    var lead = K[3] !== undefined ? K[3] : (toNeutral ? 0 : 4 * KB_F);
+    var arrive = K[0] - lead;
+    push(arrive - dur, last);
+    if (!toNeutral) {
+      // перелёт на 12 % и посадка через 5 кадров
+      push(arrive, state(K[1], 1.12));
+      push(arrive + 5 * KB_F, state(K[1], 1));
+    } else {
+      push(arrive, state(K[1], 1));
+    }
+    last = state(K[1], 1);
+  }
+  var P = [];
+  var R = [];
+  var S = [];
+  for (var q = 0; q < V.length; q++) {
+    P.push(V[q].pos);
+    R.push(V[q].rot);
+    S.push(V[q].s);
+  }
+  kbKeys(kbTr(L, "pos"), T, P, KB_EASE.snap);
+  kbKeys(kbTr(L, "rot"), T, R, KB_EASE.snap);
+  kbKeys(kbTr(L, "scale"), T, S, KB_EASE.snap);
+  return L;
+}
+

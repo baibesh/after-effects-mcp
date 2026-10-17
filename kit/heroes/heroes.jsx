@@ -59,7 +59,7 @@ var TL_HEROES = {
     roles: { idle: "idle", talk: "talk", point: ["point-side", "point-down"], hold: "hold-both", take: "surprised", cheer: "happy",
              listen: "listen", wave: "wave", think: "think" },
     // запасной путь: роли, для которых позы у Арлана ещё нет (design/mascot-tazy/AE-POSES-TODO.md). Значение — роль или поза; актёр пишет WARN ROLE и берёт её
-    fallback: { doubt: "shrug", release: "point-side" }
+    fallback: { doubt: "idle", release: "idle" }   // решение владельца 17.10: позы не генерируем (уроки не делаем) — недостающие роли играем спокойной idle, реакция идёт движением корпуса
   }
 };
 

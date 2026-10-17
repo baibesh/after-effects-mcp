@@ -58,7 +58,7 @@ function kbStyleMerge(base, over) {
   if (!kbIsPlain(base) || !kbIsPlain(over)) return kbCopy(over);
   var out = kbCopy(base);
   for (var k in over) {
-    if (!over.hasOwnProperty(k)) continue;
+    if (!over.hasOwnProperty(k) || over[k] === undefined) continue; // необязательный аргумент не стирает умолчание
     out[k] = kbIsPlain(out[k]) && kbIsPlain(over[k]) ? kbStyleMerge(out[k], over[k]) : kbCopy(over[k]);
   }
   return out;
@@ -296,7 +296,8 @@ function kbIsSpatial(prop) {
  */
 function kbEaseDelta(prop, a, b) {
   if (!(a instanceof Array)) return [b - a];
-  if (kbIsSpatial(prop)) {
+  // У цвета, как у пространственных свойств, ease одномерный: скорость — длина хорды в пространстве цвета.
+  if (kbIsSpatial(prop) || prop.propertyValueType === PropertyValueType.COLOR) {
     var sum = 0;
     for (var i = 0; i < a.length; i++) sum += (b[i] - a[i]) * (b[i] - a[i]);
     return [Math.sqrt(sum)];
@@ -326,7 +327,8 @@ function kbEaseList(list) {
 function kbLerp(a, b, p) {
   if (!(a instanceof Array)) return a + (b - a) * p;
   var out = [];
-  for (var i = 0; i < a.length; i++) out.push(a[i] + (b[i] - a[i]) * p);
+  // Короткий конец (масштаб [x, y] против [x, y, z] слоя) — недостающие оси без изменения.
+  for (var i = 0; i < a.length; i++) out.push(i < b.length ? a[i] + (b[i] - a[i]) * p : a[i]);
   return out;
 }
 

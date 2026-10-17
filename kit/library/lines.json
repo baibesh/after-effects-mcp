@@ -79,11 +79,11 @@
       "kind": "draw",
       "dur": "underline",
       "target": "points",
-      "description": "Выноска: точка на объекте → линия → плашка с текстом (выскок после линии). params.text — текст, from — точка, to — где плашка; color — линия, chip — плашка, ink — текст на плашке",
+      "description": "Выноска: точка на объекте → линия → плашка с текстом (выскок после линии). params.text — текст, from — точка, to — где плашка; color — линия, chip — плашка (color.chip стиля — тёмная, читается и на фоне, и на светлой картинке), ink — текст на плашке (chipText)",
       "params": {
         "stroke": "thin",
         "color": "ink",
-        "chip": "surface",
+        "chip": "chip",
         "text": "",
         "size": "label",
         "dot": 10,
@@ -91,7 +91,7 @@
         "bend": 0,
         "padX": 24,
         "padY": 14,
-        "ink": "onSurface"
+        "ink": "chipText"
       }
     },
     "undraw": {

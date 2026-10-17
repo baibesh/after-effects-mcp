@@ -88,7 +88,7 @@ export function listCurves(): Record<string, unknown> {
   return JSON.parse(fs.readFileSync(path.join(KIT_DIR, "library", "ease.json"), "utf8")).curves;
 }
 
-const LIB_FILES = ["motion", "text", "lines"];
+const LIB_FILES = ["motion", "text", "lines", "images", "backgrounds", "blocks", "transitions"];
 
 function libraryItems(): Record<string, any> {
   const out: Record<string, any> = {};
@@ -113,4 +113,9 @@ export function resolveLibraryItem(id: string): any {
   if (items[id]) return items[id];
   const names = Object.keys(items);
   throw new Error(`Нет примитива «${id}». Похожие: ${nearest(id, names, 5).join(", ")} (все — list_library)`);
+}
+
+/** Все переходы библиотеки с id — сервер передаёт их в AE вместе с уроком. */
+export function libraryFolder(folder: string): Record<string, any> {
+  return Object.fromEntries(Object.entries(libraryItems()).filter(([, i]) => i.folder === folder));
 }

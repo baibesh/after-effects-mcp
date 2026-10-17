@@ -3,8 +3,8 @@
   "extends": "_base",
   "description": "A — тёмный редакционный: тёмный фон с тонкой сеткой, одна акцентная краска, крупный гротеск с плотным трекингом, тонкие линии, номера блоков моно. Картинка в скруглённой маске раскрывается шторкой.",
   "color": {
-    "bg": "#0E1116", "surface": "#1A1F27", "onSurface": "#F2F4F7", "ink": "#F2F4F7", "muted": "#9AA4B2", "light": "#F2F4F7",
-    "brand": "#FF6B3D", "accent": "#FF6B3D",
+    "bg": "#0E1116", "surface": "#1A1F27", "onSurface": "#F2F4F7", "chip": "#1A1F27", "chipText": "#F2F4F7", "ink": "#F2F4F7", "muted": "#9AA4B2", "light": "#F2F4F7",
+    "brand": "#FF6B3D", "accent": "#FF6B3D", "accentText": "#FF6B3D",
     "correct": "#3FB27F", "wrong": "#FF4D4D",
     "quiz": "#161B22", "reward": "#2A1D14",
     "pos": { "noun": "#5B9DFF", "verb": "#FF9B4A", "adj": "#3FB27F", "other": "#A78BFA" },

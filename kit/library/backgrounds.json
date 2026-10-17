@@ -1,0 +1,92 @@
+{
+  "description": "Фоны: самый нижний слой композиции, во всю длину. По умолчанию — shape.background стиля. Цвета — роли color стиля, размеры — px при базе 1080. Узор едва заметен (тонкие линии, прозрачность), движение — медленный дрейф. Числа — docs/research/motion-design-pro.md §3(а), §7.10.",
+  "items": {
+    "bg.solid": {
+      "kind": "background",
+      "description": "Сплошной цвет color.bg",
+      "params": {
+        "color": "bg"
+      }
+    },
+    "bg.gradient": {
+      "kind": "background",
+      "description": "Мягкий вертикальный градиент: bg сверху, к низу темнее на 6 % к ink",
+      "params": {
+        "color": "bg",
+        "toward": "ink",
+        "mix": 0.06
+      }
+    },
+    "bg.grid-fine": {
+      "kind": "background",
+      "description": "Тонкая сетка 48 px цветом color.line, линия 1 px",
+      "params": {
+        "color": "bg",
+        "line": "line",
+        "step": 48,
+        "width": 1,
+        "opacity": 100,
+        "drift": 0
+      }
+    },
+    "bg.dots": {
+      "kind": "background",
+      "description": "Сетка точек 32 px, точка 3 px, медленный дрейф по диагонали",
+      "params": {
+        "color": "bg",
+        "line": "line",
+        "step": 32,
+        "dot": 3,
+        "opacity": 100,
+        "drift": 12
+      }
+    },
+    "bg.panel": {
+      "kind": "background",
+      "description": "Плашка цвета brand: 9:16 — шапка над safe-зоной (14 %), 16:9 — левые 38 % (картинка ложится на неё); въезжает от края за dur.transition",
+      "params": {
+        "color": "bg",
+        "panel": "brand",
+        "size": {
+          "9x16": 0.14,
+          "16x9": 0.38,
+          "1x1": 0.3
+        }
+      }
+    },
+    "bg.blocks": {
+      "kind": "background",
+      "description": "Нижняя плоскость цвета surface: 9:16 — под safe-зоной (33 %, зона интерфейса Shorts), 16:9 — 20 %; поднимается от низа за dur.transition",
+      "params": {
+        "color": "bg",
+        "block": "surface",
+        "size": {
+          "9x16": 0.33,
+          "16x9": 0.2,
+          "1x1": 0.25
+        }
+      }
+    },
+    "bg.noise": {
+      "kind": "background",
+      "description": "Сплошной цвет и мягкий фрактальный шум 15 % поверх (живая фактура без узора)",
+      "params": {
+        "color": "bg",
+        "opacity": 15
+      }
+    },
+    "bg.blobs": {
+      "kind": "background",
+      "description": "Три размытых пятна акцентных цветов (40 % ширины), медленный дрейф, период 9 с",
+      "params": {
+        "color": "bg",
+        "blobs": [
+          "brand",
+          "accent",
+          "surface"
+        ],
+        "opacity": 35
+      }
+    }
+  }
+}

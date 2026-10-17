@@ -5,13 +5,14 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import * as fs from "node:fs";
 import * as path from "node:path";
 import { deliver } from "./deliver.js";
 import { FORMATS, PLATFORMS, type FormatKey, type PlatformKey } from "./formats.js";
 import { listEffects, resolveEffect } from "./effects.js";
 import { grabFrames } from "./frames.js";
 import { listPresets, PRESETS_DIR, resolvePreset } from "./presets.js";
-import { listCurves, listLibrary, listStyles, resolveLibraryItem, resolveStyle } from "./styles.js";
+import { libraryFolder, listCurves, listLibrary, listStyles, resolveLibraryItem, resolveStyle } from "./styles.js";
 import { config, runInAE } from "./runner.js";
 
 const server = new McpServer({ name: "after-effects", version: "0.1.0" });
@@ -294,7 +295,7 @@ server.registerTool(
   "audit_animation",
   {
     description:
-      "Проверка анимации по правилам /animation-craft, проект не меняется. linear — линейные ключи движения (ease нужен); hold — у персонажа ничего не меняется дольше maxHold кадров (учитываются ключи, выражения, анимация внутри прекомпа — моргание, дыхание); accent — пик движения к ударному слогу должен быть на 1–6 кадров раньше (лучше 2–4); entrance — несколько новых элементов входят в пределах 4 кадров; expression — ошибки выражений. Кадры — при 24 fps. Звать после сборки сцены и перед рендером; исправлять warning/error.",
+      "Проверка анимации по правилам /animation-craft, проект не меняется. linear — линейные ключи движения (ease нужен); hold — у персонажа ничего не меняется дольше maxHold кадров (учитываются ключи, выражения, анимация внутри прекомпа — моргание, дыхание); accent — пик движения к ударному слогу должен быть на 1–6 кадров раньше (лучше 2–4); entrance — несколько новых элементов входят в пределах 4 кадров; expression — ошибки выражений; со style — правила урока (safe-зона, кегль, контраст, Easy Ease, idle, ритм). Кадры — при 24 fps. Звать после сборки сцены и перед рендером; исправлять warning/error.",
     inputSchema: {
       comp: compName,
       start: z.number().min(0).optional().describe("Начало проверяемого отрезка, с"),
@@ -309,9 +310,19 @@ server.registerTool(
       accentLayers: z.array(z.string()).optional().describe("Где искать акценты (по умолчанию — все слои с ключами движения)"),
       depth: z.number().int().min(0).max(6).optional().describe("Глубина захода в прекомпы для холдов (по умолчанию 3)"),
       limit: z.number().int().min(1).max(500).optional(),
+      style: z.string().optional().describe("Стиль серии (list_styles): ещё правила урока — easyEase, safe (safe-зона формата), size (type.min), contrast (4,5:1 к фону стиля), idle (> 3 циклов), rhythm (4 с без событий); блоки-прекомпы проверяются вместе с мастером"),
+      project: z.string().optional().describe("Папка ae/ проекта со своими стилями"),
     },
   },
-  (a) => call("audit_animation", a, 300),
+  (a) => {
+    const { style, project, ...rest } = a;
+    if (!style) return call("audit_animation", rest, 300);
+    try {
+      return call("audit_animation", { ...rest, style: resolveStyle(style, project) }, 300);
+    } catch (e) {
+      return text(`Ошибка: ${(e as Error).message}`, true);
+    }
+  },
 );
 
 // ---------- рендер и форматы ----------
@@ -691,7 +702,7 @@ server.registerTool(
   {
     description:
       "Примитивы библиотеки (kit/library/*.json) — движение, текст, линии, оформленные стилем серии: id, папка (motion/text/lines), вид (enter/exit/emphasis/idle/draw…), описание, длительность (мс или токен motion.dur стиля), цель (layer — слой, text — текстовый слой, points — from/to, others — список слоёв), параметры с умолчаниями. Проект не меняется.",
-    inputSchema: { folder: z.enum(["motion", "text", "lines"]).optional() },
+    inputSchema: { folder: z.enum(["motion", "text", "lines", "images", "backgrounds", "blocks", "transitions"]).optional() },
   },
   ({ folder }) => text(listLibrary(folder)),
 );
@@ -727,6 +738,122 @@ server.registerTool(
     }
     const { project: _project, id: _id, ...rest } = a;
     return call("apply_library", { ...rest, style, item });
+  },
+);
+
+const boxArg = z.tuple([z.number(), z.number(), z.number().positive(), z.number().positive()]).describe("Рамка [центр x, центр y, ширина, высота], px композиции");
+
+server.registerTool(
+  "add_background",
+  {
+    description:
+      "Фон в стиле серии самым нижним слоем композиции, во всю длину: id из list_library folder=backgrounds (bg.solid, bg.gradient, bg.grid-fine, bg.dots, bg.panel, bg.blocks, bg.noise, bg.blobs) или фон стиля (shape.background). Цвета — роли стиля; panel/blocks въезжают от start.",
+    inputSchema: {
+      comp: compName,
+      style: z.string().describe("Стиль из list_styles"),
+      id: z.string().optional(),
+      start: z.number().min(0).optional(),
+      params: z.record(z.string(), z.any()).optional(),
+      project: styleProject,
+    },
+  },
+  (a) => {
+    try {
+      const { project, style, ...rest } = a;
+      return call("add_background", { ...rest, style: resolveStyle(style, project) });
+    } catch (e) {
+      return text(`Ошибка: ${(e as Error).message}`, true);
+    }
+  },
+);
+
+server.registerTool(
+  "add_image",
+  {
+    description:
+      "Картинка в рамке стиля: маска (shape.imageMask: rounded/rect/circle; cutout — PNG с альфой, обводка если shape.sticker = outline-white; none), cover/contain с точкой фокуса, цветокоррекция под палитру (shape.imageGrade: image.normalize | image.duotone | none), раскрытие маской и медленный наезд внутри рамки (motion.image стиля), zoom — наезд к детали. Картинка сидит под матом, рамка неподвижна. warning — если исходника не хватает по разрешению.",
+    inputSchema: {
+      comp: compName,
+      style: z.string(),
+      file: z.string().describe("Путь к PNG/JPG: абсолютный или от папки ae/"),
+      box: boxArg,
+      mask: z.enum(["rounded", "rect", "circle", "cutout", "none"]).optional(),
+      fit: z.enum(["cover", "contain"]).optional(),
+      focus: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional().describe("Точка интереса [u, v] долями картинки"),
+      grade: z.string().optional(),
+      start: z.number().min(0).optional(),
+      hold: z.number().positive().optional().describe("Длина сцены для наезда, с (по умолчанию 5)"),
+      reveal: z.boolean().optional(),
+      kenBurns: z.boolean().optional(),
+      zoom: z.object({ focus: z.tuple([z.number(), z.number()]), start: z.number().min(0), scale: z.number().optional() }).optional(),
+      name: z.string().optional(),
+      project: styleProject,
+    },
+  },
+  (a) => {
+    try {
+      const { project, style, ...rest } = a;
+      return call("add_image", { ...rest, style: resolveStyle(style, project) });
+    } catch (e) {
+      return text(`Ошибка: ${(e as Error).message}`, true);
+    }
+  },
+);
+
+const formatArg = z.enum(["9x16", "16x9", "1x1"]).optional().describe("Формат композиции блока, по умолчанию 9x16");
+
+server.registerTool(
+  "build_block",
+  {
+    description:
+      "Собрать блок урока своей композицией в стиле серии: title, word, image-callout, quiz-pick, recap (list_library folder=blocks — слоты, тайминг, формат data). Фон, раскладка по safe-зоне формата, входы, удержание текста — из стиля и blocks.json. Ответ: имя композиции, длина и beats — моменты входов (для голоса и переходов). Для отладки раскладки; урок целиком — build_lesson.",
+    inputSchema: {
+      type: z.string().describe('"word", "quiz-pick"…'),
+      style: z.string(),
+      data: z.record(z.string(), z.any()).describe('Содержимое: word {word, ipa, tr, example ("…*слово*…"), image, focus}; quiz-pick {q, options:[{t, ok}], explain}; image-callout {image, labels:[{at:[u,v], text}], title}; recap {words, title}; title {title, subtitle, label}'),
+      format: formatArg,
+      index: z.number().int().min(0).optional().describe("Номер блока в уроке (метка «02 — NEW WORD»)"),
+      audience: z.enum(["teens", "kids"]).optional().describe("Время на раздумье в квизе: 3 с / 5 с"),
+      name: z.string().optional(),
+      project: styleProject,
+    },
+  },
+  (a) => {
+    try {
+      const { project, style, type, ...rest } = a;
+      return call("build_block", { ...rest, style: resolveStyle(style, project), item: resolveLibraryItem(type) }, 300);
+    } catch (e) {
+      return text(`Ошибка: ${(e as Error).message}`, true);
+    }
+  },
+);
+
+server.registerTool(
+  "build_lesson",
+  {
+    description:
+      "Собрать урок по партитуре: каждый блок — своя композиция («lesson · <id> · <формат> · NN <тип>»), мастер «lesson · <id> · <формат>» с переходами (default — motion.transition стиля, beforeGame — перед квизом, у блока — свой transition). Партитура — объект lesson или путь к lesson.json (поля: id, style?, formats, audience, transitions, blocks: [{type, …данные блока}]). Ответ: на каждый формат длина и timeline — блоки со стартом/концом, переходом и beats. Потом — audit_animation со style и get_frames.",
+    inputSchema: {
+      lesson: z.union([z.string(), z.record(z.string(), z.any())]).describe("Партитура или путь к lesson.json"),
+      style: z.string().optional().describe("Стиль серии; по умолчанию lesson.style"),
+      formats: z.array(z.enum(["9x16", "16x9", "1x1"])).optional().describe("Вместо lesson.formats"),
+      project: styleProject,
+    },
+  },
+  (a) => {
+    try {
+      const lesson: any = typeof a.lesson === "string" ? JSON.parse(fs.readFileSync(a.lesson, "utf8")) : { ...a.lesson };
+      if (a.formats) lesson.formats = a.formats;
+      if (!lesson.id) throw new Error("В партитуре нет id");
+      const styleId = a.style ?? lesson.style;
+      if (!styleId) throw new Error("Нет стиля: style вызова или lesson.style");
+      const style = resolveStyle(styleId, a.project);
+      const blocks = lesson.blocks ?? [];
+      if (!Array.isArray(blocks) || !blocks.length) throw new Error("В партитуре нет blocks");
+      return call("build_lesson", { lesson, style, transitions: libraryFolder("transitions") }, 900);
+    } catch (e) {
+      return text(`Ошибка: ${(e as Error).message}`, true);
+    }
   },
 );
 

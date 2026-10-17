@@ -8,6 +8,7 @@
 //   accent      пик движения к ударному слогу: должен быть на 1–6 кадров раньше (лучше 2–4)
 //   entrance    два новых элемента входят в пределах 4 кадров (дети одного родителя — один элемент)
 //   expression  выражение с ошибкой
+//   + со стилем серии (style): easyEase, safe, size, contrast, idle, rhythm — mcp/tools/audit-lesson.jsx
 
 var MCP_F24 = 1 / 24;
 
@@ -329,6 +330,7 @@ MCP_TOOLS.audit_animation = {
     var pattern = new RegExp(patternText, "i");
     var issues = [];
     var counts = {linear: 0, hold: 0, accent: 0, entrance: 0, expression: 0};
+    if (args.style) { counts.easyEase = 0; counts.safe = 0; counts.size = 0; counts.contrast = 0; counts.idle = 0; counts.rhythm = 0; }
     var characters = [];
     var cache = {};
     /**
@@ -531,6 +533,8 @@ MCP_TOOLS.audit_animation = {
       }
     }
 
+    var lessonStats = args.style ? mcpAuditLesson(comp, args.style, add, from, to) : null;
+
     var limit = args.limit || 60;
     var order = {error: 0, warning: 1, info: 2};
     issues.sort(function (a, b) { return order[a.severity] - order[b.severity]; });
@@ -543,6 +547,7 @@ MCP_TOOLS.audit_animation = {
       beatsWithoutAccent: fromVoice ? quietBeats : undefined,
       beatsFrom: args.beats ? "beats" : (args.beatLayer ? "beatLayer" : (args.useCompMarkers ? "compMarkers" : "voice !-markers")),
       counts: counts,
+      lesson: lessonStats ? {style: args.style.id, texts: lessonStats.texts, events: lessonStats.events} : undefined,
       issues: issues.slice(0, limit),
       truncated: issues.length > limit ? issues.length - limit : 0,
       note: characters.length ? undefined : "Персонажи не найдены (шаблон " + patternText + ") — проверка холдов не шла; передайте characters: [имена слоёв]."

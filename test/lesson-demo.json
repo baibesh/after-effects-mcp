@@ -1,0 +1,14 @@
+{
+  "id": "demo-en",
+  "style": "editorial-dark",
+  "formats": ["9x16"],
+  "audience": "teens",
+  "transitions": { "default": "style", "beforeGame": "trans.shapeWipe" },
+  "blocks": [
+    { "type": "title", "title": "Hello and wave", "subtitle": "Сәлем · 3 new words", "label": "Test lesson" },
+    { "type": "word", "word": "wave", "ipa": "/weɪv/", "tr": { "kk": "қол бұлғау", "ru": "махать" }, "example": "I *wave* to my friend.", "image": "~/kemel-bilim/kemel-bilim-content/ae/assets/doodle/taqiya-wave.png", "focus": [0.5, 0.3] },
+    { "type": "image-callout", "image": "~/kemel-bilim/kemel-bilim-content/ae/assets/doodle/friend-aha.png", "focus": [0.5, 0.3], "labels": [{ "at": [0.5, 0.18], "text": "hat — бөрік" }, { "at": [0.47, 0.42], "text": "scarf — шарф" }], "title": "Clothes" },
+    { "type": "quiz-pick", "q": "What is on his head?", "options": [{ "t": "a scarf" }, { "t": "a hat", "ok": true }, { "t": "a book" }], "explain": "He has a hat on his head." },
+    { "type": "recap", "words": ["wave", "hat", "scarf"], "title": "Today" }
+  ]
+}

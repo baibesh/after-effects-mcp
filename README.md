@@ -149,7 +149,7 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 | `list_presets` | пресеты: свои (`local`) или штатные Adobe (`adobe`, с поиском) | `{"source": "adobe", "query": "Behaviors"}` |
 | `list_styles` | стили серии (`kit/styles`, `ae/styles` проекта): наследование, описание, ключевые цвета и шрифты; `curves: true` — и кривые `kit/library/ease.json` | `{"curves": true}` |
 | `get_style` | итоговые токены стиля после `extends` или один токен по пути | `{"id": "editorial-dark", "path": "motion.dur"}` |
-| `list_library` | примитивы библиотеки (`motion`, `text`, `lines`): вид, описание, длительность, цель, параметры | `{"folder": "lines"}` |
+| `list_library` | библиотека: `motion`, `text`, `lines`, `images`, `backgrounds`, `blocks`, `transitions` — вид, описание, длительность, цель, параметры | `{"folder": "blocks"}` |
 
 ### Проект и слои
 
@@ -196,6 +196,10 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 
 | Инструмент | Что делает | Пример |
 |---|---|---|
+| `add_background` | фон стиля (или `id` из `backgrounds`) самым нижним слоем | `{"comp": "Scene", "style": "swiss-light"}` |
+| `add_image` | картинка в рамке стиля: маска, cover/фокус, цветокоррекция, раскрытие, наезд, `zoom` к детали; `warning` при нехватке разрешения | `{"comp": "Scene", "style": "editorial-dark", "file": "assets/x.png", "box": [540, 700, 760, 820], "focus": [0.5, 0.3]}` |
+| `build_block` | блок урока своей композицией: `title`, `word`, `image-callout`, `quiz-pick`, `recap`; ответ — длина и `beats` | `{"type": "word", "style": "editorial-dark", "format": "9x16", "data": {"word": "wave", "ipa": "/weɪv/", "tr": "қол бұлғау"}}` |
+| `build_lesson` | урок по партитуре (объект или путь к `lesson.json`): блоки и мастер с переходами на каждый формат; ответ — `timeline` | `{"lesson": "/…/test/lesson-demo.json", "formats": ["9x16", "16x9"]}` |
 | `apply_library` | примитив библиотеки в стиле серии: на слой, по слою (линии) или по точкам `from`/`to`; ответ — `start`/`end` | `{"comp": "Scene", "id": "text.letters", "style": "editorial-dark", "layer": "word", "start": 0.6}` · `{"…", "id": "draw.arrow", "from": "tr", "to": "card"}` |
 | `apply_preset` | пресет к слою от `start`: JSON-данные (ease по отрезкам, `speed`), свой `.ffx` или `adobe:…`; `"move:<имя>"` — движение кита (как `apply_motion`) | `{"comp": "Scene", "layer": "title", "preset": "accent-punch", "start": 2}` · `{"…", "preset": "move:punch", "start": 2.6}` |
 | `list_motions` | каталог 41 движения кита: группа A–H, слот, параметры с умолчаниями, что видит зритель, `needs`; `activeStyle` — действующий стиль (`style` вызова → композиции `comp`/активной → проекта → `hand`, со `scope`), `swappedTo` — подмены в нём | `{"group": "A"}` · `{"comp": "Scene"}` · `{"style": "brisk"}` |

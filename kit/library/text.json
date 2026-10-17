@@ -2,45 +2,106 @@
   "description": "Анимация текста по единицам (буквы, слова, строки) через Expression Selector: у каждой единицы своя кривая из ease.json со сдвигом stagger. animate — что у единицы в начале: position [x, y] (px при базе 1080 или \"Nem\" — доля кегля), opacity, scale, blur. mask — обрезка по строкам (буквы выходят из-под линии). Каскад целиком не дольше motion.stagger.maxTotal. Числа — docs/research/motion-design-pro.md §7.6.",
   "items": {
     "text.maskUp": {
-      "kind": "enter", "dur": "text", "basedOn": "lines", "stagger": "line", "mask": true,
+      "kind": "enter",
+      "dur": "text",
+      "basedOn": "lines",
+      "stagger": "line",
+      "mask": true,
       "description": "Строки выезжают снизу из-под своей линии — заголовки и фразы стилей A и B",
-      "animate": { "position": [0, "1.15em"] }
+      "animate": {
+        "position": [
+          0,
+          "1.15em"
+        ]
+      }
     },
     "text.letters": {
-      "kind": "enter", "dur": "text", "basedOn": "chars", "stagger": "letter", "mask": true,
+      "kind": "enter",
+      "dur": "text",
+      "basedOn": "chars",
+      "stagger": "letter",
+      "mask": true,
       "description": "Буквы выходят из-под линии по одной — новое слово, до 12 букв",
-      "animate": { "position": [0, "1.1em"] }
+      "animate": {
+        "position": [
+          0,
+          "1.1em"
+        ]
+      }
     },
     "text.rise": {
-      "kind": "enter", "dur": "text", "basedOn": "words", "stagger": "word",
+      "kind": "enter",
+      "dur": "text",
+      "basedOn": "words",
+      "stagger": "word",
       "description": "Слова поднимаются на 48 px с проявлением — подписи, перевод, пояснение",
-      "animate": { "position": [0, 48], "opacity": 0 }
+      "animate": {
+        "position": [
+          0,
+          48
+        ],
+        "opacity": 0
+      }
     },
     "text.fadeWords": {
-      "kind": "enter", "dur": "word", "basedOn": "words", "stagger": "word",
+      "kind": "enter",
+      "dur": "word",
+      "basedOn": "words",
+      "stagger": "word",
       "description": "Слова проявляются по одной без движения — длинная фраза, субтитр",
-      "animate": { "opacity": 0 }
+      "animate": {
+        "opacity": 0
+      }
     },
     "text.unblur": {
-      "kind": "enter", "dur": 550, "basedOn": "chars", "stagger": "letter",
+      "kind": "enter",
+      "dur": 550,
+      "basedOn": "chars",
+      "stagger": "letter",
       "description": "Буквы из расфокуса — спокойный заголовок",
-      "animate": { "opacity": 0, "blur": 24 }
+      "animate": {
+        "opacity": 0,
+        "blur": 24
+      }
     },
     "text.maskDown": {
-      "kind": "exit", "dur": "exit", "basedOn": "lines", "stagger": "line", "mask": true,
+      "kind": "exit",
+      "dur": "exit",
+      "basedOn": "lines",
+      "stagger": "line",
+      "mask": true,
       "description": "Уход: строки уходят вниз под свою линию",
-      "animate": { "position": [0, "1.15em"] }
+      "animate": {
+        "position": [
+          0,
+          "1.15em"
+        ]
+      }
     },
     "text.highlightWord": {
-      "kind": "emphasis", "dur": "micro", "basedOn": "words",
-      "description": "Слово (params.word — текст или номер с 1) окрашивается в акцент — синхронно со словом в голосе",
-      "params": { "word": 1, "color": "accent" },
-      "animate": { "fill": "$color" }
+      "kind": "emphasis",
+      "dur": "micro",
+      "basedOn": "words",
+      "description": "Слово (params.word — текст или номер с 1) окрашивается в акцент для текста (accentText — контрастен фону) — синхронно со словом в голосе",
+      "params": {
+        "word": 1,
+        "color": "accentText"
+      },
+      "animate": {
+        "fill": "$color"
+      }
     },
     "text.counter": {
-      "kind": "counter", "dur": 1000, "curve": "quintOut",
+      "kind": "counter",
+      "dur": 1000,
+      "curve": "quintOut",
       "description": "Число бежит от from до to по кривой (Source Text выражением); decimals, suffix",
-      "params": { "from": 0, "to": 100, "decimals": 0, "suffix": "" }
+      "params": {
+        "from": 0,
+        "to": 100,
+        "decimals": 0,
+        "suffix": ""
+      }
     }
   }
 }

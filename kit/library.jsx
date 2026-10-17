@@ -16,7 +16,7 @@
 
 /** @type {{[folder: string]: any}} */
 var KB_LIB = {};
-var KB_LIB_FOLDERS = ["motion", "text", "lines"];
+var KB_LIB_FOLDERS = ["motion", "text", "lines", "images", "backgrounds", "blocks", "transitions"];
 
 /**
  * Примитив по id: ищется во всех файлах библиотеки.
@@ -219,7 +219,8 @@ function kbLibMotion(style, item, layer, opts) {
     for (var n = 0; n < targets.length; n++) {
       for (var e = 0; e < item.tracks.length; e++) {
         var tr = item.tracks[e];
-        var expr = String(tr.expression)
+        // Метка kb-idle — по ней audit_animation считает одновременные циклы простоя.
+        var expr = "/* kb-idle */ " + String(tr.expression)
           .replace(/\$start/g, String(start))
           .replace(/\$phase/g, String(((opts.index || 0) * 0.9) % 6.283))
           .replace(/\$unit/g, String(unit));
@@ -373,7 +374,7 @@ function kbLibText(style, item, layer, opts) {
 
   if (item.kind === "counter") {
     var c = params;
-    source.expression = KB_LIB_EXPR_CURVE + P +
+    source.expression = "/* kb-text " + start.toFixed(3) + " " + (start + dur).toFixed(3) + " */\n" + KB_LIB_EXPR_CURVE + P +
       "var u=(time-" + start + ")/" + dur + ";var v=" + c.from + "+(" + (c.to - c.from) + ")*cv(u);" +
       "v.toFixed(" + (c.decimals || 0) + ")+" + kbLibQuote(c.suffix || "");
     return { id: item.id, start: start, end: start + dur, layers: [layer.name] };
@@ -409,7 +410,10 @@ function kbLibText(style, item, layer, opts) {
     timing = "var u=(time-" + start + ")/" + dur.toFixed(4) + ";\n";
     amount = "textIndex==" + w + "?100*cv(u):0";
   } else amount = item.kind === "exit" ? "100*cv(u)" : "100*(1-cv(u))";
-  kbProp(selector, ["ADBE Text Expressible Amount"]).expression = KB_LIB_EXPR_CURVE + P + timing + amount; // ae-ok: matchname
+  var units0 = item.kind === "emphasis" ? 1 : n;
+  // Метка kb-text начало конец — по ней audit_animation видит анимацию текста (ключей у выражения нет).
+  var tag = "/* kb-text " + start.toFixed(3) + " " + (start + dur + gap * (units0 - 1)).toFixed(3) + " */\n";
+  kbProp(selector, ["ADBE Text Expressible Amount"]).expression = tag + KB_LIB_EXPR_CURVE + P + timing + amount; // ae-ok: matchname
 
   var units = item.kind === "emphasis" ? 1 : n;
   var end = start + dur + gap * (units - 1);

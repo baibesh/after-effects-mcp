@@ -1,0 +1,12 @@
+{
+  "description": "Переходы между блоками урока в мастер-композиции. По умолчанию — motion.transition стиля; перед игровым блоком — beforeGame урока. overlap — блоки идут внахлёст (push, whip, zoom, fade, iris); cover — склейка под шторкой (shapeWipe). Числа — docs/research/motion-design-pro.md §3(б), §7.7.",
+  "items": {
+    "trans.cut": { "kind": "transition", "dur": 0, "description": "Склейка без перехода — на начало фразы" },
+    "trans.push": { "kind": "transition", "dur": 600, "mode": "overlap", "curve": "quartInOut", "description": "Новый блок выталкивает старый влево («вперёд по уроку»), с motion blur" },
+    "trans.whip": { "kind": "transition", "dur": 330, "mode": "overlap", "curve": "expoInOut", "description": "Резкий горизонтальный сдвиг на ширину кадра с направленным размытием — смена темы" },
+    "trans.shapeWipe": { "kind": "transition", "dur": 550, "mode": "cover", "curve": "expoInOut", "params": { "colors": ["brand", "accent", "next"], "stagger": 80 }, "description": "Три цветные шторки (brand, accent, фон следующего блока) проходят кадр, склейка под последней — вход в квиз, новый раздел" },
+    "trans.iris": { "kind": "transition", "dur": 500, "mode": "overlap", "curve": "expoInOut", "description": "Новый блок раскрывается кругом из центра поверх старого" },
+    "trans.zoomThrough": { "kind": "transition", "dur": 650, "mode": "overlap", "description": "Пролёт: старый блок увеличивается и гаснет (expoIn), новый приходит с 60 % (expoOut)" },
+    "trans.fade": { "kind": "transition", "dur": 400, "mode": "overlap", "curve": "sineInOut", "description": "Наплыв — только для «воспоминаний» и повторов" }
+  }
+}

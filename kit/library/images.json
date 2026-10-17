@@ -1,0 +1,33 @@
+{
+  "description": "Подача картинки: маска (shape.imageMask стиля: rounded, rect, circle, cutout, none), цветокоррекция под палитру (grade), раскрытие и медленный наезд. Картинка сидит под матом (track matte), поэтому наезд идёт внутри рамки, а не вместе с ней. Числа — docs/research/motion-design-pro.md §3(д), §7.5.",
+  "items": {
+    "image.normalize": {
+      "kind": "grade",
+      "description": "Привести разнородные картинки к одному виду: точки чёрного и белого 5/95 %, насыщенность −15, тонировка в палитру 15 % (ink → light)",
+      "params": { "black": 0.05, "white": 0.95, "saturation": -15, "tint": 15, "dark": "ink", "light": "light" }
+    },
+    "image.duotone": {
+      "kind": "grade",
+      "description": "Двухцветная картинка в палитру стиля: тень — ink, свет — bg; amount 40 — для контента, 100 — для фона",
+      "params": { "amount": 40, "dark": "ink", "light": "bg" }
+    },
+    "image.maskReveal": {
+      "kind": "reveal", "dur": 550,
+      "description": "Раскрытие маской: прямоугольная — шторкой снизу вверх, круглая — ирисом из центра"
+    },
+    "image.scaleIn": {
+      "kind": "reveal", "dur": "icon",
+      "description": "Для вырезки и картинки без маски: проявление с 80 % (enter.scaleIn)"
+    },
+    "image.kenBurns": {
+      "kind": "drift",
+      "description": "Медленный наезд 100 → 110 % за длину сцены со сдвигом к точке фокуса на 3 % кадра; не больше 120 % (запас разрешения ×1,5)",
+      "params": { "scale": 110, "drift": 0.03 }
+    },
+    "image.zoomDetail": {
+      "kind": "zoom", "dur": 800, "curve": "quartInOut",
+      "description": "Наезд к детали (focus u, v) до 200 % внутри рамки — потом draw.circle по детали",
+      "params": { "scale": 200 }
+    }
+  }
+}

@@ -9,12 +9,13 @@
     "1x1": { "top": 96, "bottom": 96, "left": 96, "right": 96 }
   },
   "color": {
-    "bg": "#F6F4EF", "surface": "#FFFFFF", "onSurface": "#1E2233", "ink": "#1E2233", "muted": "#5E6475", "light": "#FFFFFF",
-    "brand": "#3B5BFF", "accent": "#FFB400",
+    "bg": "#F6F4EF", "surface": "#FFFFFF", "onSurface": "#1E2233", "chip": "#1E2233", "chipText": "#F6F4EF", "ink": "#1E2233", "muted": "#5E6475", "light": "#FFFFFF",
+    "brand": "#3B5BFF", "accent": "#FFB400", "accentText": "#8A5200",
     "correct": "#2BB673", "wrong": "#E8615A",
     "quiz": "#2B2F6B", "reward": "#FFE7B8",
     "pos": { "noun": "#3B82F6", "verb": "#F97316", "adj": "#22A06B", "other": "#8B5CF6" },
-    "shadow": "#1E2233"
+    "shadow": "#1E2233",
+    "line": "#E2DED5"
   },
   "type": {
     "font": { "display": "Inter-Bold", "hero": "Inter-Black", "text": "Inter-SemiBold", "regular": "Inter-Regular", "mono": "Menlo-Regular", "ipa": "Inter-Regular" },
@@ -24,7 +25,7 @@
       "h2": { "9x16": 72, "16x9": 64 },
       "body": { "9x16": 54, "16x9": 48 },
       "translation": { "9x16": 44, "16x9": 40 },
-      "label": { "9x16": 40, "16x9": 32 }
+      "label": { "9x16": 40, "16x9": 40 }
     },
     "tracking": { "hero": 0, "h1": 0, "body": 5, "label": 40 },
     "ipaRatio": 0.55,
@@ -42,6 +43,7 @@
     "cap": "round",
     "imageMask": "rounded",
     "imageFrame": "none",
+    "imageGrade": "image.normalize",
     "background": "bg.solid",
     "sticker": "outline-white"
   },

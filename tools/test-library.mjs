@@ -111,3 +111,69 @@ test('библиотека против всех стилей: токены дл
     }
   }
 })
+
+const more = Object.fromEntries(['images', 'backgrounds', 'blocks', 'transitions'].map((f) => [f, load(`library/${f}.json`).items]))
+for (const f of ['blocks.jsx', 'lesson-build.jsx']) vm.runInContext(readFileSync(join(kitDir, f), 'utf8'), ctx, { filename: f })
+
+test('картинки, фоны, блоки, переходы: описания и ссылки стилей', () => {
+  for (const [folder, items] of Object.entries(more)) {
+    for (const [id, it] of Object.entries(items)) {
+      assert.ok(it.description && it.kind, `${folder}/${id}: description и kind`)
+      if (typeof it.dur === 'string') for (const st of Object.values(styles)) assert.ok(st.motion.dur[it.dur], `${id}: motion.dur.${it.dur}`)
+      if (it.curve) assert.ok(ctx.KB_CURVES[it.curve], `${id}: кривая ${it.curve}`)
+    }
+  }
+  for (const st of Object.values(styles)) {
+    assert.ok(more.backgrounds[st.shape.background], `${st.id}: shape.background ${st.shape.background}`)
+    assert.ok(more.images[st.shape.imageGrade] || st.shape.imageGrade === 'none', `${st.id}: shape.imageGrade`)
+    assert.ok(more.transitions[st.motion.transition], `${st.id}: motion.transition ${st.motion.transition}`)
+    for (const id of st.motion.image) assert.ok(more.images[id], `${st.id}: motion.image ${id}`)
+    assert.ok(['rounded', 'rect', 'circle', 'cutout', 'none'].includes(st.shape.imageMask), `${st.id}: shape.imageMask`)
+    for (const [bid, bg] of Object.entries(more.backgrounds)) {
+      const p = bg.params || {}
+      for (const role of [p.color, p.line, p.panel, p.block, p.toward, ...(p.blobs || [])].filter(Boolean)) assert.match(st.color[role] ?? '', /^#/, `${bid}: color.${role} в ${st.id}`)
+    }
+    for (const role of more.transitions['trans.shapeWipe'].params.colors.filter((r) => r !== 'next')) assert.match(st.color[role] ?? '', /^#/, `shapeWipe: color.${role} в ${st.id}`)
+    for (const role of ['accentText', 'onSurface', 'surface', 'correct', 'light', 'line', 'chip', 'chipText']) assert.match(st.color[role] ?? '', /^#/, `${st.id}: color.${role}`)
+  }
+})
+
+test('блоки: раскладки обоих форматов в долях safe-зоны, биты — числа', () => {
+  for (const [id, b] of Object.entries(more.blocks)) {
+    for (const fmt of ['9x16', '16x9']) {
+      const lay = b.layout[fmt]
+      assert.ok(lay, `${id}: нет раскладки ${fmt}`)
+      for (const [slot, v] of Object.entries(lay)) {
+        if (!Array.isArray(v)) continue
+        for (const x of v) assert.ok(x >= 0 && x <= 1, `${id}.${fmt}.${slot}: ${x} вне 0…1`)
+      }
+    }
+    for (const [k, v] of Object.entries(b.beats)) assert.equal(typeof v, 'number', `${id}.beats.${k}`)
+    assert.ok(ctx.KB_BLOCKS[id], `${id}: нет сборщика в blocks.jsx`)
+  }
+})
+
+test('данные блока проверяются до сборки', () => {
+  const chk = (t, d) => () => ctx.kbBlockCheckData(t, inVm(d))
+  assert.throws(chk('word', {}), /word: нет поля «word»/)
+  assert.throws(chk('quiz-pick', { q: 'x', options: [{ t: 'a' }] }), /2–4 варианта/)
+  assert.throws(chk('quiz-pick', { q: 'x', options: [{ t: 'a' }, { t: 'b' }] }), /ровно один вариант с ok: true \(сейчас 0\)/)
+  assert.throws(chk('quiz-pick', { q: 'x', options: [{ t: 'a', ok: true }, { t: 'b', ok: true }] }), /сейчас 2/)
+  assert.throws(chk('recap', { words: [] }), /recap/)
+  assert.doesNotThrow(chk('quiz-pick', { q: 'x', options: [{ t: 'a' }, { t: 'b', ok: true }] }))
+  assert.equal(ctx.kbBlockTarget('I eat an *apple* every day.').text, 'I eat an apple every day.')
+  assert.equal(ctx.kbBlockTarget('I eat an *apple* every day.').word, 'apple')
+  assert.equal(ctx.kbBlockTarget('no target').word, null)
+})
+
+test('урок: выбор перехода и перекрытие блоков', () => {
+  const st = styles['color-blocks']
+  const L = (t) => inVm({ transitions: t })
+  assert.equal(ctx.kbLessonTransition(st, L({ default: 'style' }), inVm({ type: 'word' })), 'trans.iris')
+  assert.equal(ctx.kbLessonTransition(st, L({ default: 'style', beforeGame: 'trans.shapeWipe' }), inVm({ type: 'quiz-pick' })), 'trans.shapeWipe')
+  assert.equal(ctx.kbLessonTransition(st, L({ default: 'trans.fade' }), inVm({ type: 'word' })), 'trans.fade')
+  assert.equal(ctx.kbLessonTransition(st, L({}), inVm({ type: 'word', transition: 'trans.cut' })), 'trans.cut')
+  near(ctx.kbTransOverlap(st, inVm(more.transitions['trans.iris']), 30), Math.round(0.5 * 0.9 * 30) / 30)
+  assert.equal(ctx.kbTransOverlap(st, inVm(more.transitions['trans.shapeWipe']), 30), 0)
+  assert.equal(ctx.kbTransOverlap(st, inVm(more.transitions['trans.cut']), 30), 0)
+})

@@ -192,9 +192,14 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 
 | Инструмент | Что делает | Пример |
 |---|---|---|
-| `apply_preset` | пресет к слою от `start`: JSON-данные (ease по отрезкам, `speed`), свой `.ffx` или `adobe:…` | `{"comp": "Scene", "layer": "title", "preset": "accent-punch", "start": 2}` |
+| `apply_preset` | пресет к слою от `start`: JSON-данные (ease по отрезкам, `speed`), свой `.ffx` или `adobe:…`; `"move:<имя>"` — движение кита (как `apply_motion`) | `{"comp": "Scene", "layer": "title", "preset": "accent-punch", "start": 2}` · `{"…", "preset": "move:punch", "start": 2.6}` |
+| `list_motions` | каталог 41 движения кита: группа A–H, слот, параметры с умолчаниями, что видит зритель, `needs`; со `style` — подмены | `{"group": "A", "style": "brisk"}` |
+| `apply_motion` | движение кита (`kbMove`) на слой (номер или имя) или на выделение; стиль композиции/проекта; ответ — план start/hit/end и sfx | `{"comp": "Scene", "layer": "BIGGER", "name": "land", "at": 1.0, "opts": {"unit": "char", "strength": 1.2}}` · `{"selection": true, "name": "rise", "at": 1.6}` |
+| `set_motion_style` | стиль движения `hand` / `brisk` / `lesson` / `magazine` для композиции (`comp`) или проекта; `null` — снять | `{"style": "brisk", "comp": "Scene"}` |
+| `get_selection` | выделенные слои активной композиции: номер, имя, тип, in/out, действующий стиль | `{}` |
 
 Свои пресеты, формат JSON и таблица готовых (`fade-up`, `pop-in`, `accent-punch`, `drop-out`, `breathe`…) — [presets/README.md](presets/README.md).
+Движения кита (текст, акценты, субтитры, плашки, камера, герой) и их параметры — [kit/README.md](kit/README.md) «Пресеты движения».
 
 ### Проверка по правилам ремесла
 

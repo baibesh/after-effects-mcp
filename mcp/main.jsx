@@ -19,3 +19,4 @@
 //@include "tools/edit.jsx"
 //@include "tools/time.jsx"
 //@include "tools/effects.jsx"
+//@include "tools/motion.jsx"

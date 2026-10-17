@@ -645,12 +645,16 @@ server.registerTool(
     inputSchema: {
       comp: compName,
       layer: layerName,
-      preset: z.string().describe('Имя из list_presets: "fade-up", "мои/zoom" или "adobe:Behaviors/…"'),
+      preset: z.string().describe('Имя из list_presets: "fade-up", "мои/zoom", "adobe:Behaviors/…" или "move:<движение>" — движение кита, как apply_motion (start → opts.start, speed не действует)'),
       start: z.number().min(0).optional(),
       speed: z.number().min(0.25).max(4).optional(),
     },
   },
   async ({ comp, layer, preset, start, speed }) => {
+    // «move:<имя>» — движение кита (apply_motion): одна точка входа для агентов, которые знают apply_preset
+    if (preset.startsWith("move:")) {
+      return call("apply_motion", { comp, layer, name: preset.slice(5), opts: start !== undefined ? { start } : {} });
+    }
     let resolved;
     try {
       resolved = resolvePreset(preset);
@@ -659,6 +663,66 @@ server.registerTool(
     }
     return call("apply_preset", { comp, layer, name: preset, start, speed, ...resolved });
   },
+);
+
+// ---------- движения кита (kit/move.jsx) ----------
+
+const motionStyle = z.enum(["hand", "brisk", "lesson", "magazine"]);
+const layerRef = z.union([z.string(), z.number().int().min(1)]).describe("Слой: номер (1 — верхний) или точное имя");
+
+server.registerTool(
+  "list_motions",
+  {
+    description:
+      "Каталог движений кита (41, kit/README.md «Пресеты движения»): имя, группа A–H (A текст-вход, B текст-выход, C цикл, D акцент слова, E субтитры, F плашки, G камера, H реакции героя), слот (in/loop/out/accent), единицы, параметры с умолчаниями, что видит зритель и на чём работает (needs: text — любой текстовый слой; pair — нужен второй слой; plate/cam/actor/voice — собираются китом в скрипте). С style — во что движение подменяется в этом стиле. Проект не меняется.",
+    inputSchema: {
+      group: z.string().optional().describe('Буква группы A–H или группа реестра ("text-in", "text-accent", "actor"…)'),
+      style: motionStyle.optional().describe("Показать подмены этого стиля (swappedTo)"),
+    },
+  },
+  (a) => call("list_motions", a),
+);
+
+server.registerTool(
+  "apply_motion",
+  {
+    description:
+      'Применить движение кита к слою (layer — номер или имя) или к каждому выделенному слою (selection: true; выделение — get_selection). Стиль — из вызова, иначе композиции, иначе проекта (set_motion_style), иначе hand; подмена по стилю — в ответе (swappedFrom). Время: at — секунды удара (движение приходит на 2 к. раньше), или anchor — маркер слоя ({"layer":"voice","marker":"!er"}), или opts.start — первый кадр движения; без них — от начала слоя. opts — параметры движения из list_motions (строка "@Имя" — слой этой композиции). Ответ — план на каждый слой: start/hit/end (секунды и кадры) и sfx-маркеры. Одна отмена на вызов. Реакции героя (группа H) через MCP не применяются: актёр собирается скриптом кита (kbActor).',
+    inputSchema: {
+      comp: compName.optional().describe("По умолчанию — активная композиция"),
+      layer: layerRef.optional(),
+      selection: z.boolean().optional().describe("Применить к выделенным слоям активной (или указанной) композиции"),
+      name: z.string().describe('Имя движения: "land", "rise", "punch", "marker-swipe"…'),
+      at: z.number().min(0).optional().describe("Секунды удара (опорный слог)"),
+      anchor: z.object({ layer: layerRef, marker: z.string() }).optional().describe("Взять at из маркера слоя"),
+      opts: z.record(z.string(), z.any()).optional().describe('Параметры движения: {"unit":"char","strength":1.2}, {"amount":"strong"}, {"next":"@BIGGER"}'),
+      style: motionStyle.optional().describe("Стиль только для этого вызова"),
+    },
+  },
+  (a) => call("apply_motion", a),
+);
+
+server.registerTool(
+  "set_motion_style",
+  {
+    description:
+      "Стиль движения: hand (по умолчанию, рилсы), brisk (бодрый, ×0,7 длительности), lesson (спокойный урок: без перелёта, рисующиеся линии заменены), magazine (журнал, ×1,6). С comp — для композиции (тег в её комментарии), без comp — для всего проекта. style: null снимает. Ответ — множители и таблица подмен.",
+    inputSchema: {
+      style: motionStyle.nullable().describe("Имя стиля или null — снять"),
+      comp: compName.optional().describe("Композиция; без неё — стиль проекта"),
+    },
+  },
+  (a) => call("set_motion_style", a),
+);
+
+server.registerTool(
+  "get_selection",
+  {
+    description:
+      "Выделенные слои активной композиции (или comp): номер, имя, тип, in/out, время головки и действующий стиль движения — чтобы «примени к этому» работало без имён. Проект не меняется.",
+    inputSchema: { comp: compName.optional().describe("По умолчанию — активная композиция") },
+  },
+  (a) => call("get_selection", a),
 );
 
 const transport = new StdioServerTransport();

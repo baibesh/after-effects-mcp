@@ -3,7 +3,7 @@
 Общий кит проектов kemel-bilim и dilyolu (и MCP-сервера в этом репозитории). **Источник — `ae-plugin/kit`**; в проекте `ae/kit/` — копия с меткой `.kit-source` (коммит ae-plugin), ролики пишут `//@include "../../kit/core.jsx"` как раньше, `KB_ROOT` — папка `ae/` проекта.
 
 - Правка кита: в `ae-plugin/kit` → коммит → `node ~/Projects/ae-plugin/tools/kit-sync.mjs <проект>/ae` → контрольные кадры проекта. Копию в проекте не править: синхронизация откажется её затирать и назовёт файлы.
-- Сверка без записи: `kit-sync.mjs <проект>/ae --check` (её же зовёт `tools/run.sh` проекта).
+- Сверка без записи: `kit-sync.mjs <проект>/ae --check` (её же зовёт `tools/run.sh` проекта). Синхронизируются и подпапки (`presets/`, `heroes/`), файлы `.jsx` и `.md`.
 - Почему не символическая ссылка: ExtendScript не находит вложенные `//@include` через ссылку (`reels → local/x.jsx → ../kit/project.jsx → core.jsx` — «File or folder does not exist»), AE 26.5. Неудачный `//@include` показывает модальный диалог и вешает все следующие скрипты.
 
 Каталог `kit/*.jsx`: 133 функции (98 рабочих + 35 служебных). Что есть, когда брать, где грабли. Правила кода — ES3, `//@include`, доступ только по matchName, точка входа `kbRun`, глубина цвета эффектов, валидатор — в `../README.md` и здесь не повторяются. Имена и типы параметров эффектов — `tools/data/effect-params-names.json` (снято зондом с живого AE).
@@ -13,7 +13,8 @@
 1. **`core.jsx`** — журнал, доступ к свойствам по matchName, одна отмена на запуск. Подключается первым, все остальные файлы тянут его через `//@include`.
 2. **Базовые**: `project` (проект 32 бита, композиция 1080×1920, палитра), `motion` (ключи и easing), `text`, `shape`, `footage` (дудлы), `look` (бумага, дрожь линии, зерно), `hero` (живой растровый герой: дыхание, разрез по шее, кивок, сквош, смена поз, тень вырезкой), `space` (2,5D: стена, вырезки, камера с ГРИП, свет с тенями), `fx` (жидкая заливка, конфетти, свечение), `render` (контрольные кадры и превью).
 3. **Приёмы витрины `show-*.jsx`** — по блокам ролика `reels/showcase`: **a** эхо, дуги, рывок слова · **b** бумажная вырезка и перевод фокуса · **c** свет (ядро, анаморфный штрих, лучи, лужа света) · **d** морф, жидкость, веер · **e** блик и подгон кегля · **hand** маркер и подчёркивание «как рукой» · **final** рывок панорамы, встряска, хроматическая аберрация. Приёмы других роликов там же: **brick** кирпич-слово, куча и кладка (`reels/say-simple`).
-4. **`probe.jsx`** — зонд: снимает с живого AE то, чего нет в документации, в `tools/data/`. В роликах не участвует, запускается отдельно (`tools/run.sh kit/probe.jsx`).
+4. **Пресеты движения** — `move.jsx` (одна точка подключения), `presets/tl-*.jsx` (41 движение: текст, акценты, субтитры, плашки, камера, реакции героя), `heroes/` (паспорта героев). Каталог и API — §6.
+5. **`probe.jsx`** — зонд: снимает с живого AE то, чего нет в документации, в `tools/data/`. В роликах не участвует, запускается отдельно (`tools/run.sh kit/probe.jsx`).
 
 Зависимости: `show-hand` → `shape` + `look`, `show-b` → `space`, `show-c` → `project`, `show-e` → `text`, `hero` → `core` + `motion`, `audio` → `core` + `footage`, `show-brick` → `space` + `text` + `show-hand` (берёт оттуда `kbHandNoise`, чтобы не заводить третий генератор), `face` → `motion` + `char` (`kbTr`, `kbHT`, `kbHold`, `KB_F`). Приёмы витрины друг друга не знают, порядок подключения — любой.
 
@@ -35,6 +36,9 @@ KB_CONFIG.probeFonts = "inter|caveat";                                          
 | `fonts` | Inter-Black / -Bold / -SemiBold / -Medium / -Regular | `KB_FONT` в `text.jsx` |
 | `doodleDirs` | `[]` | `KB_DOODLE_DIRS` в `footage.jsx`: поиск PNG после `ae/assets/doodle/` |
 | `probeFonts` | `"inter"` | `kbProbeFonts` в `probe.jsx`: регулярное выражение по семейству |
+| `sfxDir` | `"assets/sfx-soft/"` | папка мягких звуков от `ae/` — `TL_S.sfx.dir` в `kbMoveStyleDefaults` (§6); файлы звуков живут в проекте |
+| `hero` | нет | герой `kbActor` по умолчанию (id из `heroes/heroes.jsx`: `arlan`, `aidos`) |
+| `heroRoot` | папка над `ae/` | откуда считаются пути `files.dir` паспортов героев |
 
 Своё, что нужно только одному проекту (`dilyolu.jsx`), живёт в проекте (`ae/local/`), не в ките.
 
@@ -251,3 +255,138 @@ KB_CONFIG.probeFonts = "inter|caveat";                                          
 | Линейное смешивание и проценты | глазурь маркера 12 % красит тушь в оливу (замер [78, 58, 29]), 2–3 % дают «чуть другой» тон ([42, 35, 19] против [19, 19, 19]) |
 | `saveFrameToPng` | в 32 битах делит яркость на 10 — `tools/frames.sh` это учитывает |
 | Ключ цвета в морфе | ступенька за **0,02 с** до посадки: затвор 180° открыт ±0,0083 с вокруг кадра, ключ внутри затвора дал бы один кадр серого на главном кадре удара |
+
+---
+
+## 6. Пресеты движения — `move.jsx`, `presets/`, `heroes/`
+
+Библиотека именованных движений: **41 движение в 8 группах** (A текст-вход 6 · B текст-выход 2 · C цикл 2 · D акцент слова 10 · E субтитры 2 · F плашки 7 · G камера 4 · H реакции героя 8). Перенесена из прототипа kemel-bilim `ae/reels/type-lab-15/lib/` (каталог и решения по числам — `type-lab-15/catalog-v1.md`, спеки потоков `stream1…7/spec.md`) после регресса потоков 1–7.
+
+### Устройство
+
+| Файл | Что внутри |
+|---|---|
+| `move.jsx` | **одна точка подключения**: базовые файлы кита → `presets/*` в порядке зависимостей → `heroes/*`; каталог `KB_MOVE_INFO` / `KB_MOVE_GROUPS`, обёртки `kbPlate`, `kbActor`, `kbActorDone`, `kbHero`, `kbHeroIds`, `kbMoveList` |
+| `presets/tl-ease.jsx` | кривые `TL_EASE` (snap, soft, punch, release, expo), `tlBz` и та же кривая строкой для выражений |
+| `presets/tl-move.jsx` | реестр `TL_MOVES`, стили `TL_STYLES` и текущий `TL_S`, раннер `kbMove` / `kbMovePlan` / `kbSlot`, `kbMoveStyle`, аниматор текста с Expression Selector, звук `kbSfxFromMarkers`; пресеты `rise`, `sink-out`, `hold-alive` |
+| `presets/tl-accent.jsx` | `paper-fade`, `slot-pulse`, `punch`, `suffix-beat`, `letter-wave`; `tlSplitWord`, `tlFitPair` |
+| `presets/tl-hand.jsx` | `marker-swipe`, `recolor-swipe`, `strike-out` (маркер «как рукой» по замеру чернил) |
+| `presets/tl-type.jsx` | `land`, `slam`, `cascade`, `baseline-reveal` |
+| `presets/tl-voice.jsx` | `voice-in` (стаггер под голос: `onsets`, `off`, `anchors`) |
+| `presets/tl-mark.jsx` | `circle-marker`, `word-swap`, `hole-letter`, `syllable-split`; `tlHandPath` |
+| `presets/tl-caption.jsx` | `caption-words`, `headline-sub` |
+| `presets/tl-plate.jsx` | плашки-предметы `tlPlate` (`TL_PLATES`: tag, slot, badge, callout, card, bare) и их движения `plate-in`, `plate-out`, `stamp-in`, `tag-peel`, `arc-fly`, `suffix-dock`, `word-to-card` |
+| `presets/tl-camera.jsx` | риг камеры `tlCamRig` и `cam-push`, `shake-hit`, `whip-paper`, `iris-hand` |
+| `presets/tl-actor.jsx` | актёр `tlActor` (дыхание, кипение, разрез по шее, изгиб, сквош, позы по ролям), точки героя `tlActorPoint` / `tlAttach`, реакции `nod`, `lean-to`, `take`, `catch`, `throw`, `sparks`, `listen`, `wave`. **Ни имени, ни числа героя в коде** — всё из паспорта |
+| `presets/tl-style.jsx` | умолчания стиля: палитра ролей, шрифты, текст, карта мягких звуков `TL_SFX_SOFT`; `kbMoveStyleDefaults`, `kbMoveStyleUse` |
+| `heroes/heroes.jsx` + `heroes.measured.jsx` | паспорта `TL_HEROES` (`aidos`, `arlan`): файлы поз, лист, подошвы, ось, шея, голова, изгиб, позы и роли; замер заполняет `null`-поля |
+
+**Почему имена `tl…` остались.** Файлы перенесены как есть (решение исполнителя при переносе): переименование ~10 тыс. строк `tl→kb` ломало бы побайтную сверку регресса потоков 1–7 и плодило бы второе имя для каждой функции. Публичный API — с префиксом `kb` (таблица ниже), `tl…` — внутренности пресетов. Новые пресеты — в `presets/` с префиксом `tl`, публичная обёртка — в `move.jsx`.
+
+**Порядок подключения.** `tl-ease → tl-move → tl-accent → tl-hand → tl-type → tl-voice → tl-mark → tl-caption → tl-plate → tl-camera → tl-actor → tl-style`, затем `heroes.measured → heroes`. Проще всего — `//@include "../../kit/move.jsx"` одной строкой. Можно подключать файлы по отдельности (как регресс потоков), но не раньше их зависимостей.
+
+**Guard реестра.** `tl-accent.jsx` и `tl-hand.jsx` сами подключают `tl-move.jsx`, и раньше повторный `//@include` обнулял `TL_MOVES` (stream3 §3.3). Теперь в пределах **одного запуска** реестр и текущий стиль сохраняются. Глобальные переменные AE живут между запусками `DoScriptFile` (движок `main` — проверено), поэтому простое «не трогать, если уже есть» протащило бы реестр и стиль прошлого скрипта. Признак «тот же запуск» — объект функции `kbMove`: `//@include` склеивает всё в один текст, объявление поднимается до выполнения и одно на весь запуск, в следующем запуске это новый объект. Остальные таблицы (`TL_FADES`, `TL_ACTORS`, `TLP_METRICS`) по-прежнему сбрасываются при подключении: в них ключи по id композиций, и между запусками им жить нельзя.
+
+### API
+
+| Функция | Сигнатура | Что делает |
+|---|---|---|
+| `kbMove` | `(layer, name, opts?) → {name, from, start, hit, end, units, sfx[]}` | применить движение; подмена по стилю → множители → `TL_MOVES[name].plan/run` → маркер `sfx:<вид>@<сила>` на кадр удара → строка журнала `MOVE …`. `at` — секунды удара (движение приходит на `lead` кадров раньше), `start` — первый кадр; время брать из `kbS/kbAt/kbOn`, не литералом |
+| `kbMovePlan` | `(layer, name, opts?)` | то же без ключей — только времена (`PLAN …`) |
+| `kbSlot` | `(layer, {in, loop?, out?, at, until, inOpts?, loopOpts?, outOpts?}) → {in, loop, out}` | слоты слоя: вход к `at`, цикл между концом входа и началом выхода, выход к `until`; `outPoint` = конец выхода; без `out` — `WARN no-out` |
+| `kbMoveStyle` | `(style)` | включить стиль: объект `KB_STYLE` (как в `style.jsx` ролика) или имя; множители и подмены — из `TL_STYLES`, если в объекте пусты |
+| `kbMoveStyleUse` | `(name?, over?) → TL_S` | стиль по имени **с умолчаниями кита** (палитра, шрифты, мягкие звуки) — вместо копирования `style.jsx` |
+| `kbMoveStyleDefaults` | `(name?, over?) → KB_STYLE` | тот же объект без включения (дописать поля и отдать в `kbMoveStyle`) |
+| `kbSfxFromMarkers` | `(comp, cfg)` | один раз после сборки: по маркерам `sfx:` (и во вложенных композициях) кладёт звуки из `cfg.dir + map[вид].file`, уровень `level − 6 дБ × (1 − сила)`; `cfg` = `TL_S.sfx` |
+| `kbPlate` | `(comp, {kind, text|lines, x, y, side?, anchor?, tilt?, seed?, name?}) → {root, body, edge, shadow, text[], …}` | плашка-предмет: `tag`, `slot`, `badge`, `callout`, `card`, `bare`; движения `plate-in` … получают её в `opts.plate` |
+| `kbActor` | `(comp, {hero?, feet: [x, y], h, pose?, name?}) → actor` | герой из паспорта; `hero` — id (`"arlan"`) или паспорт, без него — `KB_CONFIG.hero` проекта. Реакции — `kbMove(actor.layer, "take", {…})` |
+| `kbActorDone` | `(actor)` | записать каналы актёра (ключи, выражения) — **после всех** реакций |
+| `kbHero` / `kbHeroIds` | `(hero?) → паспорт` / `() → string[]` | паспорт по id с проверкой / какие герои есть |
+| `kbMoveList` | `({group?, style?}) → []` | каталог из реестра (его отдаёт MCP `list_motions`) |
+
+```js
+//@include "../../kit/move.jsx"
+kbRun("demo", function () {
+  kbNewProject();
+  var comp = kbComp("Demo", 4);
+  kbFill(comp, KB_COLOR.paper, "paper");
+  kbMoveStyleUse("hand");                                   // или kbMoveStyle(KB_STYLE) из style.jsx ролика
+  var word = kbText(comp, { text: "BIGGER", font: KB_FONT.black, size: 200, color: KB_COLOR.ink, x: 540, y: 800 });
+  kbSlot(word, { "in": "land", loop: "hold-alive", out: "sink-out", at: 1.0, until: 3.2 });
+  kbMove(word, "marker-swipe", { at: 1.8 });
+  var hero = kbActor(comp, { feet: [540, 1700], h: 600 });  // герой проекта (KB_CONFIG.hero)
+  kbMove(hero.layer, "nod", { cause: 30 });                 // у реакций cause/start/t0/t1 — кадры, at — секунды
+  kbActorDone(hero);
+  kbSfxFromMarkers(comp, TL_S.sfx);
+});
+```
+
+### Стили
+
+| Стиль | Длит. | Сила | Потолок перелёта | Подмены |
+|---|---|---|---|---|
+| `hand` (по умолчанию) | ×1 | ×1 | 6 % (удар 8 %) | — |
+| `brisk` | ×0,7 | ×1,2 | 10 % | `rise → land`, `cascade → slam`, `paper-fade → sink-out` |
+| `lesson` | ×1,3 | ×0,6 | 0 | `land → rise`, `slam → cascade`, `baseline-reveal → rise`, `marker-swipe → recolor-swipe` (mode step) |
+| `magazine` | ×1,6 | ×0,5 | 0 | `land → baseline-reveal`, `slam → cascade`, `stamp-in → plate-in`, `marker-swipe → recolor-swipe`, `punch → cam-push` |
+
+Внутри пресетов стиль ещё действует сам: `shake-hit` в `lesson`/`magazine` выключен, плашки и подписи проверяют стиль первой строкой (`tlPlateGuardStyle`, `tlCapGuardStyle`). Мягкие звуки (`TL_SFX_SOFT`): `tick` +8,5 · `pop` −4 · `thud` −14 · `whoosh` −18 · `marker` −14 · `ding` −2 дБ; файлы — в проекте (`KB_CONFIG.sfxDir`), в кит не копируются.
+
+### Каталог
+
+`needs`: **text** — любой текстовый слой; **pair** — нужен второй слой (`next`); **plate** — объект `kbPlate` в `opts.plate`; **cam** — риг `tlCamRig`; **actor** — актёр `kbActor` в том же запуске; **voice** — `onsets`/`off` голоса. «Стили» — во что движение подменяется (все — не подменяется).
+
+| # | Имя | Группа · слот | Что видит зритель | Параметры | needs | Стили |
+|---|---|---|---|---|---|---|
+| 1 | `baseline-reveal` | A текст — вход · in | буквы выезжают из-за невидимой базовой линии (маска, не прозрачность) | unit, stagger, out, seed; умолч.: stagger_ease "linear", strength 1 | text | lesson → `rise` |
+| 2 | `cascade` | A текст — вход · in | буквы или строки поднимаются на место слева направо | unit, order, stagger_ms, stagger_ease; умолч.: stagger_ease "linear", stagger_ms 35, strength 1 | text | brisk → `slam` |
+| 3 | `land` | A текст — вход · in | слово падает и приземляется со сплющиванием, дрожь затухает; главный сочный вход | unit, stagger, strength (0,6 мягко · 1,2 тяжело), from (em); умолч.: from 1.2, strength 1, stagger_ease "linear" | text | lesson → `rise`; magazine → `baseline-reveal` |
+| 4 | `rise` | A текст — вход · in | слово всплывает снизу и проявляется; ровный вход; out:true — зеркальный уход вверх | unit, stagger, stagger_ease, strength, out; умолч.: stagger_ease "soft", strength 1 | text | brisk → `land` |
+| 5 | `slam` | A текст — вход · in | слово падает на бумагу из крупного размытия и садится (хук) | phase, stagger, strength; умолч.: strength 1, stagger_ease "linear", phase 0 | text | lesson → `cascade`; magazine → `cascade` |
+| 6 | `voice-in` | A текст — вход · in | слово проявляется в такт голосу: последняя буква основы до ударного окончания | clip, onsets, off, anchors; умолч.: strength 1 | voice | все |
+| 7 | `paper-fade` | B текст — выход · out | текст бледнеет к бумаге без движения; rest 0,35 — остаётся тенью | rest, from, duration; умолч.: rest 0, from 1, duration 12, ease "soft", strength 1 | text | brisk → `sink-out` |
+| 8 | `sink-out` | B текст — выход · out | буквы гаснут и опускаются по одной; выход ≤ 8 к. | unit, order; умолч.: stagger_ease "linear", strength 1 | text | все |
+| 9 | `hold-alive` | C цикл · loop | слово или предмет живёт на холде: качание рукой на двойках в окне [from, to] | kind (text · paper), from, to, strength; умолч.: strength 1, kind "text" | text | все |
+| 10 | `slot-pulse` | C цикл · loop | пустой слот медленно дышит — ждёт ответа | from, to (или t0, t1), amount; умолч.: amount 1, strength 1 | text | все |
+| 11 | `circle-marker` | D акцент слова · accent | окончание или слог обводится незамкнутым овалом от руки | stem, gap, color, seed, out; умолч.: stem null, gap 0.38, color null, seed 11, strength 1, rejoin true | text | все |
+| 12 | `hole-letter` | D акцент слова · accent | в слове дырка с маркерным «?»; буква врывается, слово читается целиком | hole, markStart, strength; умолч.: hole null, strength 1.2 | text | все |
+| 13 | `letter-wave` | D акцент слова · accent | по буквам или строкам пробегает волна вверх-вниз | unit, stagger, strength; умолч.: unit "line", stagger_ease "linear", strength 1 | text | все |
+| 14 | `marker-swipe` | D акцент слова · accent | жёлтый маркер проводится рукой под словом и гаснет | thin, color, seed, out; умолч.: thin false, color null, seed 60, strength 1 | text | lesson → `recolor-swipe`; magazine → `recolor-swipe` |
+| 15 | `punch` | D акцент слова · accent | слово коротко отбивает такт масштабом | amount (soft · medium · strong), anchor (center · junction); умолч.: amount "medium", anchor "center", strength 1 | text | magazine → `cam-push` |
+| 16 | `recolor-swipe` | D акцент слова · accent | слово перекрашивается мазком слева направо; mode step — ступенькой | range, color, mode (swipe · step), font; умолч.: range null, color null, mode "swipe", font null, seed 71, strength 1 | text | все |
+| 17 | `strike-out` | D акцент слова · accent | неверная форма перечёркивается маркером и гаснет (shake — с дрожью) | shake, color, rest, drop; умолч.: shake true, color null, rest 0.35, drop 12, seed 20, strength 1 | text | все |
+| 18 | `suffix-beat` | D акцент слова · accent | окончание отбивает удар на своём слоге, основа стоит (dip — с замахом) | dip, echo, strength; умолч.: echo false, dip true, strength 1 | text | все |
+| 19 | `syllable-split` | D акцент слова · accent | между слогами проступают маркерные чёрточки, ударный слог крупнее | parts, stress, gap, back; умолч.: parts null, stress 1, gap 0.4, strength 1 | text | все |
+| 20 | `word-swap` | D акцент слова · accent | меняется только слово-переменная, контекст стоит («am → are») | next (слой), error, in (land · rise); умолч.: next null, error false, in "land", strength 0.8, gap 2, hold 6, drop 1, fadeIn 4 | pair | все |
+| 21 | `caption-words` | E субтитры · in | субтитры тушью без подложки: слова встают в такт речи, активное подчёркнуто или перекрашено | words, onsets, off, active (marker · recolor), dim, settle; умолч.: words 6, active "marker", dim true, accent [], minWord 6, strength 1 | voice | все |
+| 22 | `headline-sub` | E субтитры · in | заголовок и подпись вдвое мельче на 5–6 к. позже, без плашек | sub, delay, head_in, onsets, off; умолч.: delay 5, head_in "voice-in", strength 1 | voice | все |
+| 23 | `arc-fly` | F плашки · accent | предмет летит по дуге; flip — переворот другой стороной | from, to, apex, ballistic, flip; умолч.: ballistic false, flip false, strength 1 | plate | все |
+| 24 | `plate-in` | F плашки · in | плашка вырастает из точки (grow) или опускается и ложится (drop) | plate, mode (grow · drop), from, strength; умолч.: mode "grow", strength 1 | plate | все |
+| 25 | `plate-out` | F плашки · out | плашка тает (melt), схлопывается (out) или отрывается и улетает (peel) | mode (melt · out · peel), to; умолч.: mode "out", strength 1 | plate | все |
+| 26 | `stamp-in` | F плашки · in | штамп с размаху ставится на бумагу | blots, strength; умолч.: blots 3, strength 1 | plate | magazine → `plate-in` |
+| 27 | `suffix-dock` | F плашки · accent | окончание прилипает к основе, основа отскакивает | strength; умолч.: strength 1 | plate | все |
+| 28 | `tag-peel` | F плашки · in | с окончания слова отклеивается ярлык, тень растёт | strength; умолч.: strength 1 | plate | все |
+| 29 | `word-to-card` | F плашки · out | крупное слово уменьшается и уезжает в свою строку карточки | target (слой строки); умолч.: strength 1 | plate | все |
+| 30 | `cam-push` | G камера и переходы · accent | кадр медленно наезжает на точку (micro — короткий акцент, cut — смена плана) | zoom, roll, micro, mode (push · micro · cut); умолч.: zoom 1.06, roll 0, strength 1, micro false, mode "push" | cam | все |
+| 31 | `iris-hand` | G камера и переходы · out | вокруг слова рисуется круг, фон уходит в бумагу, круг сжимается в точку | word, wordIn, color, seed, out; умолч.: seed 11, strength 1 | cam | все |
+| 32 | `shake-hit` | G камера и переходы · accent | кадр вздрагивает на ударе (в lesson/magazine выключен) | amount; умолч.: amount 6, strength 1 | cam | все |
+| 33 | `whip-paper` | G камера и переходы · in | две сцены едут как одна панорама со смазом | dir, axis; умолч.: dir "next", axis "x", strength 1 | cam | все |
+| 34 | `catch` | H реакции героя · accent | ловит летящий предмет на ладонь | item, palmU; умолч.: strength 1, palmU 0.75 | actor | все |
+| 35 | `lean-to` | H реакции героя · accent | корпус тянется к предмету; point — со сменой позы на указывающую | point, to, back; умолч.: point false, strength 1 | actor | все |
+| 36 | `listen` | H реакции героя · loop | «я тебя слушаю» — ждёт ответа зрителя | t0, t1, back; умолч.: strength 1 | actor | все |
+| 37 | `nod` | H реакции героя · accent | кивок в такт слову; tilt — наклон головы к слову без возврата | tilt, second, cause, to; умолч.: tilt false, second false, strength 1 | actor | все |
+| 38 | `sparks` | H реакции героя · accent | три маркерных штриха веером над головой | seed; умолч.: strength 1, seed 17 | actor | все |
+| 39 | `take` | H реакции героя · accent | удивление-озарение; cheer — радость, light — лёгкий | cheer, light, pose; умолч.: cheer false, light false, pose null, strength 1 | actor | все |
+| 40 | `throw` | H реакции героя · accent | замах и бросок с доводкой | item, to; умолч.: strength 1 | actor | все |
+| 41 | `wave` | H реакции героя · accent | машет на прощание | at, cause; умолч.: strength 1 | actor | все |
+
+### Как сменить героя
+
+- **На весь проект:** `KB_CONFIG.hero = "arlan";` в `ae/kit.config.jsx` — `kbActor` без `hero` берёт его.
+- **В одном вызове:** `kbActor(comp, { hero: "aidos", feet: [540, 1700], h: 600 })` (или сам паспорт `TL_HEROES.arlan`).
+- **Новый герой:** паспорт в `heroes/heroes.jsx` по образцу `arlan` (файлы поз `files.prefix` + `files.dir`, `render` doodle | char, лист `sheet`, `ground`/`top`/`axis`, `bend`, `neck` — `null`, если разреза нет, `poses` с якорями `tip`/`palm`/`hand`, `roles` → позы, `calib.bendK`); `null`-поля дописывает замер (`heroes.measured.jsx`, в kemel-bilim — `type-lab-15/stream7/measure-hero.py`; новый замер копируется в `ae-plugin/kit/heroes/` и раздаётся `kit-sync`). Пути `files.dir` — от `KB_CONFIG.heroRoot` (по умолчанию папка над `ae/`).
+- Числа героя в код пресетов не попадают (проверка `dupnames7.py --herolit` в kemel-bilim: `HEROLIT 0`); всё, что отличает героя, — в паспорте.
+
+### Через MCP
+
+`list_motions` (каталог; `style` — подмены), `apply_motion` (на слой или `selection: true`, ответ — план start/hit/end), `set_motion_style` (стиль композиции или проекта), `get_selection`; `apply_preset` с `"move:<имя>"` идёт туда же. Примеры — `../README.md` «Анимация». Через MCP применяются движения с `needs` = text (и pair через `"@Имя"` в `opts`); plate/cam/actor/voice собираются скриптом кита — между вызовами MCP объекта плашки, рига или актёра нет, `apply_motion` на реакцию героя отвечает ошибкой с подсказкой.

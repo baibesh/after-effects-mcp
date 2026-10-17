@@ -28,7 +28,18 @@ if (!target) {
 const kit = join(resolve(target), 'kit')
 const stamp = join(kit, '.kit-source')
 const git = (...a) => execFileSync('git', ['-C', repo, ...a], { encoding: 'utf8' }).trim()
-const kitFiles = (dir) => (existsSync(dir) ? readdirSync(dir).filter((f) => /\.(jsx|md)$/.test(f)).sort() : [])
+// Файлы кита с подпапками (presets/, heroes/): пути от kit/, через «/».
+const kitFiles = (dir, sub = '') => {
+  if (!existsSync(join(dir, sub))) return []
+  const out = []
+  for (const e of readdirSync(join(dir, sub), { withFileTypes: true })) {
+    if (e.name.startsWith('.')) continue
+    const rel = sub ? `${sub}/${e.name}` : e.name
+    if (e.isDirectory()) out.push(...kitFiles(dir, rel))
+    else if (/\.(jsx|md)$/.test(e.name)) out.push(rel)
+  }
+  return out.sort()
+}
 
 const differs = (a, b) => !existsSync(a) || !existsSync(b) || !readFileSync(a).equals(readFileSync(b))
 
@@ -75,7 +86,10 @@ if (git('status', '--porcelain', '--', 'kit')) {
 
 rmSync(kit, { recursive: true, force: true })
 mkdirSync(kit, { recursive: true })
-for (const f of kitFiles(source)) copyFileSync(join(source, f), join(kit, f))
+for (const f of kitFiles(source)) {
+  mkdirSync(dirname(join(kit, f)), { recursive: true })
+  copyFileSync(join(source, f), join(kit, f))
+}
 if (existsSync(projectValidator)) copyFileSync(validator, projectValidator)
 const commit = git('rev-parse', '--short', 'HEAD')
 writeFileSync(stamp, `Копия ae-plugin/kit, commit ${commit}. Не править здесь: правки — в ae-plugin/kit, затем tools/kit-sync.mjs.\n`)

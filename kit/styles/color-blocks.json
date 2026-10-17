@@ -1,0 +1,37 @@
+{
+  "id": "color-blocks",
+  "extends": "_base",
+  "description": "C — цветные плоскости: крупные плоскости цвета сменяют друг друга, плотная типографика, круги и плашки, движение блоками с лёгким перелётом. Энергично, но без стикеров.",
+  "color": {
+    "bg": "#FFD43B", "surface": "#141414", "ink": "#141414", "muted": "#3A3A3A", "light": "#F2F2F2",
+    "brand": "#141414", "accent": "#FF5A36",
+    "correct": "#2FBF71", "wrong": "#FF5A36",
+    "quiz": "#141414", "reward": "#FFD43B",
+    "pos": { "noun": "#2F6BFF", "verb": "#FF5A36", "adj": "#2FBF71", "other": "#8B5CF6" },
+    "shadow": "#141414",
+    "line": "#141414"
+  },
+  "type": {
+    "font": { "display": "Inter-Black", "hero": "Inter-Black", "text": "Inter-Bold" },
+    "tracking": { "hero": -40, "h1": -20, "body": 0, "label": 40 },
+    "labels": "plain"
+  },
+  "shape": {
+    "radius": { "card": 40, "chip": 999 },
+    "stroke": { "thin": 4, "main": 6, "accent": 10, "underline": 6, "stickerOutline": 0 },
+    "shadow": "none",
+    "imageMask": "circle",
+    "imageFrame": "none",
+    "background": "bg.blocks",
+    "sticker": "none"
+  },
+  "motion": {
+    "tempo": 0.9,
+    "overshoot": 0.6,
+    "text": "text.maskUp",
+    "word": "text.letters",
+    "image": ["image.maskReveal", "image.kenBurns"],
+    "transition": "trans.iris",
+    "emphasis": "draw.marker"
+  }
+}

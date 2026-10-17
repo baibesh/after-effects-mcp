@@ -11,6 +11,7 @@ import { FORMATS, PLATFORMS, type FormatKey, type PlatformKey } from "./formats.
 import { listEffects, resolveEffect } from "./effects.js";
 import { grabFrames } from "./frames.js";
 import { listPresets, PRESETS_DIR, resolvePreset } from "./presets.js";
+import { listCurves, listStyles, resolveStyle } from "./styles.js";
 import { config, runInAE } from "./runner.js";
 
 const server = new McpServer({ name: "after-effects", version: "0.1.0" });
@@ -638,11 +639,56 @@ server.registerTool(
   ({ source, query }) => text(listPresets(source ?? "local", query)),
 );
 
+const styleProject = z.string().optional().describe("Папка ae/ проекта: его стили (ae/styles/*.json) ищутся раньше стилей кита");
+
+server.registerTool(
+  "list_styles",
+  {
+    description:
+      "Стили серии (дизайн-система ролика, не стиль движения set_motion_style): id, от чего наследует, описание, ключевые цвета и шрифты. Стиль — токены color, type, shape, motion в kit/styles/*.json; блоки урока берут из него всё оформление. curves: true — ещё и кривые движения из kit/library/ease.json (имена годятся как ease в JSON-пресетах).",
+    inputSchema: {
+      project: styleProject,
+      curves: z.boolean().optional(),
+    },
+  },
+  ({ project, curves }) => text(curves ? { styles: listStyles(project), curves: listCurves() } : listStyles(project)),
+);
+
+server.registerTool(
+  "get_style",
+  {
+    description:
+      "Итоговые токены стиля после extends (from — порядок источников) или один токен по пути: \"color.accent\", \"type.size.h1\", \"motion.dur\". Длительности в мс до умножения на motion.tempo.",
+    inputSchema: {
+      id: z.string().describe('Имя из list_styles, например "editorial-dark"'),
+      path: z.string().optional().describe("Путь токена через точку"),
+      project: styleProject,
+    },
+  },
+  ({ id, path: tokenPath, project }) => {
+    try {
+      const style = resolveStyle(id, project);
+      if (!tokenPath) return text(style);
+      let node: any = style;
+      for (const part of tokenPath.split(".")) {
+        if (node === null || typeof node !== "object" || !(part in node)) {
+          throw new Error(`Стиль «${id}»: нет токена «${tokenPath}»${node && typeof node === "object" ? ` (есть: ${Object.keys(node).join(", ")})` : ""}`);
+        }
+        node = node[part];
+      }
+      return text({ id, path: tokenPath, value: node });
+    } catch (e) {
+      const known = listStyles(project).map((s) => s.id);
+      return text(`Ошибка: ${(e as Error).message}. Стили: ${known.join(", ")}`, true);
+    }
+  },
+);
+
 server.registerTool(
   "apply_preset",
   {
     description:
-      "Применить пресет к слою по имени. JSON-пресет ставит ключи от start (секунды, по умолчанию начало слоя) с ease по отрезкам: offset/factor — относительно текущего значения, поэтому слой сначала ставят в конечное положение. speed растягивает время (1.5 — в полтора раза медленнее; кадры при 24 fps пересчитываются под fps композиции). .ffx (свой или adobe:…) применяется штатно от start. Одна отмена на вызов.",
+      "Применить пресет к слою по имени. JSON-пресет ставит ключи от start (секунды, по умолчанию начало слоя) с ease по отрезкам (snap/soft/punch/linear/hold или кривая из list_styles curves: expoOut, quintOut, quartInOut… — с настоящей скоростью на ключах): offset/factor — относительно текущего значения, поэтому слой сначала ставят в конечное положение. speed растягивает время (1.5 — в полтора раза медленнее; кадры при 24 fps пересчитываются под fps композиции). .ffx (свой или adobe:…) применяется штатно от start. Одна отмена на вызов.",
     inputSchema: {
       comp: compName,
       layer: layerName,

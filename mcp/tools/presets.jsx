@@ -108,10 +108,18 @@ function mcpApplyTrack(layer, track, start, speed, fps) {
       prop.setInterpolationTypeAtKey(b, KeyframeInterpolationType.LINEAR, prop.keyOutInterpolationType(b));
       continue;
     }
-    var e = typeof ease === "string" ? MCP_PRESET_EASE[ease] : ease;
-    if (!e) throw new Error("Нет ease «" + ease + "»: snap, soft, punch, linear, hold или {out, into}");
     prop.setInterpolationTypeAtKey(a, prop.keyInInterpolationType(a), KeyframeInterpolationType.BEZIER);
     prop.setInterpolationTypeAtKey(b, KeyframeInterpolationType.BEZIER, prop.keyOutInterpolationType(b));
+    if (typeof ease === "string" && !MCP_PRESET_EASE[ease]) {
+      // Кривая из kit/library/ease.json: influence и speed по cubic-bezier (kit/style.jsx).
+      var curve = kbCurve(ease);
+      if (!curve.bezier || curve.keys) throw new Error("Кривая «" + ease + "» с перелётом задаётся ключами пресета, а не ease отрезка");
+      var seg = kbCurveSegment(curve.bezier, kbEaseDelta(prop, prop.keyValue(a), prop.keyValue(b)), prop.keyTime(b) - prop.keyTime(a));
+      prop.setTemporalEaseAtKey(a, /** @type {any} */ (prop.keyInTemporalEase(a)), kbEaseList(seg.out));
+      prop.setTemporalEaseAtKey(b, kbEaseList(seg.into), /** @type {any} */ (prop.keyOutTemporalEase(b)));
+      continue;
+    }
+    var e = typeof ease === "string" ? MCP_PRESET_EASE[ease] : ease;
     // Длина массива зависит от свойства, а типы ждут кортеж фиксированной длины (как в kbKeys).
     prop.setTemporalEaseAtKey(a, /** @type {any} */ (prop.keyInTemporalEase(a)), mcpEaseArray(dims, e.out));
     prop.setTemporalEaseAtKey(b, mcpEaseArray(dims, e.into), /** @type {any} */ (prop.keyOutTemporalEase(b)));

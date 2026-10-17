@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "ae": "node build/cli.js",
     "validate": "node tools/validate.mjs kit mcp",
+    "test": "node --test tools/test-*.mjs",
     "matchnames": "node tools/build-matchnames.mjs"
   },
   "dependencies": {

@@ -1,0 +1,17 @@
+{
+  "description": "Кривые движения по имени. bezier — cubic-bezier(x1, y1, x2, y2) как в CSS; в AE переводится в influence и speed ключей (kit/style.jsx, kbCurveSegment). keys — кривая с перелётом: промежуточные ключи [доля времени, доля пути], между ними segEase. Числа — docs/research/motion-design-pro.md §7.2.",
+  "curves": {
+    "linear": { "bezier": [0, 0, 1, 1], "linear": true },
+    "sineInOut": { "bezier": [0.37, 0, 0.63, 1] },
+    "cubicInOut": { "bezier": [0.65, 0, 0.35, 1] },
+    "quartInOut": { "bezier": [0.76, 0, 0.24, 1] },
+    "expoInOut": { "bezier": [0.87, 0, 0.13, 1] },
+    "quintOut": { "bezier": [0.22, 1, 0.36, 1] },
+    "expoOut": { "bezier": [0.16, 1, 0.3, 1] },
+    "emphDecel": { "bezier": [0.05, 0.7, 0.1, 1] },
+    "cubicIn": { "bezier": [0.32, 0, 0.67, 0] },
+    "expoIn": { "bezier": [0.7, 0, 0.84, 0] },
+    "backOut": { "keys": [[0.55, 1.12], [0.8, 0.96]], "segEase": "quintOut", "settle": "sineInOut" },
+    "backOutSoft": { "keys": [[0.65, 1.04]], "segEase": "quintOut", "settle": "sineInOut" }
+  }
+}

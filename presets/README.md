@@ -23,7 +23,7 @@
 
 - `prop`: `opacity`, `position`, `scale`, `rotation`, `anchor`.
 - `mode`: `absolute` — значение как есть · `offset` — прибавить к текущему · `factor` — текущее × v / 100. Для offset/factor слой сначала ставят в **конечное** положение, пресет приводит его туда.
-- `ease`: `snap` {20, 90} · `soft` {60, 60} · `punch` {10, 95} (как `KB_EASE` кита) · `linear` · `hold` · `{ "out": n, "into": n }`.
+- `ease`: `snap` {20, 90} · `soft` {60, 60} · `punch` {10, 95} (как `KB_EASE` кита) · `linear` · `hold` · `{ "out": n, "into": n }` · или кривая из `kit/library/ease.json` (`expoOut`, `quintOut`, `quartInOut`, `expoInOut`, `cubicIn`…) — influence и **скорость** по cubic-bezier, как в CSS (`list_styles curves=true`). Кривые с перелётом (`backOut`) здесь не годятся — перелёт задаётся ключами.
 - `expression`: выражение на свойство; `$start` заменяется временем старта (с).
 - `apply_preset … speed: 1.5` — в полтора раза медленнее.
 
@@ -35,6 +35,7 @@
 | `slide-in-left` | въезд слева −400 → +12 → 0 | 14 |
 | `accent-punch` | антиципация 94 % → удар 112 % → 100 %; start на 3–4 к. раньше ударного слога | 12 |
 | `drop-out` | антиципация вверх 20 px → падение 300 px с ускорением, угасание | 12 |
+| `rise` | подъём на 48 px с проявлением за половину времени, quintOut — основной вход строки и карточки | 12 |
 | `breathe` | выражение: дыхание ±0,8 % по вертикали, период 3 с (moving hold) | — |
 
 ## Свои `.ffx` из After Effects

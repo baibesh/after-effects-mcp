@@ -28,7 +28,7 @@ if (!target) {
 const kit = join(resolve(target), 'kit')
 const stamp = join(kit, '.kit-source')
 const git = (...a) => execFileSync('git', ['-C', repo, ...a], { encoding: 'utf8' }).trim()
-// Файлы кита с подпапками (presets/, heroes/): пути от kit/, через «/».
+// Файлы кита с подпапками (presets/, heroes/, styles/, library/): пути от kit/, через «/».
 const kitFiles = (dir, sub = '') => {
   if (!existsSync(join(dir, sub))) return []
   const out = []
@@ -36,7 +36,7 @@ const kitFiles = (dir, sub = '') => {
     if (e.name.startsWith('.')) continue
     const rel = sub ? `${sub}/${e.name}` : e.name
     if (e.isDirectory()) out.push(...kitFiles(dir, rel))
-    else if (/\.(jsx|md)$/.test(e.name)) out.push(rel)
+    else if (/\.(jsx|md|json)$/.test(e.name)) out.push(rel)
   }
   return out.sort()
 }

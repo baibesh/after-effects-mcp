@@ -1,0 +1,8 @@
+{
+  "description": "Подъём на 48 px с проявлением за 50 % времени, quintOut — основной вход текста и карточек (enter.rise)",
+  "use": "строка текста, карточка, плашка; длительность dur.text 500 мс = 12 кадров при 24 fps (docs/research/motion-design-pro.md §7.3)",
+  "tracks": [
+    { "prop": "opacity", "mode": "absolute", "keys": [[0, 0], [6, 100]], "ease": "quintOut" },
+    { "prop": "position", "mode": "offset", "keys": [[0, [0, 48]], [12, [0, 0]]], "ease": "quintOut" }
+  ]
+}

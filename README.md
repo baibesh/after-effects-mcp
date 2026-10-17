@@ -147,6 +147,8 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 | `get_frames` | **кадры картинкой**: один или лист до 4 в ряд; цвет как в рендере (поправка 32 бит, фон композиции, прозрачность) | `{"comp": "Scene", "times": [0.5, 1, 2], "width": 480}` |
 | `list_render_templates` | шаблоны рендера и вывода в AE (только в тестовом проекте) | `{}` |
 | `list_presets` | пресеты: свои (`local`) или штатные Adobe (`adobe`, с поиском) | `{"source": "adobe", "query": "Behaviors"}` |
+| `list_styles` | стили серии (`kit/styles`, `ae/styles` проекта): наследование, описание, ключевые цвета и шрифты; `curves: true` — и кривые `kit/library/ease.json` | `{"curves": true}` |
+| `get_style` | итоговые токены стиля после `extends` или один токен по пути | `{"id": "editorial-dark", "path": "motion.dur"}` |
 
 ### Проект и слои
 

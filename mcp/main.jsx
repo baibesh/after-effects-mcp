@@ -3,6 +3,7 @@
 
 //@include "../kit/core.jsx"
 //@include "../kit/motion.jsx"
+//@include "../kit/style.jsx"
 //@include "../kit/text.jsx"
 //@include "../kit/footage.jsx"
 //@include "lib/json.jsx"

@@ -1,0 +1,36 @@
+{
+  "id": "editorial-dark",
+  "extends": "_base",
+  "description": "A — тёмный редакционный: тёмный фон с тонкой сеткой, одна акцентная краска, крупный гротеск с плотным трекингом, тонкие линии, номера блоков моно. Картинка в скруглённой маске раскрывается шторкой.",
+  "color": {
+    "bg": "#0E1116", "surface": "#1A1F27", "ink": "#F2F4F7", "muted": "#9AA4B2", "light": "#F2F4F7",
+    "brand": "#FF6B3D", "accent": "#FF6B3D",
+    "correct": "#3FB27F", "wrong": "#FF4D4D",
+    "quiz": "#161B22", "reward": "#2A1D14",
+    "pos": { "noun": "#5B9DFF", "verb": "#FF9B4A", "adj": "#3FB27F", "other": "#A78BFA" },
+    "shadow": "#000000",
+    "line": "#2A313B"
+  },
+  "type": {
+    "font": { "display": "Inter-Bold", "hero": "Inter-Bold", "text": "Inter-Medium" },
+    "tracking": { "hero": -30, "h1": -10, "body": 0, "label": 120 },
+    "labels": "numbered-mono"
+  },
+  "shape": {
+    "radius": { "card": 20, "chip": 12 },
+    "stroke": { "thin": 2, "main": 5, "accent": 8, "underline": 6, "stickerOutline": 0 },
+    "shadow": "none",
+    "imageMask": "rounded",
+    "imageFrame": "none",
+    "background": "bg.grid-fine",
+    "sticker": "none"
+  },
+  "motion": {
+    "overshoot": 0,
+    "text": "text.maskUp",
+    "word": "text.letters",
+    "image": ["image.maskReveal", "image.kenBurns"],
+    "transition": "trans.push",
+    "emphasis": "draw.underline"
+  }
+}

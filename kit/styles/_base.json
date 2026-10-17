@@ -1,0 +1,61 @@
+{
+  "id": "_base",
+  "description": "Общая база всех стилей: сетка, safe-зоны, шкала текста, длительности, каскады, удержание. Стиль переопределяет только своё. Числа — docs/research/motion-design-pro.md §7.1.",
+  "base": 1080,
+  "grid": 8,
+  "safe": {
+    "9x16": { "top": 290, "bottom": 680, "left": 120, "right": 200 },
+    "16x9": { "top": 108, "bottom": 130, "left": 192, "right": 192 },
+    "1x1": { "top": 96, "bottom": 96, "left": 96, "right": 96 }
+  },
+  "color": {
+    "bg": "#F6F4EF", "surface": "#FFFFFF", "ink": "#1E2233", "muted": "#5E6475", "light": "#FFFFFF",
+    "brand": "#3B5BFF", "accent": "#FFB400",
+    "correct": "#2BB673", "wrong": "#E8615A",
+    "quiz": "#2B2F6B", "reward": "#FFE7B8",
+    "pos": { "noun": "#3B82F6", "verb": "#F97316", "adj": "#22A06B", "other": "#8B5CF6" },
+    "shadow": "#1E2233"
+  },
+  "type": {
+    "font": { "display": "Inter-Bold", "hero": "Inter-Black", "text": "Inter-SemiBold", "regular": "Inter-Regular", "mono": "Menlo-Regular", "ipa": "Inter-Regular" },
+    "size": {
+      "hero": { "9x16": 170, "16x9": 150 },
+      "h1": { "9x16": 108, "16x9": 90 },
+      "h2": { "9x16": 72, "16x9": 64 },
+      "body": { "9x16": 54, "16x9": 48 },
+      "translation": { "9x16": 44, "16x9": 40 },
+      "label": { "9x16": 40, "16x9": 32 }
+    },
+    "tracking": { "hero": 0, "h1": 0, "body": 5, "label": 40 },
+    "ipaRatio": 0.55,
+    "min": 40,
+    "leading": { "title": 1.15, "body": 1.3 },
+    "maxCharsPerLine": { "9x16": 22, "16x9": 42 },
+    "maxLines": 3,
+    "labels": "plain"
+  },
+  "shape": {
+    "radius": { "card": 32, "chip": 20, "bar": 999 },
+    "stroke": { "thin": 4, "main": 7, "accent": 10, "underline": 8, "stickerOutline": 10 },
+    "shadow": "soft",
+    "shadows": { "soft": { "y": 8, "blur": 18, "opacity": 0.2 }, "none": null },
+    "imageMask": "rounded",
+    "imageFrame": "none",
+    "background": "bg.solid",
+    "sticker": "outline-white"
+  },
+  "motion": {
+    "tempo": 1.0,
+    "overshoot": 1.0,
+    "ease": { "enter": "expoOut", "exit": "expoIn", "move": "quartInOut", "emphasis": "backOut", "draw": "expoOut", "transition": "expoInOut" },
+    "text": "text.rise",
+    "word": "text.letters",
+    "image": ["image.maskReveal", "image.kenBurns"],
+    "transition": "trans.push",
+    "emphasis": "draw.underline",
+    "dur": { "micro": 200, "icon": 400, "text": 500, "word": 330, "big": 650, "move": 700, "exit": 300, "transition": 550, "whip": 330, "draw": 500, "underline": 330, "morph": 1000 },
+    "stagger": { "letter": 50, "word": 90, "line": 160, "card": 130, "grid": 80, "maxTotal": 700 },
+    "hold": { "baseL2": 1000, "perWordL2": 400, "baseL1": 800, "perWordL1": 300, "min": 900, "max": 7000, "newWordMin": 2500 },
+    "rhythm": { "stimulusEvery": [2000, 4000], "sceneEvery": [6000, 12000], "anticipationFrames30": 3 }
+  }
+}

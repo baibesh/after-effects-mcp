@@ -53,9 +53,9 @@ var TL_HEROES = {
     rig: { split: false, bend: true, squash: true, scale: true, blink: true, lids: false, brows: false, mouth: false, ears: false, tail: false },
     face: { blinkOn: ["idle", "talk", "talk3q", "listen"] },        // накладки eyes_half / eyes_closed по rig.json (face_patches_ok)
     calib: { bendK: 0.7350, warp: "coons" }, // зонд Q3A (17.10): θ — хорда bend Start → макушка, k_θ — МНК по ней (решение оркестратора 17.10); подгонка по настоящим кадрам Арлана 12 точек × 7 значений Bend, φ = 1,8025°/ед., невязка 0,60 px
-    // якоря рук — замер (null → heroes.measured.jsx); у talk нет tip (открытая ладонь, не палец) — его якоря palm/palmEnd
+    // якоря рук — замер (null → heroes.measured.jsx); hold-both.palmU 0.2 — ладонь справа от тела, catch кладёт предмет вправо от неё, а не на грудь (до позы hold-one, AE-POSES-TODO №3); у talk нет tip (открытая ладонь, не палец) — его якоря palm/palmEnd
     poses: { idle: {}, talk: {}, talk3q: {}, listen: {}, "point-side": { tip: null, dir: [1, 0] }, "point-down": { tip: null, dir: null }, hold: { palm: null },
-             "hold-both": { palm: null, palmEnd: null }, surprised: {}, aha: { tip: null }, happy: { hands: null }, shrug: { palms: null }, think: {}, wave: { hand: null, dir: null } },
+             "hold-both": { palm: null, palmEnd: null, palmU: 0.2 }, surprised: {}, aha: { tip: null }, happy: { hands: null }, shrug: { palms: null }, think: {}, wave: { hand: null, dir: null } },
     roles: { idle: "idle", talk: "talk", point: ["point-side", "point-down"], hold: "hold-both", take: "surprised", cheer: "happy",
              listen: "listen", wave: "wave", think: "think" },
     // запасной путь: роли, для которых позы у Арлана ещё нет (design/mascot-tazy/AE-POSES-TODO.md). Значение — роль или поза; актёр пишет WARN ROLE и берёт её

@@ -1261,11 +1261,23 @@ TL_MOVES["take"] = {
 // №35 catch
 // ---------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Точка касания предмета на ладони роли hold — доля ширины предмета слева (0 — левый край, 1 — правый).
+ * Паспорт: poses[<поза hold>].palmU. Нет — 0.75 (Айдос: ладонь слева от тела, предмет уходит влево, от корпуса).
+ * Ладонь справа от тела (Арлан hold-both) — palmU ≈ 0.2: предмет уходит вправо и не закрывает грудь.
+ * @param {any} A
+ * @returns {number}
+ */
+function tlaPalmU(A) {
+  var pz = A.hero.poses[tlaRolePose(A, "hold")];
+  return (pz && pz.palmU !== undefined && pz.palmU !== null) ? pz.palmU : 0.75;
+}
+
 /** №35 catch — тело героя вокруг arc-fly: тянется, рука встречает, отдача, предмет качается на ладони. Вызов до полётов: опции item, contact (чётный кадр касания). */
 TL_MOVES["catch"] = {
   group: "actor", slot: "accent", units: [], unit: "word",
   frames: { total: 24 }, stagger: {}, over: 0, lead: 0, sfx: null,
-  params: { strength: 1, palmU: 0.75, to: undefined },
+  params: { strength: 1, palmU: undefined, to: undefined },   // palmU не задан → tlaPalmU (паспорт позы роли hold, иначе 0.75)
   plan: function (layer, o, S) {
     var A = tlActorOf(layer);
     if (o.contact === undefined) throw new Error("catch: нужен contact (чётный кадр касания)");
@@ -1281,6 +1293,7 @@ TL_MOVES["catch"] = {
     var T = TL_ACT.catchA;
     // знак: к ладони посадки (x ладони − x оси героя) в кадре; ладонь берём из позы роли hold
     var holdPose = tlaRolePose(A, "hold");
+    var palmU = o.palmU !== undefined ? o.palmU : tlaPalmU(A);
     var palm = tlaPointRaw(A, "palm", c, { pose: holdPose });
     var ax = tlaPointRaw(A, "ground", c, { pose: holdPose });
     var sign = tlaSign(palm.x - ax.x);
@@ -1317,14 +1330,14 @@ TL_MOVES["catch"] = {
         var sd = tlpSide(item);
         var W = sd.W;
         var Hh = sd.H;
-        tlPlateRepivot(root, c / 30, [-W / 2 + o.palmU * W, Hh / 2]);
+        tlPlateRepivot(root, c / 30, [-W / 2 + palmU * W, Hh / 2]);
         var rot = kbProp(root, ["ADBE Transform Group", "ADBE Rotate Z"]);
         var ks = [];
         for (var j = 0; j < swing.length; j++) ks.push([swing[j][0] / 30, swing[j][1], j > 0 ? "soft" : undefined]);
         tlpKeys(rot, ks);
         var errs = [];
         for (var ff = c; ff <= c + 16; ff += 2) {
-          var touch = tlpToComp(root, -W / 2 + o.palmU * W, Hh / 2, ff / 30);
+          var touch = tlpToComp(root, -W / 2 + palmU * W, Hh / 2, ff / 30);
           var pp = tlaPointRaw(A, "palm", ff);
           errs.push(Math.max(Math.abs(touch[0] - pp.x), Math.abs(touch[1] - pp.y)));
         }
@@ -1336,7 +1349,7 @@ TL_MOVES["catch"] = {
     tlaSfx(A, "tick", TL_ACT.sfx.catchA, c);
     var sw = [];
     for (var k = 0; k < T.rot.length; k++) sw.push(T.rot[k][1]);
-    kbLog("CATCH " + A.name + " c f" + c + " pose " + holdPose + " f" + (c - 4) + " recoil " + a.toFixed(4) + " swing " + sw.join("/") + " attach " + nul.name);
+    kbLog("CATCH " + A.name + " c f" + c + " pose " + holdPose + " f" + (c - 4) + " palmU " + palmU + " recoil " + a.toFixed(4) + " swing " + sw.join("/") + " attach " + nul.name);
     tlaReact(A, "catch", P);
   }
 };

@@ -371,7 +371,7 @@ kbRun("demo", function () {
 | 31 | `iris-hand` | G камера и переходы · out | вокруг слова рисуется круг, фон уходит в бумагу, круг сжимается в точку | word, wordIn, color, seed, out; умолч.: seed 11, strength 1 | cam | все |
 | 32 | `shake-hit` | G камера и переходы · accent | кадр вздрагивает на ударе (в lesson/magazine выключен) | amount; умолч.: amount 6, strength 1 | cam | все |
 | 33 | `whip-paper` | G камера и переходы · in | две сцены едут как одна панорама со смазом | dir, axis; умолч.: dir "next", axis "x", strength 1 | cam | все |
-| 34 | `catch` | H реакции героя · accent | ловит летящий предмет на ладонь | item, palmU; умолч.: strength 1, palmU 0.75 | actor | все |
+| 34 | `catch` | H реакции героя · accent | ловит летящий предмет на ладонь | item, palmU; умолч.: strength 1, palmU из паспорта (poses[hold].palmU, иначе 0.75) | actor | все |
 | 35 | `lean-to` | H реакции героя · accent | корпус тянется к предмету; point — со сменой позы на указывающую | point, to, back; умолч.: point false, strength 1 | actor | все |
 | 36 | `listen` | H реакции героя · loop | «я тебя слушаю» — ждёт ответа зрителя | t0, t1, back; умолч.: strength 1 | actor | все |
 | 37 | `nod` | H реакции героя · accent | кивок в такт слову; tilt — наклон головы к слову без возврата | tilt, second, cause, to; умолч.: tilt false, second false, strength 1 | actor | все |

@@ -44,15 +44,29 @@ out/        журнал, кадры, рендеры (не в git)
 
 ## Установка
 
-Нужно: **macOS**, **After Effects 2026** (проверено на 26.5), **Node 20+**, **ffmpeg** (`brew install ffmpeg`).
+Нужно: **macOS**, **After Effects 2026** (проверено на 26.5), **Node 20+**, **ffmpeg**, шрифты **Inter**.
+
+Новый Mac — клон и установщик:
 
 ```bash
-git clone git@github.com:baibesh/after-effects-mcp.git ~/Projects/ae-plugin
+git clone git@github.com:baibesh/after-effects-mcp.git ~/Projects/ae-plugin && ~/Projects/ae-plugin/install.sh
 ```
 
+Обновление на любом Mac — тот же установщик (можно запускать сколько угодно раз):
+
 ```bash
-cd ~/Projects/ae-plugin && npm install && npm run build
+~/Projects/ae-plugin/install.sh
 ```
+
+Что делает `install.sh`: проверяет macOS, Node 20+, ffmpeg и After Effects → `git pull --ff-only` (если в клоне нет незакоммиченных правок) → `npm ci`, сборка, typecheck, тесты и валидатор ExtendScript → создаёт настройки машины `~/.config/ae-mcp/config.sh` (папки `ae/` проектов с копией кита находит сам) → регистрирует сервер в Claude Code для всех папок (user scope) с замками проектов → сверяет копии кита в проектах → проверяет настройку AE «Allow Scripts to Write Files…», шаблоны вывода «MCP ProRes …» и шрифты Inter. В конце — список замечаний; настройки AE и шрифты скрипт только проверяет, не меняет.
+
+| Флаг | Что |
+|---|---|
+| `--sync` | обновить копии кита в проектах (`kit-sync`; откажется, если кит правили прямо в проекте) |
+| `--desktop` | прописать сервер и в Claude Desktop (старый конфиг — в `.bak-…`) |
+| `--brew` | поставить недостающие node и ffmpeg через Homebrew |
+| `--no-pull`, `--no-test` | без обновления клона / без тестов (быстрее) |
+| `--smoke` | проверить ответ AE, даже если он не запущен (запустит) |
 
 Проверка без Claude (AE запустится сам, если не открыт):
 

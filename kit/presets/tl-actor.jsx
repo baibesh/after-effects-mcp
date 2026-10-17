@@ -1383,7 +1383,12 @@ TL_MOVES["throw"] = {
     tlaAdd(A, "sq", "throw-sq", qk);
     var rel = "-";
     var rolePoses = A.hero.roles ? A.hero.roles.release : null;
-    if ((rolePoses === null || rolePoses === undefined) && !(A.hero.fallback && A.hero.fallback.release)) {
+    var noRel = rolePoses === null || rolePoses === undefined;
+    var lastPoseF = A.poses[A.poses.length - 1].f;
+    if (noRel && A.hero.fallback && ("release" in A.hero.fallback) && !(A.hero.fallback.release && r + 4 > lastPoseF)) {
+      // запасная поза есть, но смена на r + 4 встала бы раньше уже записанной (ячейка задала позу после броска заранее) — только корпус
+      kbLog("WARN ROLE " + A.hero.id + " release: своей позы нет" + (A.hero.fallback.release ? ", запасная «" + A.hero.fallback.release + "» не встаёт по порядку (последняя смена f" + lastPoseF + ")" : "") + " — только корпус");
+    } else if (noRel && !(A.hero.fallback && A.hero.fallback.release)) {
       kbLog("INFO throw: позы выброса нет — только корпус");
     } else {
       rel = tlActorPose(A, "release", r + 4, { quiet: true });

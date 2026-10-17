@@ -299,7 +299,7 @@ KB_CONFIG.probeFonts = "inter|caveat";                                          
 | `kbMoveStyleDefaults` | `(name?, over?) → KB_STYLE` | тот же объект без включения (дописать поля и отдать в `kbMoveStyle`) |
 | `kbSfxFromMarkers` | `(comp, cfg)` | один раз после сборки: по маркерам `sfx:` (и во вложенных композициях) кладёт звуки из `cfg.dir + map[вид].file`, уровень `level − 6 дБ × (1 − сила)`; `cfg` = `TL_S.sfx` |
 | `kbPlate` | `(comp, {kind, text|lines, x, y, side?, anchor?, tilt?, seed?, name?}) → {root, body, edge, shadow, text[], …}` | плашка-предмет: `tag`, `slot`, `badge`, `callout`, `card`, `bare`; движения `plate-in` … получают её в `opts.plate` |
-| `kbActor` | `(comp, {hero?, feet: [x, y], h, pose?, name?}) → actor` | герой из паспорта; `hero` — id (`"arlan"`) или паспорт, без него — `KB_CONFIG.hero` проекта. Реакции — `kbMove(actor.layer, "take", {…})` |
+| `kbActor` | `(comp, {hero?, feet: [x, y], h, pose?, name?}) → actor` | герой из паспорта; `hero` — id (`"arlan"`) или паспорт, без него — `KB_CONFIG.hero` проекта, иначе Арлан (`KB_HERO_DEFAULT`). Реакции — `kbMove(actor.layer, "take", {…})` |
 | `kbActorDone` | `(actor)` | записать каналы актёра (ключи, выражения) — **после всех** реакций |
 | `kbHero` / `kbHeroIds` | `(hero?) → паспорт` / `() → string[]` | паспорт по id с проверкой / какие герои есть |
 | `kbMoveList` | `({group?, style?}) → []` | каталог из реестра (его отдаёт MCP `list_motions`) |
@@ -314,7 +314,7 @@ kbRun("demo", function () {
   var word = kbText(comp, { text: "BIGGER", font: KB_FONT.black, size: 200, color: KB_COLOR.ink, x: 540, y: 800 });
   kbSlot(word, { "in": "land", loop: "hold-alive", out: "sink-out", at: 1.0, until: 3.2 });
   kbMove(word, "marker-swipe", { at: 1.8 });
-  var hero = kbActor(comp, { feet: [540, 1700], h: 600 });  // герой проекта (KB_CONFIG.hero)
+  var hero = kbActor(comp, { feet: [540, 1700], h: 600 });  // герой проекта (KB_CONFIG.hero) или Арлан
   kbMove(hero.layer, "nod", { cause: 30 });                 // у реакций cause/start/t0/t1 — кадры, at — секунды
   kbActorDone(hero);
   kbSfxFromMarkers(comp, TL_S.sfx);
@@ -382,7 +382,10 @@ kbRun("demo", function () {
 
 ### Как сменить героя
 
-- **На весь проект:** `KB_CONFIG.hero = "arlan";` в `ae/kit.config.jsx` — `kbActor` без `hero` берёт его.
+- **По умолчанию — Арлан** (`KB_HERO_DEFAULT = "arlan"` в `heroes/heroes.jsx`): `kbActor` без `hero` и без `KB_CONFIG.hero` берёт его. Позы — PNG 1024² с альфой из `<heroRoot>/ae/assets/heroes/arlan/` (в kemel-bilim — копия `design/mascot-tazy/library/arlan`).
+- **На весь проект:** `KB_CONFIG.hero = "aidos";` в `ae/kit.config.jsx` — `kbActor` без `hero` берёт его.
+- **Нет позы под роль — запасной путь, не падение.** Если у героя нет роли (или её позы), а у паспорта есть `fallback: {роль: роль|поза}`, актёр берёт запасную позу (цепочка до 4 шагов, в конце — `idle`) и пишет в журнал один раз на роль `WARN ROLE <герой> <роль>: своей позы нет — запасной путь паспорта … = <поза>`. У Арлана сейчас: `doubt → shrug` (тэйк-сомнение), `release → point-side` (доводка броска). Паспорт без `fallback` (Айдос) по-прежнему падает с именем поля. Чего не хватает Арлану — `kemel-bilim-content/design/mascot-tazy/AE-POSES-TODO.md`.
+- **Якоря Арлана** (замер `measure-hero.py --hero arlan`): голова `head.c/r/crown`, глаза `head.eyes`, нос `head.nose`, шея `neck.y` (кант худи под наушниками; разрез выключен `rig.split: false` до «ок» владельца — кивок и наклон идут изгибом корпуса, `INFO nod→bend`), ладони `palm/palmEnd` (talk, talk3q, hold-both, hold — кулак), `tip` (point-side, point-down, aha), `hand` (wave, surprised, think≈), `hands` (happy), `palms` (shrug). Роли: `hold → hold-both` (открытая ладонь под ловлю и бросок), `point → point-side | point-down` (`lean-to` берёт ближнюю по углу).
 - **В одном вызове:** `kbActor(comp, { hero: "aidos", feet: [540, 1700], h: 600 })` (или сам паспорт `TL_HEROES.arlan`).
 - **Новый герой:** паспорт в `heroes/heroes.jsx` по образцу `arlan` (файлы поз `files.prefix` + `files.dir`, `render` doodle | char, лист `sheet`, `ground`/`top`/`axis`, `bend`, `neck` — `null`, если разреза нет, `poses` с якорями `tip`/`palm`/`hand`, `roles` → позы, `calib.bendK`); `null`-поля дописывает замер (`heroes.measured.jsx`, в kemel-bilim — `type-lab-15/stream7/measure-hero.py`; новый замер копируется в `ae-plugin/kit/heroes/` и раздаётся `kit-sync`). Пути `files.dir` — от `KB_CONFIG.heroRoot` (по умолчанию папка над `ae/`).
 - Числа героя в код пресетов не попадают (проверка `dupnames7.py --herolit` в kemel-bilim: `HEROLIT 0`); всё, что отличает героя, — в паспорте.

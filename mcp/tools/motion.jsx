@@ -151,7 +151,7 @@ MCP_TOOLS.list_motions = {
     for (var n in MCP_MOTION_STYLES) styles[n] = mcpMotionStyleInfo(n);
     var active = null;
     try { active = mcpMotionStyleFor(app.project.activeItem instanceof CompItem ? /** @type {CompItem} */ (app.project.activeItem) : null); } catch (e) { active = null; }
-    return { count: rows.length, groups: KB_MOVE_GROUPS, motions: rows, styles: styles, activeStyle: active, heroes: kbHeroIds() };
+    return { count: rows.length, groups: KB_MOVE_GROUPS, motions: rows, styles: styles, activeStyle: active, heroes: kbHeroIds(), defaultHero: kbConfig("hero", KB_HERO_DEFAULT) };
   }
 };
 

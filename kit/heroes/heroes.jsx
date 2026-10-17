@@ -1,8 +1,12 @@
 // Паспорта героев кита (kit/heroes) — ДАННЫЕ: всё про героя (файлы, якоря, позы по ролям, масштаб листа, наклон) живёт здесь.
-// В presets/tl-actor.jsx нет ни имени, ни числа героя. Подмена героя = hero: "arlan" в kbActor (или KB_CONFIG.hero в kit.config.jsx).
+// В presets/tl-actor.jsx нет ни имени, ни числа героя. Герой по умолчанию — Арлан (KB_HERO_DEFAULT); другой — hero: "aidos" в kbActor или KB_CONFIG.hero в kit.config.jsx.
+// Нет позы под роль — fallback паспорта (роль/поза) + WARN ROLE в журнал, без падения.
 // Пути files.dir — от KB_CONFIG.heroRoot (по умолчанию папка над ae/ проекта). Перенесено из kemel-bilim type-lab-15/stream7 (замер — stream7/measure-hero.py).
 // Единицы: px исходника позы (Айдос 896×1200, Арлан 1024²); углы — градусы; направления dir — вектор «основание кисти → кончик».
 // Подключать после heroes.measured.jsx (незаполненные null поля берутся из замера measure-hero.py); kit/move.jsx подключает оба.
+
+/** Герой kbActor/kbHero, если ни вызов, ни KB_CONFIG.hero проекта его не задали. */
+var KB_HERO_DEFAULT = "arlan";
 
 /** @type {any} */
 var TL_HEROES = {
@@ -35,24 +39,27 @@ var TL_HEROES = {
     roles: { idle: "base", talk: "speaking", point: ["pointing", "speaking"], hold: "holding", take: "aha",
              cheer: "celebrate", doubt: "confused", listen: "listening", wave: "wave", think: "thinking", release: null }
   },
-  arlan: {                                    // ЗАГОТОВКА: что есть в библиотеке — заполнено, что нужно замерить — null
+  arlan: {                                    // ГЕРОЙ ПО УМОЛЧАНИЮ (KB_HERO_DEFAULT): 20 поз библиотеки маскота, якоря — замер measure-hero.py --hero arlan (17.10)
     id: "arlan", name: "Арлан",
     render: "char",
-    files: { prefix: "arlan_", dir: "design/mascot-tazy/library/arlan/", w: 1024, h: 1024, rig: "design/mascot-tazy/library/rig.json" }, // ae-ok: asset — путь от KB_CONFIG.heroRoot проекта (kemel-bilim), в ae-plugin файла нет
+    files: { prefix: "arlan_", dir: "ae/assets/heroes/arlan/", w: 1024, h: 1024, rig: "design/mascot-tazy/library/rig.json" }, // ae-ok: asset — путь от KB_CONFIG.heroRoot проекта (kemel-bilim: копия design/mascot-tazy/library/arlan, PNG 1024² с альфой), в ae-plugin файла нет
     blend: "normal",
     sheet: null,                              // measure-hero.py --hero arlan: dx = 0,37·H, dy = 0,40·H, pad = 0,12·H (поле под подошвами для CC Bend It; к h не прибавлено — комп рисунка = h + pad), низ листа = подошвы + 0,02·H, fill "none"
     ground: 982, top: null, axis: 503,        // axis = head_x 503 (одинаков во всех позах; ступни скользят по рисунку); top паспорта — по idle; у поз — свой top
     bend: null,                               // правило measure-hero.py: start = ground + 0,085·H (подошвы + pad), end = top − 0,246·H
-    neck: null,                               // линии шеи нет: разрез по канту худи под наушниками — замер и «ок» владельца (§14); до тех пор nod/tilt → изгиб корпуса
-    head: { c: null, r: null, crown: null, hat: null },
+    neck: null,                               // замер: кант худи под чашками наушников (y ≈ 341). Разрез выключен (rig.split false) до «ок» владельца по кадрам — nod/tilt идут изгибом корпуса
+    head: { c: null, r: null, crown: null, hat: null },   // замер: c/r — череп с ушами выше наушников, crown — макушка idle, eyes — центр накладки eyes_half (rig.json), nose — кончик носа
     life: { breath: { amount: 0.022, period: 2.6, fps: 15 }, boil: null, twos: 15, blur: false },   // кипения нет: гладкая иллюстрация
     rig: { split: false, bend: true, squash: true, scale: true, blink: true, lids: false, brows: false, mouth: false, ears: false, tail: false },
     face: { blinkOn: ["idle", "talk", "talk3q", "listen"] },        // накладки eyes_half / eyes_closed по rig.json (face_patches_ok)
     calib: { bendK: 0.7350, warp: "coons" }, // зонд Q3A (17.10): θ — хорда bend Start → макушка, k_θ — МНК по ней (решение оркестратора 17.10); подгонка по настоящим кадрам Арлана 12 точек × 7 значений Bend, φ = 1,8025°/ед., невязка 0,60 px
-    poses: { idle: {}, talk: {}, talk3q: {}, listen: {}, "point-side": { tip: null, dir: [1, 0] }, "point-down": {}, hold: { palm: null },
-             "hold-both": {}, surprised: {}, aha: { tip: null }, happy: { hands: null }, shrug: {}, think: {}, wave: { hand: null } },
-    roles: { idle: "idle", talk: "talk", point: ["point-side"], hold: "hold", take: "surprised", cheer: "happy",
-             doubt: "shrug", listen: "listen", wave: "wave", think: "think", release: null }
+    // якоря рук — замер (null → heroes.measured.jsx); у talk нет tip (открытая ладонь, не палец) — его якоря palm/palmEnd
+    poses: { idle: {}, talk: {}, talk3q: {}, listen: {}, "point-side": { tip: null, dir: [1, 0] }, "point-down": { tip: null, dir: null }, hold: { palm: null },
+             "hold-both": { palm: null, palmEnd: null }, surprised: {}, aha: { tip: null }, happy: { hands: null }, shrug: { palms: null }, think: {}, wave: { hand: null, dir: null } },
+    roles: { idle: "idle", talk: "talk", point: ["point-side", "point-down"], hold: "hold-both", take: "surprised", cheer: "happy",
+             listen: "listen", wave: "wave", think: "think" },
+    // запасной путь: роли, для которых позы у Арлана ещё нет (design/mascot-tazy/AE-POSES-TODO.md). Значение — роль или поза; актёр пишет WARN ROLE и берёт её
+    fallback: { doubt: "shrug", release: "point-side" }
   }
 };
 

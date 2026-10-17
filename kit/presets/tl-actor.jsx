@@ -1,7 +1,7 @@
 // Поток 7: герой как данные и его реакции (spec stream7 §4–5). Ядро: актёр tlActor (дыхание, кипение, разрез по шее, изгиб, сквош, масштаб, позы по ролям),
 // точка героя tlActorPoint и пустышка на ней tlAttach, смена позы tlActorPose, запись каналов tlActorDone и восемь пресетов:
 // nod (+tilt), lean-to (+point), catch, throw, take (+cheer, +light), sparks, listen, wave.
-// В файле НЕТ имени, позы и числа конкретного героя: всё про героя — паспорт TL_HEROES (stream7/heroes.jsx). Подмена героя = другой паспорт в данных ячейки.
+// В файле НЕТ имени, позы и числа конкретного героя: всё про героя — паспорт TL_HEROES (kit/heroes/heroes.jsx). Подмена героя = другой паспорт в данных ячейки; нет позы под роль — fallback паспорта + WARN ROLE.
 // ES3, свойства только по matchName. Подключает только файлы кита без состояния (повторный include lib/*.jsx обнулил бы TL_MOVES, spec §0);
 // tl-ease/tl-move/tl-hand/tl-plate/tl-mark берутся по имени в момент вызова — подключать после них.
 // Кадры: опции cause/start/contact/release/t0/t1/back/untilt — кадры ячейки (30 к/с), at — секунды (ударный слог). Герой на двойках: ключи на чётных кадрах,
@@ -155,18 +155,59 @@ function tlActorOf(layer) {
 
 /**
  * Роль → список поз героя (роль в паспорте — строка или массив).
+ * Нет роли или её позы, а у паспорта есть fallback[role] (роль или поза) — запасной путь + WARN ROLE (один раз на актёра и роль), без падения.
+ * У паспорта без fallback — исключение с именем поля (как раньше).
  * @param {any} A
  * @param {string} role
  * @returns {string[]}
  */
 function tlaRolePoses(A, role) {
-  var r = A.hero.roles ? A.hero.roles[role] : undefined;
-  if (r === undefined || r === null) throw new Error("tlActor: у героя " + A.hero.id + " нет роли " + role + " — заполнить TL_HEROES." + A.hero.id + ".roles");
-  var list = (r instanceof Array) ? r : [r];
+  var H = A.hero;
+  var r = H.roles ? H.roles[role] : undefined;
+  var list = (r === undefined || r === null) ? [] : ((r instanceof Array) ? r : [r]);
+  var ok = [];
   for (var i = 0; i < list.length; i++) {
-    if (!A.hero.poses[list[i]]) throw new Error("tlActor: роль " + role + " героя " + A.hero.id + " указывает на позу «" + list[i] + "», которой нет в TL_HEROES." + A.hero.id + ".poses");
+    if (H.poses[list[i]]) ok.push(list[i]);
+    else if (!H.fallback) throw new Error("tlActor: роль " + role + " героя " + H.id + " указывает на позу «" + list[i] + "», которой нет в TL_HEROES." + H.id + ".poses");
   }
-  return list;
+  if (ok.length) return ok;
+  if (!H.fallback) throw new Error("tlActor: у героя " + H.id + " нет роли " + role + " — заполнить TL_HEROES." + H.id + ".roles");
+  return [tlaFallbackPose(A, role)];
+}
+
+/**
+ * Запасная поза роли по паспорту: fallback[role] → роль (её первая поза) или поза; цепочка до 4 шагов, в конце — роль idle.
+ * @param {any} A
+ * @param {string} role
+ * @returns {string}
+ */
+function tlaFallbackPose(A, role) {
+  var H = A.hero;
+  var cur = role;
+  var path = [role];
+  var pose = null;
+  for (var step = 0; step < 4 && pose === null; step++) {
+    var fb = H.fallback[cur];
+    if (fb === undefined || fb === null) break;
+    path.push(fb);
+    if (H.poses[fb]) { pose = fb; break; }
+    var rr = H.roles ? H.roles[fb] : undefined;
+    var rl = (rr === undefined || rr === null) ? [] : ((rr instanceof Array) ? rr : [rr]);
+    for (var j = 0; j < rl.length && pose === null; j++) if (H.poses[rl[j]]) pose = rl[j];
+    cur = fb;
+  }
+  if (pose === null) {
+    var idle = H.roles ? H.roles.idle : null;
+    pose = (idle instanceof Array) ? idle[0] : idle;
+    path.push("idle");
+    if (!pose || !H.poses[pose]) throw new Error("tlActor: у героя " + H.id + " нет роли " + role + " и запасной позы (fallback, idle) — заполнить TL_HEROES." + H.id + ".roles");
+  }
+  if (!A.warnRole) A.warnRole = {};
+  if (!A.warnRole[role]) {
+    kbLog("WARN ROLE " + H.id + " " + role + ": своей позы нет — запасной путь паспорта " + path.join(" → ") + " = " + pose);
+    A.warnRole[role] = true;
+  }
+  return pose;
 }
 
 /**
@@ -490,7 +531,7 @@ function tlActor(comp, o) {
   };
   if (H.head && H.head.crown) A.geo.uc = (A.geo.sy - (sh.dy + H.head.crown[1])) / (A.geo.sy - A.geo.ey);
   var role0 = o.pose || "idle";
-  var pose0 = (H.roles && H.roles[role0] !== undefined) ? tlaRolePose(A, role0) : role0;
+  var pose0 = ((H.roles && H.roles[role0] !== undefined) || (H.fallback && H.fallback[role0] !== undefined && !H.poses[role0])) ? tlaRolePose(A, role0) : role0;
   if (!H.poses[pose0]) throw new Error("tlActor: у героя " + H.id + " нет позы «" + pose0 + "»");
   A.poses.push({ f: 0, role: role0, pose: pose0 });
 
@@ -1342,7 +1383,7 @@ TL_MOVES["throw"] = {
     tlaAdd(A, "sq", "throw-sq", qk);
     var rel = "-";
     var rolePoses = A.hero.roles ? A.hero.roles.release : null;
-    if (rolePoses === null || rolePoses === undefined) {
+    if ((rolePoses === null || rolePoses === undefined) && !(A.hero.fallback && A.hero.fallback.release)) {
       kbLog("INFO throw: позы выброса нет — только корпус");
     } else {
       rel = tlActorPose(A, "release", r + 4, { quiet: true });

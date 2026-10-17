@@ -101,12 +101,12 @@ function kbPlate(comp, o) {
 }
 
 /**
- * Паспорт героя по id или объекту; без hero — KB_CONFIG.hero проекта.
+ * Паспорт героя по id или объекту; без hero — KB_CONFIG.hero проекта, без него — KB_HERO_DEFAULT кита (\"arlan\").
  * @param {any=} hero
  * @returns {any}
  */
 function kbHero(hero) {
-  var h = hero === undefined || hero === null ? kbConfig("hero", null) : hero;
+  var h = hero === undefined || hero === null ? kbConfig("hero", typeof KB_HERO_DEFAULT !== "undefined" ? KB_HERO_DEFAULT : null) : hero;
   if (h === null) throw new Error("kbHero: герой не задан — hero в опциях или KB_CONFIG.hero в kit.config.jsx (есть: " + kbHeroIds().join(", ") + ")");
   if (typeof h === "string") {
     if (!TL_HEROES[h]) throw new Error("kbHero: нет героя «" + h + "» в kit/heroes (есть: " + kbHeroIds().join(", ") + ")");
@@ -125,7 +125,7 @@ function kbHeroIds() {
 /**
  * Актёр: герой на бумаге с дыханием, разрезом, изгибом и позами. Реакции — kbMove(actor.layer, "take", {…}); в конце — kbActorDone(actor).
  * @param {CompItem} comp
- * @param {any} o {hero?: id|паспорт (по умолчанию KB_CONFIG.hero), feet: [x, y], h: высота px, pose?: роль, name?}
+ * @param {any} o {hero?: id|паспорт (по умолчанию KB_CONFIG.hero, иначе Арлан), feet: [x, y], h: высота px, pose?: роль, name?}
  * @returns {any} актёр (A.layer — слой в композиции)
  */
 function kbActor(comp, o) {

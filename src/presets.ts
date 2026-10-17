@@ -52,12 +52,37 @@ export function resolvePreset(name: string): { preset: unknown } | { ffx: string
     const dir = adobeDir();
     if (!dir) throw new Error("Папка Presets After Effects не найдена");
     const file = path.resolve(dir, name.slice(6) + ".ffx");
-    if (!file.startsWith(dir + path.sep) || !fs.existsSync(file)) throw new Error(`Нет штатного пресета ${name} (list_presets source=adobe)`);
+    if (!file.startsWith(dir + path.sep) || !fs.existsSync(file)) {
+      throw new Error(`Нет штатного пресета ${name}. Похожие: ${nearest(name, listPresets("adobe").map((p) => p.name), 8).join(", ")} (list_presets source=adobe)`);
+    }
     return { ffx: file };
   }
   const base = path.resolve(PRESETS_DIR, name);
   if (!base.startsWith(PRESETS_DIR + path.sep)) throw new Error(`Пресет ${name} вне папки presets/`);
   if (fs.existsSync(base + ".json")) return { preset: JSON.parse(fs.readFileSync(base + ".json", "utf8")) };
   if (fs.existsSync(base + ".ffx")) return { ffx: base + ".ffx" };
-  throw new Error(`Нет пресета ${name}. Есть: ${listPresets("local").map((p) => p.name).join(", ")}`);
+  const local = listPresets("local").map((p) => p.name);
+  throw new Error(`Нет пресета ${name}. Похожие: ${nearest(name, local, 8).join(", ")} (всего ${local.length} — list_presets; движения кита — "move:<имя>", list_motions)`);
+}
+
+function editDistance(a: string, b: string): number {
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur.push(Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)));
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+/** Ближайшие имена для подсказки: сначала с подстрокой (по последнему звену пути), потом по расстоянию правки. */
+export function nearest(name: string, names: string[], max: number): string[] {
+  const q = name.toLowerCase();
+  const leaf = (s: string) => s.toLowerCase().split("/").pop() ?? s;
+  const score = (n: string) => {
+    const l = leaf(n);
+    const ql = leaf(q);
+    return Math.min(editDistance(q, n.toLowerCase()), editDistance(ql, l)) - (n.toLowerCase().includes(ql) || ql.includes(l) ? 100 : 0);
+  };
+  return names.map((n) => ({ n, d: score(n) })).sort((a, b) => a.d - b.d || a.n.localeCompare(b.n)).slice(0, max).map((r) => r.n);
 }

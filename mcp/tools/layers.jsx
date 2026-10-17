@@ -246,8 +246,11 @@ MCP_TOOLS.delete_layer = {
     var comp = mcpFindComp(args.comp);
     var layer = mcpFindLayer(comp, args.layer);
     var name = layer.name;
+    var dropped = kbSfxDropLayer(layer); // метки sfx движений этого слоя (kb-sfx-src), иначе kbSfxFromMarkers даст призрачные звуки
     layer.remove();
-    return {deleted: name, layers: comp.numLayers};
+    var sfx = [];
+    for (var i = dropped.length - 1; i >= 0; i--) sfx.push({kind: dropped[i].kind, t: Math.round(dropped[i].t * 1000) / 1000, strength: dropped[i].strength});
+    return {deleted: name, layers: comp.numLayers, sfxRemoved: sfx};
   }
 };
 

@@ -22,7 +22,7 @@ function mcpItemPath(item) {
  * @returns {CompItem}
  */
 function mcpFindComp(name) {
-  if (!name) throw new Error("Не указано имя композиции");
+  if (!name) throw mcpNoChange(new Error("Не указано имя композиции"));
   var byPath = name.indexOf("/") >= 0;
   var found = [];
   var all = [];
@@ -36,9 +36,9 @@ function mcpFindComp(name) {
   if (found.length > 1) {
     var paths = [];
     for (var j = 0; j < found.length; j++) paths.push(mcpItemPath(found[j]));
-    throw new Error("Композиций «" + name + "» несколько: " + paths.join(", ") + ". Укажите путь с папкой или переименуйте.");
+    throw mcpNoChange(new Error("Композиций «" + name + "» несколько: " + paths.join(", ") + ". Укажите путь с папкой или переименуйте."));
   }
-  throw new Error("Нет композиции «" + name + "». Есть: " + (all.length ? all.slice(0, 30).join(", ") : "ни одной"));
+  throw mcpNoChange(new Error("Нет композиции «" + name + "». Есть: " + (all.length ? all.slice(0, 30).join(", ") : "ни одной")));
 }
 
 /**
@@ -48,7 +48,7 @@ function mcpFindComp(name) {
  * @returns {Layer}
  */
 function mcpFindLayer(comp, name) {
-  if (!name) throw new Error("Не указано имя слоя");
+  if (!name) throw mcpNoChange(new Error("Не указано имя слоя"));
   var found = [];
   var all = [];
   for (var i = 1; i <= comp.numLayers; i++) {
@@ -58,7 +58,49 @@ function mcpFindLayer(comp, name) {
   }
   if (found.length === 1) return found[0];
   if (found.length > 1) {
-    throw new Error("В «" + comp.name + "» слоёв «" + name + "» несколько (" + found.length + "). Переименуйте их, чтобы различать.");
+    throw mcpNoChange(new Error("В «" + comp.name + "» слоёв «" + name + "» несколько (" + found.length + "). Переименуйте их, чтобы различать."));
   }
-  throw new Error("В «" + comp.name + "» нет слоя «" + name + "». Есть: " + (all.length ? all.slice(0, 40).join(", ") : "ни одного"));
+  throw mcpNoChange(new Error("В «" + comp.name + "» нет слоя «" + name + "». Есть: " + (all.length ? all.slice(0, 40).join(", ") : "ни одного")));
+}
+
+/**
+ * Ближайшие имена для подсказки в ошибке: сначала с подстрокой, потом по расстоянию правки.
+ * @param {string} name
+ * @param {string[]} names
+ * @param {number} max
+ * @returns {string[]}
+ */
+function mcpNearest(name, names, max) {
+  var q = String(name).toLowerCase();
+  var rows = [];
+  for (var i = 0; i < names.length; i++) {
+    var n = String(names[i]).toLowerCase();
+    var d = mcpEditDistance(q, n);
+    if (n.indexOf(q) >= 0 || q.indexOf(n) >= 0) d -= 100;
+    rows.push({ name: names[i], d: d });
+  }
+  rows.sort(function (a, b) { return a.d - b.d || (a.name < b.name ? -1 : 1); });
+  var out = [];
+  for (var j = 0; j < rows.length && j < max; j++) out.push(rows[j].name);
+  return out;
+}
+
+/**
+ * Расстояние Левенштейна.
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
+function mcpEditDistance(a, b) {
+  var prev = [];
+  var j;
+  for (j = 0; j <= b.length; j++) prev.push(j);
+  for (var i = 1; i <= a.length; i++) {
+    var cur = [i];
+    for (j = 1; j <= b.length; j++) {
+      cur.push(Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1)));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
 }

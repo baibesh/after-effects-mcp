@@ -74,7 +74,8 @@ MCP_TOOLS.create_comp = {
       if (!folder) folder = app.project.items.addFolder(args.folder);
       comp.parentFolder = folder;
     }
-    return {name: comp.name, path: mcpItemPath(comp), width: width, height: height, fps: fps, duration: duration};
+    if (args.open !== false) { comp.openInViewer(); mcpRememberComp(comp); } // новая композиция — активная: get_selection / apply_motion без comp работают сразу
+    return {name: comp.name, path: mcpItemPath(comp), width: width, height: height, fps: fps, duration: duration, active: app.project.activeItem === comp};
   }
 };
 

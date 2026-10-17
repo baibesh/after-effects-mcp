@@ -277,8 +277,35 @@ function tlCeilFrame(t) {
   return Math.ceil(t * 30 - 0.001) / 30;
 }
 
+/** Параметр маркера sfx: слои-источники меток через «|», по одному на метку комментария (id слоя AE, "" — неизвестен). */
+var TL_SFX_SRC = "kb-sfx-src";
+
+/** Журнал меток sfx, поставленных в этом запуске: {kind, t, strength, layer, index, id}. kbMove отдаёт свой отрезок в res.sfx. */
+/** @type {any[]} */
+var TL_SFX_LOG = [];
+
 /**
- * Маркер sfx на композиции слоя; на занятом кадре дописывается через «|».
+ * Источники меток маркера (по одному на метку комментария «sfx:a|b»).
+ * @param {MarkerValue} mv
+ * @param {number} n число меток в комментарии
+ * @returns {string[]}
+ */
+function tlSfxSources(mv, n) {
+  var raw = "";
+  try {
+    var params = /** @type {any} */ (mv.getParameters());
+    if (params && params[TL_SFX_SRC] !== undefined) raw = String(params[TL_SFX_SRC]);
+  } catch (e) {
+    raw = "";
+  }
+  var src = raw === "" ? [] : raw.split("|");
+  while (src.length < n) src.push("");
+  return src.slice(0, n);
+}
+
+/**
+ * Маркер sfx на композиции слоя; на занятом кадре дописывается через «|». Слой-источник — в параметре маркера
+ * kb-sfx-src (id слоя), чтобы при удалении слоя снять его звуки (kbSfxDropLayer). Метка пишется в TL_SFX_LOG.
  * @param {Layer} layer
  * @param {number} t
  * @param {string} kind
@@ -288,13 +315,67 @@ function tlSfxMarker(layer, t, kind, strength) {
   var markers = layer.containingComp.markerProperty;
   var item = kind + "@" + strength;
   var comment = "sfx:" + item;
+  var id = /** @type {any} */ (layer).id;
+  var src = [id === undefined ? "" : String(id)];
   for (var i = 1; i <= markers.numKeys; i++) {
     if (Math.abs(markers.keyTime(i) - t) < 0.0005) {
-      var old = markers.keyValue(i).comment;
-      comment = old.indexOf("sfx:") === 0 ? old + "|" + item : comment;
+      var oldMv = markers.keyValue(i);
+      var old = oldMv.comment;
+      if (old.indexOf("sfx:") === 0) {
+        comment = old + "|" + item;
+        src = tlSfxSources(oldMv, old.substring(4).split("|").length).concat(src);
+      }
     }
   }
-  markers.setValueAtTime(t, new MarkerValue(comment));
+  var mv = new MarkerValue(comment);
+  var params = {};
+  params[TL_SFX_SRC] = src.join("|");
+  mv.setParameters(params);
+  markers.setValueAtTime(t, mv);
+  TL_SFX_LOG.push({ kind: kind, t: t, strength: strength, layer: layer.name, index: layer.index, id: id });
+}
+
+/**
+ * Снять метки sfx, поставленные движениями этого слоя (по kb-sfx-src); звать до layer.remove(). Метки без источника
+ * (маркеры до кита с источниками, ручные) не трогает. Пустой маркер удаляется.
+ * @param {Layer} layer
+ * @returns {{kind: string, t: number, strength: number}[]} снятые метки
+ */
+function kbSfxDropLayer(layer) {
+  var markers = layer.containingComp.markerProperty;
+  var id = String(/** @type {any} */ (layer).id);
+  var dropped = [];
+  for (var i = markers.numKeys; i >= 1; i--) {
+    var mv = markers.keyValue(i);
+    var comment = mv.comment;
+    if (comment.indexOf("sfx:") !== 0) continue;
+    var items = comment.substring(4).split("|");
+    var src = tlSfxSources(mv, items.length);
+    var keepItems = [];
+    var keepSrc = [];
+    for (var j = 0; j < items.length; j++) {
+      if (src[j] === id) {
+        var parts = items[j].split("@");
+        dropped.push({ kind: parts[0], t: markers.keyTime(i), strength: parts.length > 1 ? parseFloat(parts[1]) : 1 });
+      } else {
+        keepItems.push(items[j]);
+        keepSrc.push(src[j]);
+      }
+    }
+    if (keepItems.length === items.length) continue;
+    if (!keepItems.length) {
+      markers.removeKey(i);
+      continue;
+    }
+    var nv = new MarkerValue("sfx:" + keepItems.join("|"));
+    nv.duration = mv.duration;
+    var params = {};
+    params[TL_SFX_SRC] = keepSrc.join("|");
+    nv.setParameters(params);
+    markers.setValueAtKey(i, nv);
+  }
+  if (dropped.length) kbLog("SFX drop " + dropped.length + " «" + layer.name + "»");
+  return dropped;
 }
 
 /**
@@ -320,6 +401,7 @@ function tlRunMove(layer, name, opts, doRun) {
   if (from !== name && S.swapOpts && S.swapOpts[name]) for (key in S.swapOpts[name]) o[key] = S.swapOpts[name][key]; // опции подмены — под опциями вызова
   for (key in (opts || {})) o[key] = opts[key];
   var plan;
+  var logFrom = TL_SFX_LOG.length;
   try {
     plan = def.plan(layer, o, S);
     if (doRun) def.run(layer, o, S, plan);
@@ -336,7 +418,10 @@ function tlRunMove(layer, name, opts, doRun) {
     var strength = (def.sfx.strength || 1) * (o.strength !== undefined ? o.strength : 1);
     var t = tlCeilFrame(def.sfx.at === "start" ? plan.start : plan.hit); // sfx.at: "hit" (по умолчанию) | "start" (звук проведения, marker-swipe)
     tlSfxMarker(layer, t, def.sfx.kind, strength);
-    sfx.push({ kind: def.sfx.kind, t: t, strength: strength });
+  }
+  for (var si = logFrom; si < TL_SFX_LOG.length; si++) { // все метки движения: раннера и те, что ставит сам run (cascade, plate, mark…)
+    var lg = TL_SFX_LOG[si];
+    sfx.push({ kind: lg.kind, t: lg.t, strength: lg.strength, layer: lg.layer });
   }
   var res = { name: name, from: from, start: plan.start, hit: plan.hit, end: plan.end, units: plan.n, sfx: sfx };
   kbLog((doRun ? "MOVE " : "PLAN ") + name + " «" + layer.name + "» start " + plan.start.toFixed(3) + " hit " + plan.hit.toFixed(3) +

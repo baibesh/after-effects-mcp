@@ -16,6 +16,16 @@ var MCP_REQUEST;
 /** Реестр инструментов: MCP_TOOLS.<имя> = {write: bool, run: function(args) → any} */
 var MCP_TOOLS = {};
 
+/**
+ * Пометить ошибку «до изменений» (проверка аргументов, поиск слоя): к ней не дописывается совет про Cmd+Z.
+ * @param {Error} e
+ * @returns {Error}
+ */
+function mcpNoChange(e) {
+  /** @type {any} */ (e).mcpNoChange = true;
+  return e;
+}
+
 /** @param {string} message */
 function mcpLog(message) {
   var log = new File(MCP_REQUEST.logPath);
@@ -71,18 +81,22 @@ function mcpDispatch() {
   var tool = MCP_TOOLS[name];
   var response;
   var undoOpen = false;
+  var dirtyBefore = true;
   mcpLog("▶ mcp " + name);
   try {
     if (!tool) throw new Error("Неизвестный инструмент «" + name + "»");
     if (tool.write) {
       mcpCheckWritable();
+      dirtyBefore = /** @type {any} */ (app.project).dirty === true;
       app.beginUndoGroup("MCP: " + name);
       undoOpen = true;
     }
     response = {ok: true, result: tool.run(MCP_REQUEST.args || {})};
   } catch (e) {
     var where = e.fileName ? " (" + new File(e.fileName).name + ":" + e.line + ")" : "";
-    var hint = undoOpen ? " — если вызов успел что-то изменить, Cmd+Z в AE откатывает его целиком" : "";
+    // Совет про отмену — только если вызов мог что-то изменить: не ошибка проверки и не «проект как был чистым, так и остался».
+    var touched = !e.mcpNoChange && (dirtyBefore || /** @type {any} */ (app.project).dirty === true);
+    var hint = undoOpen && touched ? " — если вызов успел что-то изменить, Cmd+Z в AE откатывает его целиком" : "";
     response = {ok: false, error: String(e.message || e) + where + hint};
   } finally {
     if (undoOpen) app.endUndoGroup();

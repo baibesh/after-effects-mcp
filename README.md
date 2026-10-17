@@ -142,8 +142,8 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 |---|---|---|
 | `ae_status` | версия AE, открытый проект, `dirty`, битность, активная композиция | `{}` |
 | `list_comps` | композиции: путь, размер, fps, длительность, число слоёв | `{}` |
-| `list_layers` | слои сверху вниз: тип, in/out, родитель, эффекты, 3D, трек-мат | `{"comp": "Scene"}` |
-| `get_layer` | трансформ со значениями и ключами (время, значение, интерполяция, ease), выражения, текст, эффекты, содержимое shape | `{"comp": "Scene", "layer": "title"}` |
+| `list_layers` | слои сверху вниз: тип, in/out, родитель, эффекты, 3D, трек-мат; `markers` — маркеры композиции (`sfx:…` с источником `kb-sfx-src` в `params`) | `{"comp": "Scene"}` |
+| `get_layer` | трансформ со значениями и ключами (время, значение, интерполяция, ease), выражения, текст, эффекты, содержимое shape; `animators` — текстовые аниматоры (имя, изменённые свойства с ключами/выражениями, селекторы), `markers` — маркеры слоя | `{"comp": "Scene", "layer": "title"}` |
 | `get_frames` | **кадры картинкой**: один или лист до 4 в ряд; цвет как в рендере (поправка 32 бит, фон композиции, прозрачность) | `{"comp": "Scene", "times": [0.5, 1, 2], "width": 480}` |
 | `list_render_templates` | шаблоны рендера и вывода в AE (только в тестовом проекте) | `{}` |
 | `list_presets` | пресеты: свои (`local`) или штатные Adobe (`adobe`, с поиском) | `{"source": "adobe", "query": "Behaviors"}` |
@@ -154,7 +154,8 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 |---|---|---|
 | `open_project` | открыть любой `.aep`; текущий закрывается, только если ничего не потеряется; `writable` — можно ли менять | `{"path": "/…/out/a1-01.aep"}` |
 | `open_test_project` | открыть или создать `test/<имя>.aep` (32 бита, линейный свет) | `{"name": "mcp-test"}` |
-| `create_comp` | композиция; по умолчанию 1920×1080, 30 fps, 10 с | `{"name": "Scene", "duration": 4, "background": [0.96, 0.95, 0.92]}` |
+| `create_comp` | композиция; по умолчанию 1920×1080, 30 fps, 10 с; открывается во вьюере и становится активной (`open: false` — нет) | `{"name": "Scene", "duration": 4, "background": [0.96, 0.95, 0.92]}` |
+| `open_comp` | открыть композицию во вьюере, сделать активной, `time` — головка (проект не меняется) | `{"comp": "Scene", "time": 1.5}` |
 | `save_project` | сохранить (только разрешённые папки) | `{}` |
 | `add_text` | текст, якорь в центре; `font` — ключ шрифта проекта или PostScript-имя | `{"comp": "Scene", "name": "title", "text": "Сәлем!", "font": "black", "size": 110, "color": [1,1,1], "position": [960, 300], "start": 0.3}` |
 | `add_shape` | прямоугольник (скругление) или эллипс, заливка/обводка | `{"comp": "Scene", "name": "plaque", "shape": "rect", "size": [900, 220], "radius": 24, "fill": [0.18, 0.43, 0.71]}` |
@@ -163,7 +164,7 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 | `add_null` | невидимый родитель группы | `{"comp": "Scene", "name": "rig", "position": [960, 300]}` |
 | `add_footage` | картинка/видео/звук; `fit`: none, contain, cover или ширина px; `blend` | `{"comp": "Scene", "file": "/abs/card.png", "fit": 360, "position": [1500, 780]}` |
 | `set_layer` | имя, трансформ, время, родитель, наложение, видимость, порядок | `{"comp": "Scene", "layer": "title", "parent": "rig", "moveTo": {"above": "plaque"}}` |
-| `delete_layer` | удалить слой | `{"comp": "Scene", "layer": "sub"}` |
+| `delete_layer` | удалить слой; sfx-метки композиции, поставленные его движениями (`kb-sfx-src`), снимаются вместе с ним — `sfxRemoved` | `{"comp": "Scene", "layer": "sub"}` |
 
 ### Правка готового
 
@@ -193,10 +194,15 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 | Инструмент | Что делает | Пример |
 |---|---|---|
 | `apply_preset` | пресет к слою от `start`: JSON-данные (ease по отрезкам, `speed`), свой `.ffx` или `adobe:…`; `"move:<имя>"` — движение кита (как `apply_motion`) | `{"comp": "Scene", "layer": "title", "preset": "accent-punch", "start": 2}` · `{"…", "preset": "move:punch", "start": 2.6}` |
-| `list_motions` | каталог 41 движения кита: группа A–H, слот, параметры с умолчаниями, что видит зритель, `needs`; со `style` — подмены | `{"group": "A", "style": "brisk"}` |
-| `apply_motion` | движение кита (`kbMove`) на слой (номер или имя) или на выделение; стиль композиции/проекта; ответ — план start/hit/end и sfx | `{"comp": "Scene", "layer": "BIGGER", "name": "land", "at": 1.0, "opts": {"unit": "char", "strength": 1.2}}` · `{"selection": true, "name": "rise", "at": 1.6}` |
+| `list_motions` | каталог 41 движения кита: группа A–H, слот, параметры с умолчаниями, что видит зритель, `needs`; `activeStyle` — действующий стиль (`style` вызова → композиции `comp`/активной → проекта → `hand`, со `scope`), `swappedTo` — подмены в нём | `{"group": "A"}` · `{"comp": "Scene"}` · `{"style": "brisk"}` |
+| `apply_motion` | движение кита (`kbMove`) на слой (номер или имя) или на выделение; стиль композиции/проекта; ответ — план start/hit/end и `sfx`: все метки, которые движение фактически поставило (вид, время, кадр, сила, `inComp` — сверено с маркерами композиции; у `cascade` — по метке на букву-тик) | `{"comp": "Scene", "layer": "BIGGER", "name": "land", "at": 1.0, "opts": {"unit": "char", "strength": 1.2}}` · `{"selection": true, "name": "rise", "at": 1.6}` |
 | `set_motion_style` | стиль движения `hand` / `brisk` / `lesson` / `magazine` для композиции (`comp`) или проекта; `null` — снять | `{"style": "brisk", "comp": "Scene"}` |
-| `get_selection` | выделенные слои активной композиции: номер, имя, тип, in/out, действующий стиль | `{}` |
+| `get_selection` | выделенные слои активной композиции (или `comp`): номер, имя, тип, in/out, действующий стиль | `{}` · `{"comp": "Scene"}` |
+| `select_layers` | выделить слои (номер или имя), с остальных снять; `add` — добавить к выделению, `[]` — снять всё; композиция открывается и становится активной | `{"comp": "Scene", "layers": ["BIGGER", 3]}` |
+
+Активная композиция — та, что во вьюере AE; если AE её не отдаёт (фокус на панели Project), берётся последняя открытая через
+MCP (`create_comp`, `open_comp`, `select_layers`) в этом проекте. Нет ни той, ни другой — ошибка с подсказкой `open_comp`.
+«Примени к выделенному»: `select_layers` → `apply_motion {"selection": true, …}`.
 
 Свои пресеты, формат JSON и таблица готовых (`fade-up`, `pop-in`, `accent-punch`, `drop-out`, `breathe`…) — [presets/README.md](presets/README.md).
 Движения кита (текст, акценты, субтитры, плашки, камера, герой) и их параметры — [kit/README.md](kit/README.md) «Пресеты движения».
@@ -227,7 +233,7 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 | Инструмент | Что делает | Пример |
 |---|---|---|
 | `make_format_comp` | композиция под формат: своя раскладка `«<comp> <формат>»` → сама композиция → переразметка `(reframe)` cover/contain; тексты вне безопасных зон — в ответе | `{"comp": "Scene", "format": "9x16", "mode": "contain"}` |
-| `render_master` | мастер ProRes в `out/renders/<comp>/<comp>-master.mov` | `{"comp": "Scene"}` · `{"comp": "Plate", "alpha": true}` |
+| `render_master` | мастер ProRes в `out/renders/<comp>/<comp>-master.mov`; `duration`/`frames` — длина ролика, `renderSeconds` — время рендера | `{"comp": "Scene"}` · `{"comp": "Plate", "alpha": true}` |
 | `deliver` | файл для площадки из мастера (ffmpeg) | `{"master": "/…/out/renders/Scene/Scene-master.mov", "platform": "youtube"}` |
 | `render_formats` | всё сразу: формат → мастер → выдача; переразметку с текстом вне зон не рендерит без `force` | `{"comp": "Scene", "formats": ["16x9", "9x16"]}` |
 
@@ -304,7 +310,8 @@ node build/mcp-call.js get_frames '{"comp":"Scene","times":[1,2]}'
 | «Шрифта … нет в системе» | установить шрифт или взять ключ из списка в ошибке |
 | условие выбрало не ту ветку | вложенный `?:` без скобок: ExtendScript группирует `a && b ? x : c ? y : z` как `a && (b ? x : c) ? y : z` — валидатор ловит (`ternary`) |
 | «Object is invalid» после добавления в shape-группу | AE делает недействительными прежние ссылки на свойства группы после `addProperty` — брать свойство заново (`kbGroup`) после всех добавлений |
-| ошибка изменяющего инструмента на полпути | один вызов — одна группа отмены: Cmd+Z в AE откатывает его целиком |
+| ошибка изменяющего инструмента на полпути | один вызов — одна группа отмены: Cmd+Z в AE откатывает его целиком; ошибки проверки (нет слоя, движения, стиля) — до изменений, совета про Cmd+Z у них нет |
+| «Нет движения / пресета …» | в ошибке до 8 ближайших имён; полный список — `list_motions` / `list_presets` |
 | `//@include` не находит файл через символическую ссылку | ограничение ExtendScript: кит в проекте — копия (`kit-sync.mjs`), не ссылка |
 
 ## Лицензия

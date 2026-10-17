@@ -291,12 +291,13 @@ KB_CONFIG.probeFonts = "inter|caveat";                                          
 
 | Функция | Сигнатура | Что делает |
 |---|---|---|
-| `kbMove` | `(layer, name, opts?) → {name, from, start, hit, end, units, sfx[]}` | применить движение; подмена по стилю → множители → `TL_MOVES[name].plan/run` → маркер `sfx:<вид>@<сила>` на кадр удара → строка журнала `MOVE …`. `at` — секунды удара (движение приходит на `lead` кадров раньше), `start` — первый кадр; время брать из `kbS/kbAt/kbOn`, не литералом |
+| `kbMove` | `(layer, name, opts?) → {name, from, start, hit, end, units, sfx[]}` | применить движение; подмена по стилю → множители → `TL_MOVES[name].plan/run` → маркер `sfx:<вид>@<сила>` на кадр удара → строка журнала `MOVE …`. `sfx[]` — все метки движения (раннера и те, что ставит сам пресет: тики `cascade`, плашки, маркер), `{kind, t, strength, layer}`; каждая метка — в `TL_SFX_LOG` и с источником `kb-sfx-src`. `at` — секунды удара (движение приходит на `lead` кадров раньше), `start` — первый кадр; время брать из `kbS/kbAt/kbOn`, не литералом |
 | `kbMovePlan` | `(layer, name, opts?)` | то же без ключей — только времена (`PLAN …`) |
 | `kbSlot` | `(layer, {in, loop?, out?, at, until, inOpts?, loopOpts?, outOpts?}) → {in, loop, out}` | слоты слоя: вход к `at`, цикл между концом входа и началом выхода, выход к `until`; `outPoint` = конец выхода; без `out` — `WARN no-out` |
 | `kbMoveStyle` | `(style)` | включить стиль: объект `KB_STYLE` (как в `style.jsx` ролика) или имя; множители и подмены — из `TL_STYLES`, если в объекте пусты |
 | `kbMoveStyleUse` | `(name?, over?) → TL_S` | стиль по имени **с умолчаниями кита** (палитра, шрифты, мягкие звуки) — вместо копирования `style.jsx` |
 | `kbMoveStyleDefaults` | `(name?, over?) → KB_STYLE` | тот же объект без включения (дописать поля и отдать в `kbMoveStyle`) |
+| `kbSfxDropLayer` | `(layer) → [{kind, t, strength}]` | снять метки `sfx:` композиции, поставленные движениями этого слоя; звать до `layer.remove()` (MCP `delete_layer` зовёт сам). Источник метки — параметр маркера `kb-sfx-src` (id слоев через «\|», по одному на метку комментария); метки без источника (старые, ручные) не трогает |
 | `kbSfxFromMarkers` | `(comp, cfg)` | один раз после сборки: по маркерам `sfx:` (и во вложенных композициях) кладёт звуки из `cfg.dir + map[вид].file`, уровень `level − 6 дБ × (1 − сила)`; `cfg` = `TL_S.sfx` |
 | `kbPlate` | `(comp, {kind, text|lines, x, y, side?, anchor?, tilt?, seed?, name?}) → {root, body, edge, shadow, text[], …}` | плашка-предмет: `tag`, `slot`, `badge`, `callout`, `card`, `bare`; движения `plate-in` … получают её в `opts.plate` |
 | `kbActor` | `(comp, {hero?, feet: [x, y], h, pose?, name?}) → actor` | герой из паспорта; `hero` — id (`"arlan"`) или паспорт, без него — `KB_CONFIG.hero` проекта, иначе Арлан (`KB_HERO_DEFAULT`). Реакции — `kbMove(actor.layer, "take", {…})` |

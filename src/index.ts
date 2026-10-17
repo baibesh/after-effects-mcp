@@ -48,7 +48,7 @@ server.registerTool(
 
 server.tool(
   "list_layers",
-  "Слои композиции сверху вниз: имя, тип (text/shape/precomp/image/video/audio/null/adjustment/camera/light/solid), in/out, родитель, эффекты, 3D, трек-мат.",
+  "Слои композиции сверху вниз: имя, тип (text/shape/precomp/image/video/audio/null/adjustment/camera/light/solid), in/out, родитель, эффекты, 3D, трек-мат; markers — маркеры композиции (sfx:…, с источником kb-sfx-src в params).",
   { comp: compName },
   (a) => call("list_layers", a),
 );
@@ -56,7 +56,7 @@ server.tool(
 server.registerTool(
   "get_layer",
   {
-    description: "Подробно про один слой: трансформации со значениями и ключами (время, значение, интерполяция, ease), выражения, текст, эффекты с изменёнными параметрами, содержимое shape-слоя. Свойства идентифицируются matchName.",
+    description: "Подробно про один слой: трансформации со значениями и ключами (время, значение, интерполяция, ease), выражения, текст, эффекты с изменёнными параметрами, содержимое shape-слоя, текстовые аниматоры (имя, свойства с ключами и выражениями, селекторы) и маркеры слоя. Свойства идентифицируются matchName.",
     inputSchema: {
     comp: compName,
     layer: layerName,
@@ -117,7 +117,7 @@ server.registerTool(
 server.registerTool(
   "create_comp",
   {
-    description: "Создать композицию. Имя должно быть уникальным. По умолчанию 1920×1080, 30 fps, 10 с.",
+    description: "Создать композицию. Имя должно быть уникальным. По умолчанию 1920×1080, 30 fps, 10 с. Новая композиция открывается во вьюере и становится активной (open: false — не открывать).",
     inputSchema: {
     name: z.string(),
     width: z.number().int().min(4).max(30000).optional(),
@@ -126,6 +126,7 @@ server.registerTool(
     duration: z.number().min(0.04).max(10800).optional().describe("Секунды"),
     background: z.array(z.number().min(0).max(1)).length(3).optional().describe("Цвет фона [r,g,b] 0..1"),
     folder: z.string().optional().describe("Папка в панели Project (создаётся, если нет)"),
+    open: z.boolean().optional().describe("Открыть во вьюере и сделать активной (по умолчанию да)"),
   },
   },
   (a) => call("create_comp", a),
@@ -280,7 +281,7 @@ server.registerTool(
 server.registerTool(
   "delete_layer",
   {
-    description: "Удалить слой по имени (отменяется Cmd+Z в AE).",
+    description: "Удалить слой по имени (отменяется Cmd+Z в AE). Вместе со слоем снимаются sfx-метки композиции, которые поставили его движения (apply_motion, move:…) — в ответе sfxRemoved.",
     inputSchema: { comp: compName, layer: layerName },
   },
   (a) => call("delete_layer", a),
@@ -357,7 +358,7 @@ server.registerTool(
 server.registerTool(
   "render_master",
   {
-    description: `Мастер-файл композиции: QuickTime ProRes (422 HQ / 4444 с альфой при наличии шаблонов «MCP …», иначе штатные «High Quality»). Пишет в ${config.renderDir}/<comp>/<comp>-master.mov. Блокирует AE до конца рендера; очередь рендера пользователя не трогает.`,
+    description: `Мастер-файл композиции: QuickTime ProRes (422 HQ / 4444 с альфой при наличии шаблонов «MCP …», иначе штатные «High Quality»). Пишет в ${config.renderDir}/<comp>/<comp>-master.mov. Блокирует AE до конца рендера; очередь рендера пользователя не трогает. В ответе duration/frames — длина ролика, renderSeconds — сколько шёл рендер.`,
     inputSchema: {
       comp: compName,
       alpha: z.boolean().optional().describe("С прозрачностью (ProRes 4444)"),
@@ -674,10 +675,11 @@ server.registerTool(
   "list_motions",
   {
     description:
-      "Каталог движений кита (41, kit/README.md «Пресеты движения»): имя, группа A–H (A текст-вход, B текст-выход, C цикл, D акцент слова, E субтитры, F плашки, G камера, H реакции героя), слот (in/loop/out/accent), единицы, параметры с умолчаниями, что видит зритель и на чём работает (needs: text — любой текстовый слой; pair — нужен второй слой; plate/cam/actor/voice — собираются китом в скрипте). С style — во что движение подменяется в этом стиле. Проект не меняется.",
+      "Каталог движений кита (41, kit/README.md «Пресеты движения»): имя, группа A–H (A текст-вход, B текст-выход, C цикл, D акцент слова, E субтитры, F плашки, G камера, H реакции героя), слот (in/loop/out/accent), единицы, параметры с умолчаниями, что видит зритель и на чём работает (needs: text — любой текстовый слой; pair — нужен второй слой; plate/cam/actor/voice — собираются китом в скрипте). activeStyle — действующий стиль: style вызова → композиции (comp или активная) → проекта → hand, со scope; swappedTo — во что движение подменяется в нём. Проект не меняется.",
     inputSchema: {
       group: z.string().optional().describe('Буква группы A–H или группа реестра ("text-in", "text-accent", "actor"…)'),
-      style: motionStyle.optional().describe("Показать подмены этого стиля (swappedTo)"),
+      comp: compName.optional().describe("Композиция, чей стиль показать; по умолчанию активная"),
+      style: motionStyle.optional().describe("Показать подмены этого стиля вместо действующего"),
     },
   },
   (a) => call("list_motions", a),
@@ -687,11 +689,11 @@ server.registerTool(
   "apply_motion",
   {
     description:
-      'Применить движение кита к слою (layer — номер или имя) или к каждому выделенному слою (selection: true; выделение — get_selection). Стиль — из вызова, иначе композиции, иначе проекта (set_motion_style), иначе hand; подмена по стилю — в ответе (swappedFrom). Время: at — секунды удара (движение приходит на 2 к. раньше), или anchor — маркер слоя ({"layer":"voice","marker":"!er"}), или opts.start — первый кадр движения; без них — от начала слоя. opts — параметры движения из list_motions (строка "@Имя" — слой этой композиции). Ответ — план на каждый слой: start/hit/end (секунды и кадры) и sfx-маркеры. Одна отмена на вызов. Реакции героя (группа H) через MCP не применяются: актёр собирается скриптом кита (kbActor).',
+      'Применить движение кита к слою (layer — номер или имя) или к каждому выделенному слою (selection: true; выделение — get_selection). Стиль — из вызова, иначе композиции, иначе проекта (set_motion_style), иначе hand; подмена по стилю — в ответе (swappedFrom). Время: at — секунды удара (движение приходит на 2 к. раньше), или anchor — маркер слоя ({"layer":"voice","marker":"!er"}), или opts.start — первый кадр движения; без них — от начала слоя. opts — параметры движения из list_motions (строка "@Имя" — слой этой композиции). Ответ — план на каждый слой: start/hit/end (секунды и кадры) и sfx — все метки, которые движение фактически поставило в маркеры композиции (вид, время, кадр, сила, inComp — сверено с композицией). Одна отмена на вызов. Реакции героя (группа H) через MCP не применяются: актёр собирается скриптом кита (kbActor).',
     inputSchema: {
       comp: compName.optional().describe("По умолчанию — активная композиция"),
       layer: layerRef.optional(),
-      selection: z.boolean().optional().describe("Применить к выделенным слоям активной (или указанной) композиции"),
+      selection: z.boolean().optional().describe("Применить к выделенным слоям активной (или указанной) композиции; выделить — select_layers"),
       name: z.string().describe('Имя движения: "land", "rise", "punch", "marker-swipe"…'),
       at: z.number().min(0).optional().describe("Секунды удара (опорный слог)"),
       anchor: z.object({ layer: layerRef, marker: z.string() }).optional().describe("Взять at из маркера слоя"),
@@ -719,10 +721,34 @@ server.registerTool(
   "get_selection",
   {
     description:
-      "Выделенные слои активной композиции (или comp): номер, имя, тип, in/out, время головки и действующий стиль движения — чтобы «примени к этому» работало без имён. Проект не меняется.",
+      "Выделенные слои активной композиции (или comp): номер, имя, тип, in/out, время головки и действующий стиль движения — чтобы «примени к этому» работало без имён. Активной нет — open_comp; выделить — select_layers. Проект не меняется.",
     inputSchema: { comp: compName.optional().describe("По умолчанию — активная композиция") },
   },
   (a) => call("get_selection", a),
+);
+
+server.registerTool(
+  "open_comp",
+  {
+    description: "Открыть композицию во вьюере AE и сделать её активной (для get_selection, select_layers, apply_motion без comp). time — поставить головку. Проект не меняется.",
+    inputSchema: { comp: compName, time: z.number().min(0).optional().describe("Секунды — куда поставить головку") },
+  },
+  (a) => call("open_comp", a),
+);
+
+server.registerTool(
+  "select_layers",
+  {
+    description:
+      "Выделить слои композиции (номер или имя), с остальных выделение снять; add: true — добавить к текущему. layers: [] — снять всё. Композиция открывается во вьюере и становится активной (open: false — нет). Потом apply_motion {selection: true}. Проект не меняется.",
+    inputSchema: {
+      comp: compName.optional().describe("По умолчанию — активная композиция"),
+      layers: z.array(layerRef).describe("Слои: номер (1 — верхний) или точное имя"),
+      add: z.boolean().optional().describe("Не снимать текущее выделение"),
+      open: z.boolean().optional().describe("Открыть композицию во вьюере (по умолчанию да)"),
+    },
+  },
+  (a) => call("select_layers", a),
 );
 
 const transport = new StdioServerTransport();

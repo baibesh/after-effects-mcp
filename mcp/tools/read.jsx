@@ -127,6 +127,60 @@ function mcpDescribeGroup(group, depth, onlyModified) {
   return out;
 }
 
+/**
+ * Текстовые аниматоры: имя, свойства аниматора (что меняет, с ключами и выражениями) и селекторы.
+ * @param {TextLayer} layer
+ * @param {boolean} all
+ * @returns {Object[]}
+ */
+function mcpTextAnimators(layer, all) {
+  var out = [];
+  var group = /** @type {PropertyGroup} */ (kbGroup(layer, ["ADBE Text Properties", "ADBE Text Animators"]));
+  for (var i = 1; i <= group.numProperties; i++) {
+    var an = /** @type {PropertyGroup} */ (group.property(i));
+    var props = an.property("ADBE Text Animator Properties");
+    var sels = /** @type {PropertyGroup} */ (an.property("ADBE Text Selectors"));
+    var selectors = [];
+    for (var s = 1; sels && s <= sels.numProperties; s++) {
+      var sel = /** @type {PropertyGroup} */ (sels.property(s));
+      selectors.push({name: sel.name, matchName: sel.matchName, properties: mcpDescribeGroup(sel, 1, !all)});
+    }
+    out.push({
+      name: an.name,
+      enabled: /** @type {any} */ (an).enabled,
+      properties: props ? mcpDescribeGroup(/** @type {PropertyGroup} */ (props), 1, !all) : [],
+      selectors: selectors
+    });
+  }
+  return out;
+}
+
+/**
+ * Маркеры слоя: время, комментарий, длительность, параметры.
+ * @param {Layer} layer
+ * @returns {Object[]}
+ */
+function mcpLayerMarkers(layer) {
+  return mcpMarkerList(/** @type {Property} */ (kbProp(layer, ["ADBE Marker"])));
+}
+
+/**
+ * @param {Property} markers свойство маркеров слоя или композиции
+ * @returns {Object[]}
+ */
+function mcpMarkerList(markers) {
+  var out = [];
+  for (var i = 1; i <= markers.numKeys; i++) {
+    var mv = /** @type {MarkerValue} */ (markers.keyValue(i));
+    var m = {t: Math.round(markers.keyTime(i) * 1000) / 1000, comment: mv.comment};
+    if (mv.duration) m.duration = Math.round(mv.duration * 1000) / 1000;
+    var params = /** @type {any} */ (mv.getParameters());
+    for (var k in params) { m.params = params; break; }
+    out.push(m);
+  }
+  return out;
+}
+
 MCP_TOOLS.ae_status = {
   write: false,
   run: function () {
@@ -192,7 +246,7 @@ MCP_TOOLS.list_layers = {
       if (av.hasTrackMatte) info.trackMatte = String(av.trackMatteType);
       layers.push(info);
     }
-    return {
+    var res = {
       comp: mcpItemPath(comp),
       width: comp.width,
       height: comp.height,
@@ -200,6 +254,9 @@ MCP_TOOLS.list_layers = {
       duration: Math.round(comp.duration * 1000) / 1000,
       layers: layers
     };
+    var markers = mcpMarkerList(comp.markerProperty);
+    if (markers.length) res.markers = markers; // маркеры композиции (sfx:…, сцены)
+    return res;
   }
 };
 
@@ -221,7 +278,11 @@ MCP_TOOLS.get_layer = {
     };
     if (layer instanceof TextLayer) {
       out.text = mcpDescribeProp(kbProp(layer, ["ADBE Text Properties", "ADBE Text Document"]));
+      var animators = mcpTextAnimators(layer, all);
+      if (animators.length) out.animators = animators;
     }
+    var markers = mcpLayerMarkers(layer);
+    if (markers.length) out.markers = markers;
     var parade = mcpEffectParade(layer);
     if (parade && parade.numProperties) {
       var effects = [];

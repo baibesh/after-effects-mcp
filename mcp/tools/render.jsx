@@ -72,10 +72,12 @@ MCP_TOOLS.render_master = {
     }
     var item = queue.items.add(comp);
     var started = new Date().getTime();
+    var span = 0;
     try {
       item.applyTemplate("Best Settings");
       if (args.start !== undefined) item.timeSpanStart = args.start;
       if (args.duration !== undefined) item.timeSpanDuration = args.duration;
+      span = item.timeSpanDuration;
       var output = item.outputModule(1);
       var template = mcpApplyMasterTemplate(output, args.alpha === true);
       output.file = file;
@@ -96,7 +98,9 @@ MCP_TOOLS.render_master = {
       width: comp.width,
       height: comp.height,
       fps: comp.frameRate,
-      seconds: Math.round((new Date().getTime() - started) / 100) / 10
+      duration: Math.round(span * 1000) / 1000, // длина ролика, с
+      frames: Math.round(span * comp.frameRate),
+      renderSeconds: Math.round((new Date().getTime() - started) / 100) / 10 // сколько шёл рендер
     };
   }
 };

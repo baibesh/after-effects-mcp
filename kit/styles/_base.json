@@ -9,7 +9,7 @@
     "1x1": { "top": 96, "bottom": 96, "left": 96, "right": 96 }
   },
   "color": {
-    "bg": "#F6F4EF", "surface": "#FFFFFF", "ink": "#1E2233", "muted": "#5E6475", "light": "#FFFFFF",
+    "bg": "#F6F4EF", "surface": "#FFFFFF", "onSurface": "#1E2233", "ink": "#1E2233", "muted": "#5E6475", "light": "#FFFFFF",
     "brand": "#3B5BFF", "accent": "#FFB400",
     "correct": "#2BB673", "wrong": "#E8615A",
     "quiz": "#2B2F6B", "reward": "#FFE7B8",
@@ -39,6 +39,7 @@
     "stroke": { "thin": 4, "main": 7, "accent": 10, "underline": 8, "stickerOutline": 10 },
     "shadow": "soft",
     "shadows": { "soft": { "y": 8, "blur": 18, "opacity": 0.2 }, "none": null },
+    "cap": "round",
     "imageMask": "rounded",
     "imageFrame": "none",
     "background": "bg.solid",

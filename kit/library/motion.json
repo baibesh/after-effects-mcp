@@ -1,0 +1,119 @@
+{
+  "description": "Примитивы движения слоя. dur — мс или имя из motion.dur стиля (× motion.tempo). Трек: prop, from/to или keys [[доля времени, значение, кривая?]], span — доля длительности, curve — имя из ease.json или @enter/@exit/@emphasis/@move/@draw (motion.ease стиля). Значение: \"base\" — текущее, число/список — как есть, {\"offset\": v} — к текущему (px при базе 1080), {\"factor\": %} — от текущего. \"$имя\" — параметр (params, переопределяется вызовом). Числа — docs/research/motion-design-pro.md §7.3.",
+  "items": {
+    "enter.rise": {
+      "kind": "enter", "dur": "text",
+      "description": "Подъём на 48 px с проявлением за первую половину — основной вход строки, карточки, плашки",
+      "tracks": [
+        { "prop": "opacity", "from": 0, "to": "base", "span": [0, 0.5] },
+        { "prop": "position", "from": { "offset": [0, 48] }, "to": "base" }
+      ]
+    },
+    "enter.slideIn": {
+      "kind": "enter", "dur": { "path": [300, 0.25, 900] },
+      "description": "Въезд сбоку; длительность от пути: 300 мс + 0,25 мс на px, не больше 900. dx < 0 — слева",
+      "params": { "dx": -240, "dy": 0 },
+      "tracks": [
+        { "prop": "opacity", "from": 0, "to": "base", "span": [0, 0.35] },
+        { "prop": "position", "from": { "offset": ["$dx", "$dy"] }, "to": "base" }
+      ]
+    },
+    "enter.scaleIn": {
+      "kind": "enter", "dur": "icon",
+      "description": "Проявление с масштаба 80 % — иконка, картинка, карточка без перелёта",
+      "tracks": [
+        { "prop": "opacity", "from": 0, "to": "base", "span": [0, 0.4] },
+        { "prop": "scale", "from": { "factor": 80 }, "to": "base" }
+      ]
+    },
+    "enter.pop": {
+      "kind": "enter", "dur": "icon",
+      "description": "Выскок: масштаб 0 → перелёт (motion.overshoot стиля) → 100, поворот −10° → 0 — стикер, бейдж, значок",
+      "tracks": [
+        { "prop": "opacity", "from": 0, "to": "base", "span": [0, 0.15], "curve": "linear" },
+        { "prop": "scale", "from": { "factor": 0 }, "to": "base", "curve": "@emphasis" },
+        { "prop": "rotation", "from": { "offset": -10 }, "to": "base", "curve": "@enter" }
+      ]
+    },
+    "enter.unblur": {
+      "kind": "enter", "dur": 550,
+      "description": "Из расфокуса: размытие 40 → 0, масштаб 105 → 100 — заголовок, фон, смена плана",
+      "tracks": [
+        { "prop": "opacity", "from": 0, "to": "base", "span": [0, 0.5] },
+        { "prop": "blur", "from": 40, "to": 0 },
+        { "prop": "scale", "from": { "factor": 105 }, "to": "base" }
+      ]
+    },
+    "exit.fadeDown": {
+      "kind": "exit", "dur": "exit",
+      "description": "Уход: угасание, спуск на 20 px, масштаб 96 % — выход короче входа, с ускорением",
+      "tracks": [
+        { "prop": "opacity", "from": "base", "to": 0 },
+        { "prop": "position", "from": "base", "to": { "offset": [0, 20] } },
+        { "prop": "scale", "from": "base", "to": { "factor": 96 } }
+      ]
+    },
+    "exit.shrink": {
+      "kind": "exit", "dur": 230,
+      "description": "Сжатие до 80 % с угасанием — значок, стикер, вариант ответа",
+      "tracks": [
+        { "prop": "opacity", "from": "base", "to": 0 },
+        { "prop": "scale", "from": "base", "to": { "factor": 80 } }
+      ]
+    },
+    "emphasis.pop": {
+      "kind": "emphasis", "dur": 280,
+      "description": "Акцент: масштаб 100 → 118 → 100 — ударное слово, верный ответ, счётчик. start на 2–4 кадра раньше слова в голосе",
+      "tracks": [
+        { "prop": "scale", "keys": [[0, "base"], [0.45, { "factor": 118 }, "quintOut"], [1, "base", "sineInOut"]] }
+      ]
+    },
+    "emphasis.shake": {
+      "kind": "emphasis", "dur": 300,
+      "description": "Мягкое «нет»: покачивание ±10, ±6, ±3 px — неверный ответ",
+      "tracks": [
+        { "prop": "position", "curve": "sineInOut",
+          "keys": [[0, "base"], [0.2, { "offset": [-10, 0] }], [0.45, { "offset": [6, 0] }], [0.7, { "offset": [-3, 0] }], [1, "base"]] }
+      ]
+    },
+    "emphasis.dimOthers": {
+      "kind": "emphasis", "dur": 250, "target": "others",
+      "description": "Приглушить остальное до 45 % — фокус на одном объекте (signaling). Слои — others вызова",
+      "params": { "level": 45 },
+      "tracks": [
+        { "prop": "opacity", "from": "base", "to": { "factor": "$level" }, "curve": "cubicInOut" }
+      ]
+    },
+    "emphasis.undim": {
+      "kind": "emphasis", "dur": 250, "target": "others",
+      "description": "Вернуть приглушённые слои к 100 %",
+      "tracks": [
+        { "prop": "opacity", "from": "base", "to": 100, "curve": "cubicInOut" }
+      ]
+    },
+    "idle.breathe": {
+      "kind": "idle",
+      "description": "Дыхание 100 ↔ 103 %, период 2,2 с, фаза по index — стикер и карточка в простое (не больше 3 слоёв сразу)",
+      "params": { "amp": 3, "period": 2200 },
+      "tracks": [
+        { "prop": "scale", "expression": "var k=1+($amp/100)*(1-Math.cos(2*Math.PI*(time-$start)/($period/1000)+$phase))/2;value*k" }
+      ]
+    },
+    "idle.sway": {
+      "kind": "idle",
+      "description": "Покачивание ±3°, период 2,6 с",
+      "params": { "amp": 3, "period": 2600 },
+      "tracks": [
+        { "prop": "rotation", "expression": "value+$amp*Math.sin(2*Math.PI*(time-$start)/($period/1000)+$phase)" }
+      ]
+    },
+    "idle.float": {
+      "kind": "idle",
+      "description": "Парение ±6 px по вертикали, период 3 с",
+      "params": { "amp": 6, "period": 3000 },
+      "tracks": [
+        { "prop": "position", "expression": "value+[0,$amp*$unit*Math.sin(2*Math.PI*(time-$start)/($period/1000)+$phase)]" }
+      ]
+    }
+  }
+}

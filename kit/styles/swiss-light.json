@@ -3,7 +3,7 @@
   "extends": "_base",
   "description": "B — светлый швейцарский: тёплый светлый фон, строгая сетка, контрастная чёрная типографика, один насыщенный цвет панелями. Почти без скруглений, жирная линейка.",
   "color": {
-    "bg": "#F5F3EE", "surface": "#FFFFFF", "ink": "#111111", "muted": "#555555", "light": "#FFFFFF",
+    "bg": "#F5F3EE", "surface": "#FFFFFF", "onSurface": "#111111", "ink": "#111111", "muted": "#555555", "light": "#FFFFFF",
     "brand": "#1849FF", "accent": "#1849FF",
     "correct": "#1E8C4E", "wrong": "#E5342B",
     "quiz": "#1849FF", "reward": "#FFF1C7",
@@ -20,6 +20,7 @@
     "radius": { "card": 4, "chip": 4 },
     "stroke": { "thin": 2, "main": 3, "accent": 6, "underline": 3, "stickerOutline": 0 },
     "shadow": "none",
+    "cap": "butt",
     "imageMask": "rect",
     "imageFrame": "none",
     "background": "bg.panel",

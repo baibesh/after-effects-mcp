@@ -1,0 +1,105 @@
+{
+  "description": "Линии и аннотации — shape-слои в координатах композиции. Толщины — shape.stroke стиля (px при базе 1080), цвет — роль из color стиля, прорисовка — trim по кривой @draw, концы — shape.cap стиля (params.cap — исключение). Цель (target) — слой, к рамке которого привязана линия; from/to — точки [x, y] или слои. Числа — docs/research/motion-design-pro.md §7.4.",
+  "items": {
+    "draw.underline": {
+      "kind": "draw",
+      "dur": "underline",
+      "target": "layer",
+      "description": "Подчёркивание под выносными элементами последней строки (0,26 кегля от базовой линии), слева направо, с выносом 6 %",
+      "params": {
+        "stroke": "underline",
+        "color": "accent",
+        "offset": 0.26,
+        "overhang": 0.06
+      }
+    },
+    "draw.marker": {
+      "kind": "draw",
+      "dur": 350,
+      "target": "layer",
+      "description": "Маркер за нижней половиной слова (высота 0,45 кегля, 70 %), слева направо — под слоем текста",
+      "params": {
+        "color": "accent",
+        "height": 0.45,
+        "opacity": 70,
+        "cap": "butt"
+      }
+    },
+    "draw.circle": {
+      "kind": "draw",
+      "dur": 500,
+      "target": "layer",
+      "curve": "quartInOut",
+      "description": "Обвести эллипсом с полем 18 %, старт с поворота 15° — «смотри сюда»",
+      "params": {
+        "stroke": "main",
+        "color": "accent",
+        "pad": 0.18
+      }
+    },
+    "draw.strike": {
+      "kind": "draw",
+      "dur": 250,
+      "target": "layer",
+      "description": "Зачеркнуть под углом −7° — ошибка, неверный вариант",
+      "params": {
+        "stroke": "accent",
+        "color": "wrong",
+        "tilt": -7
+      }
+    },
+    "draw.arrow": {
+      "kind": "draw",
+      "dur": "draw",
+      "target": "points",
+      "description": "Стрелка from → to с изгибом (0 — прямая, 0,3 — дуга); наконечник выскакивает на 80 % прорисовки",
+      "params": {
+        "stroke": "main",
+        "color": "accent",
+        "bend": 0.2,
+        "gap": 24,
+        "head": 3.5,
+        "headAngle": 40
+      }
+    },
+    "draw.connector": {
+      "kind": "draw",
+      "dur": "underline",
+      "target": "points",
+      "description": "Тонкая линия-выноска от точки к подписи, с точкой-якорем 10 px",
+      "params": {
+        "stroke": "thin",
+        "color": "muted",
+        "dot": 10,
+        "gap": 16,
+        "bend": 0
+      }
+    },
+    "callout": {
+      "kind": "draw",
+      "dur": "underline",
+      "target": "points",
+      "description": "Выноска: точка на объекте → линия → плашка с текстом (выскок после линии). params.text — текст, from — точка, to — где плашка; color — линия, chip — плашка, ink — текст на плашке",
+      "params": {
+        "stroke": "thin",
+        "color": "ink",
+        "chip": "surface",
+        "text": "",
+        "size": "label",
+        "dot": 10,
+        "gap": 0,
+        "bend": 0,
+        "padX": 24,
+        "padY": 14,
+        "ink": "onSurface"
+      }
+    },
+    "undraw": {
+      "kind": "undraw",
+      "dur": "draw",
+      "target": "layer",
+      "curve": "@exit",
+      "description": "Стереть линию библиотеки обратным trim за 65 % времени прорисовки"
+    }
+  }
+}

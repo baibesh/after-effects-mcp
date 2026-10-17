@@ -4,6 +4,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vm from "node:vm";
+import { nearest } from "./presets.js";
 import { REPO_ROOT } from "./runner.js";
 
 export const KIT_DIR = path.join(REPO_ROOT, "kit");
@@ -85,4 +86,31 @@ export function listStyles(projectAeDir?: string): StyleInfo[] {
 
 export function listCurves(): Record<string, unknown> {
   return JSON.parse(fs.readFileSync(path.join(KIT_DIR, "library", "ease.json"), "utf8")).curves;
+}
+
+const LIB_FILES = ["motion", "text", "lines"];
+
+function libraryItems(): Record<string, any> {
+  const out: Record<string, any> = {};
+  for (const f of LIB_FILES) {
+    const items = JSON.parse(fs.readFileSync(path.join(KIT_DIR, "library", `${f}.json`), "utf8")).items;
+    for (const [id, item] of Object.entries(items)) out[id] = { ...(item as object), id, folder: f };
+  }
+  return out;
+}
+
+export type LibraryInfo = { id: string; folder: string; kind: string; description?: string; dur?: unknown; target?: string; params?: unknown };
+
+export function listLibrary(folder?: string): LibraryInfo[] {
+  return Object.values(libraryItems())
+    .filter((i) => !folder || i.folder === folder)
+    .map((i) => ({ id: i.id, folder: i.folder, kind: i.kind, description: i.description, dur: i.dur, target: i.target ?? (i.basedOn ? "text" : "layer"), params: i.params }));
+}
+
+/** Примитив по id; ошибка с ближайшими именами. */
+export function resolveLibraryItem(id: string): any {
+  const items = libraryItems();
+  if (items[id]) return items[id];
+  const names = Object.keys(items);
+  throw new Error(`Нет примитива «${id}». Похожие: ${nearest(id, names, 5).join(", ")} (все — list_library)`);
 }

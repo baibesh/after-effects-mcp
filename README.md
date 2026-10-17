@@ -149,6 +149,7 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 | `list_presets` | пресеты: свои (`local`) или штатные Adobe (`adobe`, с поиском) | `{"source": "adobe", "query": "Behaviors"}` |
 | `list_styles` | стили серии (`kit/styles`, `ae/styles` проекта): наследование, описание, ключевые цвета и шрифты; `curves: true` — и кривые `kit/library/ease.json` | `{"curves": true}` |
 | `get_style` | итоговые токены стиля после `extends` или один токен по пути | `{"id": "editorial-dark", "path": "motion.dur"}` |
+| `list_library` | примитивы библиотеки (`motion`, `text`, `lines`): вид, описание, длительность, цель, параметры | `{"folder": "lines"}` |
 
 ### Проект и слои
 
@@ -195,6 +196,7 @@ claude mcp add after-effects --scope user -- node "$HOME/Projects/ae-plugin/buil
 
 | Инструмент | Что делает | Пример |
 |---|---|---|
+| `apply_library` | примитив библиотеки в стиле серии: на слой, по слою (линии) или по точкам `from`/`to`; ответ — `start`/`end` | `{"comp": "Scene", "id": "text.letters", "style": "editorial-dark", "layer": "word", "start": 0.6}` · `{"…", "id": "draw.arrow", "from": "tr", "to": "card"}` |
 | `apply_preset` | пресет к слою от `start`: JSON-данные (ease по отрезкам, `speed`), свой `.ffx` или `adobe:…`; `"move:<имя>"` — движение кита (как `apply_motion`) | `{"comp": "Scene", "layer": "title", "preset": "accent-punch", "start": 2}` · `{"…", "preset": "move:punch", "start": 2.6}` |
 | `list_motions` | каталог 41 движения кита: группа A–H, слот, параметры с умолчаниями, что видит зритель, `needs`; `activeStyle` — действующий стиль (`style` вызова → композиции `comp`/активной → проекта → `hand`, со `scope`), `swappedTo` — подмены в нём | `{"group": "A"}` · `{"comp": "Scene"}` · `{"style": "brisk"}` |
 | `apply_motion` | движение кита (`kbMove`) на слой (номер или имя) или на выделение; стиль композиции/проекта; ответ — план start/hit/end и `sfx`: все метки, которые движение фактически поставило (вид, время, кадр, сила, `inComp` — сверено с маркерами композиции; у `cascade` — по метке на букву-тик) | `{"comp": "Scene", "layer": "BIGGER", "name": "land", "at": 1.0, "opts": {"unit": "char", "strength": 1.2}}` · `{"selection": true, "name": "rise", "at": 1.6}` |

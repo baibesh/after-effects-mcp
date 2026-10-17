@@ -4,6 +4,7 @@
 //@include "../kit/core.jsx"
 //@include "../kit/motion.jsx"
 //@include "../kit/style.jsx"
+//@include "../kit/library.jsx"
 //@include "../kit/text.jsx"
 //@include "../kit/footage.jsx"
 //@include "lib/json.jsx"
@@ -21,3 +22,4 @@
 //@include "tools/time.jsx"
 //@include "tools/effects.jsx"
 //@include "tools/motion.jsx"
+//@include "tools/library.jsx"

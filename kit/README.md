@@ -14,7 +14,7 @@
 2. **Базовые**: `project` (проект 32 бита, композиция 1080×1920, палитра), `motion` (ключи и easing), `text`, `shape`, `footage` (дудлы), `look` (бумага, дрожь линии, зерно), `hero` (живой растровый герой: дыхание, разрез по шее, кивок, сквош, смена поз, тень вырезкой), `space` (2,5D: стена, вырезки, камера с ГРИП, свет с тенями), `fx` (жидкая заливка, конфетти, свечение), `render` (контрольные кадры и превью).
 3. **Приёмы витрины `show-*.jsx`** — по блокам ролика `reels/showcase`: **a** эхо, дуги, рывок слова · **b** бумажная вырезка и перевод фокуса · **c** свет (ядро, анаморфный штрих, лучи, лужа света) · **d** морф, жидкость, веер · **e** блик и подгон кегля · **hand** маркер и подчёркивание «как рукой» · **final** рывок панорамы, встряска, хроматическая аберрация. Приёмы других роликов там же: **brick** кирпич-слово, куча и кладка (`reels/say-simple`).
 4. **Пресеты движения** — `move.jsx` (одна точка подключения), `presets/tl-*.jsx` (41 движение: текст, акценты, субтитры, плашки, камера, реакции героя), `heroes/` (паспорта героев). Каталог и API — §6.
-5. **Стили серии** — `style.jsx`, `styles/*.json`, `library/ease.json`: токены оформления (цвет, шрифт, формы, движение) и кривые cubic-bezier с настоящей скоростью на ключах. §7.
+5. **Стили серии и библиотека** — `style.jsx`, `styles/*.json`, `library/ease.json`: токены оформления (цвет, шрифт, формы, движение) и кривые cubic-bezier с настоящей скоростью на ключах; `library.jsx`, `library/{motion,text,lines}.json`: 30 примитивов, которые берут оформление из стиля. §7.
 6. **`probe.jsx`** — зонд: снимает с живого AE то, чего нет в документации, в `tools/data/`. В роликах не участвует, запускается отдельно (`tools/run.sh kit/probe.jsx`).
 
 Зависимости: `show-hand` → `shape` + `look`, `show-b` → `space`, `show-c` → `project`, `show-e` → `text`, `hero` → `core` + `motion`, `audio` → `core` + `footage`, `show-brick` → `space` + `text` + `show-hand` (берёт оттуда `kbHandNoise`, чтобы не заводить третий генератор), `face` → `motion` + `char` (`kbTr`, `kbHT`, `kbHold`, `KB_F`). Приёмы витрины друг друга не знают, порядок подключения — любой.
@@ -420,3 +420,30 @@ kbRun("demo", function () {
 Проверено в AE 26.5: значения между ключами совпадают с cubic-bezier до 0,01 % размаха — для убывающих значений (скорость со знаком), позиции по диагонали (скорость — длина хорды) и масштаба по осям; `backOut` даёт пик ровно 112 %.
 
 Чистые функции (`kbStyleResolve`, `kbStyleMerge`, `kbTok`, `kbMs`, `kbCurveSegment`, `kbCurvePoints`) выполняет и сервер MCP (`src/styles.ts`, песочница vm) — один код для `list_styles`/`get_style` и для AE. Тесты без AE: `npm test`.
+
+### Библиотека примитивов — `library.jsx`, `library/{motion,text,lines}.json`
+
+Примитив — данные: длительность (мс или токен `motion.dur`), кривая (`@enter`, `@exit`, `@emphasis`, `@draw` → `motion.ease` стиля, или имя из ease.json), значения от текущего (`"base"`, `{"offset"}` в px при базе 1080, `{"factor"}` в %), параметры `$имя`. Каталог с описаниями — `list_library` или сами файлы.
+
+| Папка | Примитивы |
+|---|---|
+| `motion` | `enter.rise/slideIn/scaleIn/pop/unblur`, `exit.fadeDown/shrink`, `emphasis.pop/shake/dimOthers/undim`, `idle.breathe/sway/float` |
+| `text` | `text.maskUp/letters/rise/fadeWords/unblur/maskDown/highlightWord/counter` |
+| `lines` | `draw.underline/marker/circle/strike/arrow/connector`, `callout`, `undraw` |
+
+```js
+//@include "../kit/library.jsx"
+var st = kbStyle("editorial-dark");
+var r = kbLib(st, st.motion.word, word, {start: 0.6});          // r.end — когда закончилось
+kbLib(st, "draw.underline", word, {start: r.end - 0.1});
+kbLib(st, "draw.arrow", null, {comp: comp, from: tr, to: card, start: 2.1, params: {bend: 0.25}});
+kbLib(st, "emphasis.dimOthers", null, {start: 4, others: [label, tr]});
+var hold = kbTextHold(st, "I eat an apple every day");          // мс удержания после входа
+```
+
+- **Текст** — Expression Selector: у каждой единицы (буквы без пробелов, слова, строки) своя кривая со сдвигом stagger; каскад не дольше `motion.stagger.maxTotal`. Перелёт `backOut` — отрицательный amount, выражение считает кривую так же, как ключи (проверено тестом против cubic-bezier).
+- **Маски строк** (`mask: true`): по маске на строку, буквы выезжают из-под своей линии. В многострочном тексте полосы соседствуют, поэтому второй аниматор (`… · hide`) растворяет букву дальше ~0,3 em от её строки; однострочный текст — чистая маска.
+- **Линии** — shape-слои в координатах композиции, trim по `@draw`, концы `shape.cap` стиля. Рамка цели — `sourceRectAtTime` с позицией, якорем и масштабом слоя (родитель и поворот не учитываются); подчёркивание — от базовой линии последней строки. `undraw` стирает trim за 65 % прорисовки и сжимает наконечник и точку.
+- **Грабли ExtendScript:** `parseFloat("1.1em")` даёт NaN (читается как экспонента `1.1e…`) — длины в em разбираются через `Number(v.replace(/em$/, ""))`.
+
+Демо в трёх стилях: `test/lib-demo.jsx` (сцена «новое слово», композиции `lib · <стиль>`), запуск в открытом тестовом проекте.

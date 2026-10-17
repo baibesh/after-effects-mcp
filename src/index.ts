@@ -11,7 +11,7 @@ import { FORMATS, PLATFORMS, type FormatKey, type PlatformKey } from "./formats.
 import { listEffects, resolveEffect } from "./effects.js";
 import { grabFrames } from "./frames.js";
 import { listPresets, PRESETS_DIR, resolvePreset } from "./presets.js";
-import { listCurves, listStyles, resolveStyle } from "./styles.js";
+import { listCurves, listLibrary, listStyles, resolveLibraryItem, resolveStyle } from "./styles.js";
 import { config, runInAE } from "./runner.js";
 
 const server = new McpServer({ name: "after-effects", version: "0.1.0" });
@@ -681,6 +681,52 @@ server.registerTool(
       const known = listStyles(project).map((s) => s.id);
       return text(`Ошибка: ${(e as Error).message}. Стили: ${known.join(", ")}`, true);
     }
+  },
+);
+
+const point = z.union([z.string(), z.tuple([z.number(), z.number()])]).describe("Слой (имя) или точка [x, y] в композиции");
+
+server.registerTool(
+  "list_library",
+  {
+    description:
+      "Примитивы библиотеки (kit/library/*.json) — движение, текст, линии, оформленные стилем серии: id, папка (motion/text/lines), вид (enter/exit/emphasis/idle/draw…), описание, длительность (мс или токен motion.dur стиля), цель (layer — слой, text — текстовый слой, points — from/to, others — список слоёв), параметры с умолчаниями. Проект не меняется.",
+    inputSchema: { folder: z.enum(["motion", "text", "lines"]).optional() },
+  },
+  ({ folder }) => text(listLibrary(folder)),
+);
+
+server.registerTool(
+  "apply_library",
+  {
+    description:
+      "Применить примитив библиотеки в стиле серии: длительность, кривая, перелёт, толщины, цвета, кегли — из стиля. motion/text — на слой (layer) от start; линии по слою (draw.underline/marker/circle/strike, undraw — на слой линии) или по точкам (draw.arrow/connector/callout: from, to — слой или [x, y]); emphasis.dimOthers/undim — others. Ответ: start/end (секунды) и созданные/затронутые слои — end ставит следующий шаг. Одна отмена на вызов.",
+    inputSchema: {
+      comp: compName,
+      id: z.string().describe('Примитив из list_library: "text.letters", "enter.pop", "draw.arrow"…'),
+      style: z.string().describe('Стиль серии из list_styles: "editorial-dark", "swiss-light", "color-blocks"'),
+      layer: layerName.optional(),
+      start: z.number().min(0).optional().describe("Секунды; по умолчанию начало слоя"),
+      dur: z.number().positive().optional().describe("Длительность, мс — вместо длительности примитива (× tempo стиля)"),
+      params: z.record(z.string(), z.any()).optional().describe('Параметры примитива: {"word": "apple"}, {"bend": 0.3}, {"text": "roof — шатыр"}'),
+      from: point.optional(),
+      to: point.optional(),
+      others: z.array(z.string()).optional().describe("Слои для emphasis.dimOthers/undim"),
+      index: z.number().int().min(0).optional().describe("Номер объекта для фазы idle (чтобы соседи не дышали в такт)"),
+      name: z.string().optional().describe("Имя нового слоя линии"),
+      project: styleProject,
+    },
+  },
+  (a) => {
+    let style, item;
+    try {
+      style = resolveStyle(a.style, a.project);
+      item = resolveLibraryItem(a.id);
+    } catch (e) {
+      return text(`Ошибка: ${(e as Error).message}`, true);
+    }
+    const { project: _project, id: _id, ...rest } = a;
+    return call("apply_library", { ...rest, style, item });
   },
 );
 
